@@ -1,4 +1,4 @@
-VERSION = 0.0.3
+VERSION = 0.0.1
 
 MARIADB_VERSION := 10.11.4
 MARIADB_FOLDER := mariadb-${MARIADB_VERSION}-linux-systemd-x86_64
@@ -6,14 +6,15 @@ OS := $(shell uname -s)
 
 .PHONY: prep
 prep:
-	@echo "Preparing build/bin for usage..."	
+	@echo "Preparing build/bin for usage..."
+	@sed -i 's/#define VERSION ".*/#define VERSION "$(VERSION)"/g' common/version.h
 	@-cd build/bin && unlink assets
 	@cd build/bin && ln -s ../../base/assets assets
 	@cp -R -u -p base/login.ini build/bin/login.ini
 	@cp -R -u -p base/eqemu_config.json build/bin/eqemu_config.json
 	@mkdir -p build/bin/logs
 	@mkdir -p build/bin/shared
-	@echo "Done. Try 'make loginserver' to start the loginserver."
+	@echo "Done."
 
 # Runs loginserver binary
 .PHONY: loginserver

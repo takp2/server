@@ -1,20 +1,3 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2002 EQEMu Development Team (http://eqemu.org)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-*/
 #include "../common/global_define.h"
 #include <iostream>
 #include <string.h>
@@ -808,7 +791,7 @@ void Console::ProcessCommand(const char* command) {
 			}
 			else if (strcasecmp(sep.arg[0], "version") == 0 && admin >= consoleWorldStatus) {
 				SendMessage(1, "Current version information.");
-				SendMessage(1, "  %s", CURRENT_VERSION);
+				SendMessage(1, "  %s", VERSION);
 				SendMessage(1, "  Compiled on: %s at %s", COMPILE_DATE, COMPILE_TIME);
 				SendMessage(1, "  Last modified on: %s", LAST_MODIFIED);
 			}
