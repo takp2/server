@@ -1,0 +1,78 @@
+{
+    "server": {
+        "zones": {
+            "defaultstatus": "0",
+            "ports": {
+                "low": "7000",
+                "high": "7400"
+            }
+        },
+        "qsdatabase": {
+            "host": "127.0.0.1",
+            "port": "3306",
+            "username": "takp",
+            "password": "takppass",
+            "db": "takp"
+        },
+        "chatserver": {
+            "port": "7778",
+            "host": ""
+        },
+        "mailserver": {
+            "host": "",
+            "port": "7778"
+        },
+        "world": {
+            "loginserver1": {
+                "account": "",
+                "password": "",
+                "legacy": "1",
+                "host": "login.eqemulator.net",
+                "port": "5998"
+            },
+            "loginserver2": {
+                "port": "5998",
+                "account": "",
+                "password": "",
+                "host": "127.0.0.1"
+            },
+            "loginserver3": {
+                "port": "5998",
+                "account": "",
+                "password": "",
+                "host": "login.projecteq.net"
+            },
+            "tcp": {
+                "ip": "127.0.0.1",
+                "port": "9001"
+            },
+            "telnet": {
+                "ip": "127.0.0.1",
+                "port": "9000",
+                "enabled": "true"
+            },
+            "key": "iasodjaoisjdiaosjdsaiojdsa",
+            "shortname": "req",
+            "longname": "RebuildEQ"
+        },
+        "database": {
+            "db": "takp",
+            "host": "127.0.0.1",
+            "port": "3306",
+            "username": "takp",
+            "password": "takppass"
+        },
+        "files": {
+            "opcodes": "assets/opcodes/opcodes.conf",
+            "mail_opcodes": "assets/opcodes/mail_opcodes.conf"
+        },
+        "directories": {
+            "patches": "assets/patches/",
+            "opcodes": "assets/opcodes/",
+            "lua_modules": "quests/lua_modules/",
+            "quests": "quests/",
+            "plugins": "quests/plugins/",
+            "maps": "maps/"
+        }
+    }
+}

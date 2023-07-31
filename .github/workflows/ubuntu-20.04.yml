@@ -1,0 +1,49 @@
+name: ubuntu-20.04
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: write
+
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Get CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Install Dependencies
+      run: sudo apt install -y --no-install-recommends build-essential libtool cmake curl debconf-utils  git libio-stringy-perl liblua5.1-0  liblua5.1-0-dev libluabind-dev libmysql++-dev  libperl-dev libperl5i-perl libjson-perl libsodium-dev  libmysqlclient-dev libssl-dev lua5.1  minizip make locales nano open-vm-tools unzip uuid-dev iputils-ping zlibc wget libcurl4-openssl-dev gdb
+
+    - name: Run CMake
+      run: mkdir -p build && cd build && cmake -DEQEMU_BUILD_LOGIN=ON -DEQEMU_BUILD_LUA=ON -G 'Unix Makefiles' ..
+
+    - name: Make
+      run: cd build && make
+
+    - name: Archive Release
+      uses: thedoctor0/zip-release@main
+      with:
+        path: './build/bin/'
+        type: 'tar'
+        filename: 'linux-latest.tar.gz'
+
+    - name: Upload Latest Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: 'linux-latest.tar.gz'
+        token: ${{ secrets.GITHUB_TOKEN }}
+        prerelease: true
+        tag: latest
