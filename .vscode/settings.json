@@ -4,7 +4,7 @@
 	"editor.tabSize": 4,
 	"editor.autoIndent": "full",
 	"editor.formatOnSave": true,
-	"C_Cpp.clang_format_style": "{ BasedOnStyle: Google, UseTab: ForIndentation, IndentWidth: 4, TabWidth: 4 }",
+	"C_Cpp.clang_format_style": "{ BasedOnStyle: Google, UseTab: ForIndentation, IndentWidth: 4, TabWidth: 4, IncludeBlocks: Preserve, ColumnLimit: 0, SortIncludes: false}",
 	"search.exclude": {
 		"dependencies": true,
 	},
@@ -17,4 +17,8 @@
 	],
 	"testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
 	"cmake.configureOnOpen": false,
+	"files.associations": {
+		"*.ipp": "cpp",
+		"functional": "cpp"
+	},
 }
