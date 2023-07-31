@@ -3,7 +3,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 SET(common_sources
 	base_packet.cpp
 	classes.cpp
-	cli/eqemu_command_handler.cpp
 	condition.cpp
 	crash.cpp
 	crc16.cpp
@@ -310,9 +309,6 @@ SET(common_headers
 	bodytypes.h
 	chat_oplist.h
 	classes.h
-	cli/argh.h
-	cli/eqemu_command_handler.h
-	cli/terminal_color.hpp
 	condition.h
 	crash.h
 	crc16.h
