@@ -20,6 +20,9 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: true
+    
+    - name: Set Version
+      run: make set-version
 
     - name: Get CMake
       uses: lukka/get-cmake@latest
@@ -38,12 +41,13 @@ jobs:
       with:
         path: './build/bin/'
         type: 'tar'
-        filename: 'linux-latest.tar.gz'
+        filename: 'linux-${{ env.VERSION }}.${{ github.run_number }}.tar.gz'
 
-    - name: Upload Latest Release
-      uses: ncipollo/release-action@v1
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        artifacts: 'linux-latest.tar.gz'
-        token: ${{ secrets.GITHUB_TOKEN }}
-        prerelease: true
-        tag: latest
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "${{ env.VERSION }}.${{ github.run_number }}"
+        prerelease: false
+        title: "${{ env.VERSION }}.${{ github.run_number }}"
+        files: |
+          build/bin/${{ env.VERSION }}.${{ github.run_number }}.tar.gz

@@ -1,4 +1,4 @@
-VERSION = 0.0.1
+VERSION ?= 0.0.1
 
 MARIADB_VERSION := 10.11.4
 MARIADB_FOLDER := mariadb-${MARIADB_VERSION}-linux-systemd-x86_64
@@ -77,3 +77,7 @@ init-mariadb:
 	@#cd build/bin/db/${MARIADB_FOLDER}/bin && ./mysqld_safe --initialize-insecure --datadir=${PWD}/build/bin/db/data --defaults-file=${PWD}/build/bin/db/my.cnf
 	@echo "MariaDB is now initialized. Use 'make mariadb' to run it."
 	
+# CICD triggers this
+.PHONY: set-variable
+set-version:
+	@echo "VERSION=${VERSION}" >> $$GITHUB_ENV	
