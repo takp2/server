@@ -61,7 +61,6 @@ union semun {
 #include "ucs.h"
 #include "wguild_mgr.h"
 #include "world_config.h"
-#include "world_server_command_handler.h"
 #include "zonelist.h"
 #include "zoneserver.h"
 
@@ -144,10 +143,6 @@ int main(int argc, char** argv) {
 	set_exception_handler();
 
 	LogInfo("Starting World v{}", VERSION);
-
-	if (argc > 1) {
-		WorldserverCommandHandler::CommandHandler(argc, argv);
-	}
 
 	LoadServerConfig();
 

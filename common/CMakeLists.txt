@@ -8,7 +8,6 @@ SET(common_sources
 	crash.cpp
 	crc16.cpp
 	crc32.cpp
-	database/database_dump_service.cpp
 	database.cpp
 	dbcore.cpp
 	emu_constants.cpp
@@ -314,7 +313,6 @@ SET(common_headers
 	cli/argh.h
 	cli/eqemu_command_handler.h
 	cli/terminal_color.hpp
-	database/database_dump_service.h
 	condition.h
 	crash.h
 	crc16.h
