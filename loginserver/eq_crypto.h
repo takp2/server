@@ -8,7 +8,7 @@
 #else
 	#include "../common/unix.h"
 #endif
-
+ 
 class EQCrypto 
 {
 public:

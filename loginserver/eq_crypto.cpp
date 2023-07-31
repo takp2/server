@@ -6,7 +6,7 @@
 using namespace std;
 
 #include "eq_crypto.h"
-
+ 
 /* verant's DES key in our client: 13 D9 13 6D D0 34 15 FB - neorab */
 DES_cblock EQCrypto::verant_key = { 19, 217, 19, 109, 208, 52, 21, 251 };
 

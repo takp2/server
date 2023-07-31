@@ -45,7 +45,7 @@ struct construct_aux<0, T, Pointer, Signature>
     {
         object_rep* self = touserdata<object_rep>(self_);
         class_rep* cls = self->crep();
-
+ 
         std::auto_ptr<T> instance(new T);
         inject_backref(self_.interpreter(), instance.get(), instance.get());
 
