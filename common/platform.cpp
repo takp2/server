@@ -10,7 +10,7 @@ const EQEmuExePlatform& GetExecutablePlatform() {
 	return exe_platform;
 }
 
-int GetExecutablePlatformInt(){
+int GetExecutablePlatformInt(){ 
 	return exe_platform;
 }
 

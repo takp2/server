@@ -16,7 +16,7 @@ SET(ucs_headers
 	ucsconfig.h
 	worldserver.h
 )
-
+ 
 ADD_EXECUTABLE(ucs ${ucs_sources} ${ucs_headers})
 
 INSTALL(TARGETS ucs RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

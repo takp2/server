@@ -1,19 +1,19 @@
 #ifndef CHATCHANNEL_H
 #define CHATCHANNEL_H
 
-//#include "clientlist.h"
-#include "../common/linked_list.h"
-#include "../common/timer.h"
+// #include "clientlist.h"
 #include <string>
 #include <vector>
+
+#include "../common/linked_list.h"
+#include "../common/timer.h"
 
 class Client;
 
 class ChatChannel {
-
-public:
-
-	ChatChannel(std::string inName, std::string inOwner, std::string inPassword, bool inPermanent, int inMinimumStatus = 0);
+   public:
+	ChatChannel(std::string inName, std::string inOwner, std::string inPassword,
+	            bool inPermanent, int inMinimumStatus = 0);
 	~ChatChannel();
 
 	void AddClient(Client *c);
@@ -22,8 +22,10 @@ public:
 
 	int MemberCount(int Status);
 	const std::string &GetName() { return Name; }
-	void SendMessageToChannel(std::string Message, Client* Sender);
-	bool CheckPassword(std::string inPassword) { return Password.empty() || Password == inPassword; }
+	void SendMessageToChannel(std::string Message, Client *Sender);
+	bool CheckPassword(std::string inPassword) {
+		return Password.empty() || Password == inPassword;
+	}
 	void SetPassword(std::string inPassword);
 	bool IsOwner(std::string Name) { return (Owner == Name); }
 	void SetOwner(std::string inOwner);
@@ -45,8 +47,7 @@ public:
 
 	friend class ChatChannelList;
 
-private:
-
+   private:
 	std::string Name;
 	std::string Owner;
 	std::string Password;
@@ -58,30 +59,28 @@ private:
 
 	Timer DeleteTimer;
 
-	LinkedList<Client*> ClientsInChannel;
+	LinkedList<Client *> ClientsInChannel;
 
 	std::vector<std::string> Moderators;
 	std::vector<std::string> Invitees;
 	std::vector<std::string> Voiced;
-
 };
 
 class ChatChannelList {
-
-public:
-	ChatChannel* CreateChannel(std::string Name, std::string Owner, std::string Passwordi, bool Permanent, int MinimumStatus = 0);
-	ChatChannel* FindChannel(std::string Name);
-	ChatChannel* AddClientToChannel(std::string Channel, Client *c);
-	ChatChannel* RemoveClientFromChannel(std::string Channel, Client *c);
+   public:
+	ChatChannel *CreateChannel(std::string Name, std::string Owner,
+	                           std::string Passwordi, bool Permanent,
+	                           int MinimumStatus = 0);
+	ChatChannel *FindChannel(std::string Name);
+	ChatChannel *AddClientToChannel(std::string Channel, Client *c);
+	ChatChannel *RemoveClientFromChannel(std::string Channel, Client *c);
 	void RemoveChannel(ChatChannel *Channel);
 	void RemoveAllChannels();
 	void SendAllChannels(Client *c);
 	void Process();
 
-private:
-
-	LinkedList<ChatChannel*> ChatChannels;
-
+   private:
+	LinkedList<ChatChannel *> ChatChannels;
 };
 
 std::string CapitaliseName(std::string inString);

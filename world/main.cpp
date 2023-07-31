@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include "../common/crash.h"
+#include "../common/crash.h" 
 #include "../common/eq_packet.h"
 #include "../common/eq_stream_factory.h"
 #include "../common/eq_stream_ident.h"

@@ -10,7 +10,6 @@ SET(common_sources
 	database.cpp
 	dbcore.cpp
 	emu_constants.cpp
-	emu_limits.cpp
 	emu_opcodes.cpp
 	emu_tcp_connection.cpp
 	emu_tcp_server.cpp
@@ -63,7 +62,6 @@ SET(common_sources
 	spdat.cpp
 	strings.cpp
 	struct_strategy.cpp
-	textures.cpp
 	tcp_connection.cpp
 	tcp_server.cpp
 	timeoutmgr.cpp
@@ -71,24 +69,13 @@ SET(common_sources
 	unix.cpp
 	uuid.cpp
 	worldconn.cpp
-	xml_parser.cpp
 	platform.cpp
 	process/process.cpp
 	json/jsoncpp.cpp
 	patches/patches.cpp
 	patches/mac.cpp
 	patches/mac_limits.cpp
-	SocketLib/Base64.cpp
-	SocketLib/File.cpp
-	SocketLib/MemFile.cpp
-	SocketLib/Parse.cpp
-	SocketLib/socket_include.cpp
-	SocketLib/Utility.cpp
-	StackWalker/StackWalker.cpp
-	tinyxml/tinystr.cpp
-	tinyxml/tinyxml.cpp
-	tinyxml/tinyxmlerror.cpp
-	tinyxml/tinyxmlparser.cpp
+	StackWalker/StackWalker.cpp	
 ) 
 
 SET(repositories
@@ -396,7 +383,7 @@ SET(common_headers
 	shareddb.h
 	skills.h
 	spdat.h
-    	strings.h
+    strings.h
 	struct_strategy.h
 	textures.h
 	tcp_basic_server.h
@@ -409,7 +396,6 @@ SET(common_headers
 	uuid.h
 	version.h
 	worldconn.h
-	xml_parser.h
 	zone_numbers.h
 	platform.h
 	json/json.h
@@ -422,16 +408,7 @@ SET(common_headers
 	patches/ss_declare.h
 	patches/ss_define.h
 	patches/ss_register.h
-	SocketLib/Base64.h
-	SocketLib/File.h
-	SocketLib/IFile.h
-	SocketLib/MemFile.h
-	SocketLib/Parse.h
-	SocketLib/socket_include.h
-	SocketLib/Utility.h
 	StackWalker/StackWalker.h
-	tinyxml/tinystr.h
-	tinyxml/tinyxml.h
 )
 
 SOURCE_GROUP(Event FILES

@@ -16,7 +16,7 @@
 #define CLE_Status_Zoning		3
 #define CLE_Status_InZone		4
 
-class ZoneServer;
+class ZoneServer; 
 struct ServerClientList_Struct;
 
 class ClientListEntry {

@@ -17,7 +17,7 @@
 	#define INVALID_SOCKET -1
 	#define SOCKET_ERROR -1
 #endif
-
+ 
 #define SERVER_LOOP_GRANULARITY 3	//# of ms between checking our socket/queues
 
 BaseTCPServer::BaseTCPServer(uint16 in_port) {

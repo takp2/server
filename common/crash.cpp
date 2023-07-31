@@ -13,20 +13,20 @@
 #if defined(_WINDOWS) && defined(CRASH_LOGGING)
 #include "StackWalker.h"
 
-class EQEmuStackWalker : public StackWalker
-{
-public:
-	EQEmuStackWalker() : StackWalker() { }
-	EQEmuStackWalker(DWORD dwProcessId, HANDLE hProcess) : StackWalker(dwProcessId, hProcess) { }
+class EQEmuStackWalker : public StackWalker {
+   public:
+	EQEmuStackWalker() : StackWalker() {}
+	EQEmuStackWalker(DWORD dwProcessId, HANDLE hProcess)
+	    : StackWalker(dwProcessId, hProcess) {}
 	virtual void OnOutput(LPCSTR szText) {
 		char buffer[4096];
-		for(int i = 0; i < 4096; ++i) {
-			if(szText[i] == 0) {
+		for (int i = 0; i < 4096; ++i) {
+			if (szText[i] == 0) {
 				buffer[i] = '\0';
 				break;
 			}
 
-			if(szText[i] == '\n' || szText[i] == '\r') {
+			if (szText[i] == '\n' || szText[i] == '\r') {
 				buffer[i] = ' ';
 			} else {
 				buffer[i] = szText[i];
@@ -38,10 +38,8 @@ public:
 	}
 };
 
-LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS *ExceptionInfo)
-{
-	switch(ExceptionInfo->ExceptionRecord->ExceptionCode)
-	{
+LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS *ExceptionInfo) {
+	switch (ExceptionInfo->ExceptionRecord->ExceptionCode) {
 		case EXCEPTION_ACCESS_VIOLATION:
 			Log(Logs::General, Logs::Crash, "EXCEPTION_ACCESS_VIOLATION");
 			break;
@@ -91,7 +89,8 @@ LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS *ExceptionInfo)
 			Log(Logs::General, Logs::Crash, "EXCEPTION_INVALID_DISPOSITION");
 			break;
 		case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-			Log(Logs::General, Logs::Crash, "EXCEPTION_NONCONTINUABLE_EXCEPTION");
+			Log(Logs::General, Logs::Crash,
+			    "EXCEPTION_NONCONTINUABLE_EXCEPTION");
 			break;
 		case EXCEPTION_PRIV_INSTRUCTION:
 			Log(Logs::General, Logs::Crash, "EXCEPTION_PRIV_INSTRUCTION");
@@ -107,9 +106,10 @@ LONG WINAPI windows_exception_handler(EXCEPTION_POINTERS *ExceptionInfo)
 			break;
 	}
 
-	if(EXCEPTION_STACK_OVERFLOW != ExceptionInfo->ExceptionRecord->ExceptionCode)
-	{
-		EQEmuStackWalker sw; sw.ShowCallstack(GetCurrentThread(), ExceptionInfo->ContextRecord);
+	if (EXCEPTION_STACK_OVERFLOW !=
+	    ExceptionInfo->ExceptionRecord->ExceptionCode) {
+		EQEmuStackWalker sw;
+		sw.ShowCallstack(GetCurrentThread(), ExceptionInfo->ContextRecord);
 	}
 
 	return EXCEPTION_EXECUTE_HANDLER;
@@ -122,26 +122,32 @@ void set_exception_handler() {
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <sys/fcntl.h>
 
-void print_trace()
-{
+void print_trace() {
 	bool does_gdb_exist = Strings::Contains(Process::execute("gdb -v"), "GNU");
 	if (!does_gdb_exist) {
-		LogCrash("[Error] GDB is not installed, if you want crash dumps on Linux to work properly you will need GDB installed");
+		LogCrash(
+		    "[Error] GDB is not installed, if you want crash dumps on Linux to "
+		    "work properly you will need GDB installed");
 		std::exit(1);
 	}
 
 	auto uid = geteuid();
-	std::string temp_output_file = fmt::format("/tmp/dump-output-{}", Strings::Random(10));
+	std::string temp_output_file =
+	    fmt::format("/tmp/dump-output-{}", Strings::Random(10));
 
 	// check for passwordless sudo if not root
 	if (uid != 0) {
-		bool sudo_password_required = Strings::Contains(Process::execute("sudo -n true"), "a password is required");
+		bool sudo_password_required = Strings::Contains(
+		    Process::execute("sudo -n true"), "a password is required");
 		if (sudo_password_required) {
-			LogCrash("[Error] Current user does not have passwordless sudo installed. It is required to automatically process crash dumps with GDB as non-root.");
+			LogCrash(
+			    "[Error] Current user does not have passwordless sudo "
+			    "installed. It is required to automatically process crash "
+			    "dumps with GDB as non-root.");
 			std::exit(1);
 		}
 	}
@@ -152,26 +158,26 @@ void print_trace()
 	name_buf[readlink("/proc/self/exe", name_buf, 511)] = 0;
 	int child_pid = fork();
 	if (!child_pid) {
-		int fd = open(temp_output_file.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-		dup2(fd, 1); // redirect output to stderr
+		int fd =
+		    open(temp_output_file.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+		dup2(fd, 1);  // redirect output to stderr
 		fprintf(stdout, "stack trace for %s pid=%s\n", name_buf, pid_buf);
 		if (uid == 0) {
-			execlp("gdb", "gdb", "--batch", "-n", "-ex", "thread", "-ex", "bt", name_buf, pid_buf, NULL);
-		}
-		else {
-			execlp("sudo", "gdb", "gdb", "--batch", "-n", "-ex", "thread", "-ex", "bt", name_buf, pid_buf, NULL);
+			execlp("gdb", "gdb", "--batch", "-n", "-ex", "thread", "-ex", "bt",
+			       name_buf, pid_buf, NULL);
+		} else {
+			execlp("sudo", "gdb", "gdb", "--batch", "-n", "-ex", "thread",
+			       "-ex", "bt", name_buf, pid_buf, NULL);
 		}
 
 		close(fd);
 
 		abort(); /* If gdb failed to start */
-	}
-	else {
+	} else {
 		waitpid(child_pid, nullptr, 0);
 	}
 
-
-	std::ifstream    input(temp_output_file);
+	std::ifstream input(temp_output_file);
 	for (std::string line; getline(input, line);) {
 		LogCrash("{}", line);
 	}
@@ -182,8 +188,7 @@ void print_trace()
 }
 
 // crash is off or an unhandled platform
-void set_exception_handler()
-{
+void set_exception_handler() {
 	signal(SIGABRT, reinterpret_cast<void (*)(int)>(print_trace));
 	signal(SIGFPE, reinterpret_cast<void (*)(int)>(print_trace));
 	signal(SIGFPE, reinterpret_cast<void (*)(int)>(print_trace));

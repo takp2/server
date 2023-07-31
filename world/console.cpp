@@ -14,7 +14,7 @@
 #include "../common/seperator.h"
 #include "../common/eq_packet_structs.h"
 #include "../common/eq_packet.h"
-#include "login_server.h"
+#include "login_server.h" 
 #include "login_server_list.h"
 #include "../common/md5.h"
 #include "../common/opcodemgr.h"

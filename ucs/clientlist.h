@@ -1,41 +1,44 @@
-/*	EQEMu: Everquest Server Emulator
-	Copyright (C) 2001-2008 EQEMu Development Team (http://eqemulator.net)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; version 2 of the License.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY except by those people which sell it, which
-	are required to give you total support for your newly bought product;
-	without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-*/
-
 #ifndef CHATSERVER_CLIENTLIST_H
 #define CHATSERVER_CLIENTLIST_H
 
-#include "../common/opcodemgr.h"
-#include "../common/eq_stream_type.h"
-#include "../common/eq_stream_factory.h"
-#include "../common/rulesys.h"
-#include "chatchannel.h"
 #include <list>
 #include <vector>
+
+#include "../common/eq_stream_factory.h"
+#include "../common/eq_stream_type.h"
+#include "../common/opcodemgr.h"
+#include "../common/rulesys.h"
+#include "chatchannel.h"
 
 #define MAX_JOINED_CHANNELS 10
 
 enum {
-	CommandJoin = 0, CommandLeaveAll, CommandLeave, CommandListAll, CommandList, CommandSet, CommandAnnounce, CommandSetOwner,
-	CommandOPList, CommandInvite, CommandGrant, CommandModerate, CommandVoice, CommandKick,
-	CommandPassword, CommandToggleInvites, CommandAFK, CommandUptime,
-	CommandGetHeaders, CommandGetBody, CommandMailTo, CommandSetMessageStatus, CommandSelectMailBox,
-	CommandSetMailForwarding, CommandBuddy, CommandIgnorePlayer,
+	CommandJoin = 0,
+	CommandLeaveAll,
+	CommandLeave,
+	CommandListAll,
+	CommandList,
+	CommandSet,
+	CommandAnnounce,
+	CommandSetOwner,
+	CommandOPList,
+	CommandInvite,
+	CommandGrant,
+	CommandModerate,
+	CommandVoice,
+	CommandKick,
+	CommandPassword,
+	CommandToggleInvites,
+	CommandAFK,
+	CommandUptime,
+	CommandGetHeaders,
+	CommandGetBody,
+	CommandMailTo,
+	CommandSetMessageStatus,
+	CommandSelectMailBox,
+	CommandSetMailForwarding,
+	CommandBuddy,
+	CommandIgnorePlayer,
 	CommandEndOfList
 };
 
@@ -44,36 +47,41 @@ struct CommandEntry {
 	int CommandCode;
 };
 
-typedef enum { ConnectionTypeUnknown, ConnectionTypeCombined, ConnectionTypeMail, ConnectionTypeChat } ConnectionType;
+typedef enum {
+	ConnectionTypeUnknown,
+	ConnectionTypeCombined,
+	ConnectionTypeMail,
+	ConnectionTypeChat
+} ConnectionType;
 
 static const CommandEntry Commands[] = {
-					{ "join", CommandJoin },
-					{ "leaveall", CommandLeaveAll },
-					{ "leave", CommandLeave },
-					{ "listall", CommandListAll },
-					{ "list", CommandList },
-					{ "set", CommandSet },
-					{ "announce", CommandAnnounce },
-					{ "setowner", CommandSetOwner },
-					{ "oplist", CommandOPList },
-					{ "invite", CommandInvite },
-					{ "grant", CommandGrant },
-					{ "moderate", CommandModerate },
-					{ "voice", CommandVoice },
-					{ "kick", CommandKick },
-					{ "password", CommandPassword },
-					{ "toggleinvites", CommandToggleInvites },
-					{ "afk", CommandAFK },
-					{ "uptime", CommandUptime },
-					{ "getheaders", CommandGetHeaders },
-					{ "getbody", CommandGetBody },
-					{ "mailto", CommandMailTo },
-					{ "setmessagestatus", CommandSetMessageStatus },
-					{ "selectmailbox", CommandSelectMailBox },
-					{ "setmailforwarding", CommandSetMailForwarding },
-					{ "buddy", CommandBuddy },
-					{ "ignoreplayer", CommandIgnorePlayer },
-					{ "", CommandEndOfList } };
+    {"join", CommandJoin},
+    {"leaveall", CommandLeaveAll},
+    {"leave", CommandLeave},
+    {"listall", CommandListAll},
+    {"list", CommandList},
+    {"set", CommandSet},
+    {"announce", CommandAnnounce},
+    {"setowner", CommandSetOwner},
+    {"oplist", CommandOPList},
+    {"invite", CommandInvite},
+    {"grant", CommandGrant},
+    {"moderate", CommandModerate},
+    {"voice", CommandVoice},
+    {"kick", CommandKick},
+    {"password", CommandPassword},
+    {"toggleinvites", CommandToggleInvites},
+    {"afk", CommandAFK},
+    {"uptime", CommandUptime},
+    {"getheaders", CommandGetHeaders},
+    {"getbody", CommandGetBody},
+    {"mailto", CommandMailTo},
+    {"setmessagestatus", CommandSetMessageStatus},
+    {"selectmailbox", CommandSelectMailBox},
+    {"setmailforwarding", CommandSetMailForwarding},
+    {"buddy", CommandBuddy},
+    {"ignoreplayer", CommandIgnorePlayer},
+    {"", CommandEndOfList}};
 
 struct CharacterEntry {
 	int CharID;
@@ -84,27 +92,51 @@ struct CharacterEntry {
 };
 
 class Client {
-
-public:
-	Client(EQStream* eqs);
+   public:
+	Client(EQStream *eqs);
 	~Client();
 
 	EQStream *ClientStream;
-	void AddCharacter(int CharID, const char *CharacterName, int Level, int Race, int Class);
+	void AddCharacter(int CharID, const char *CharacterName, int Level,
+	                  int Race, int Class);
 	void ClearCharacters() { Characters.clear(); }
 	void SendChatlist();
-	inline void QueuePacket(const EQApplicationPacket *p, bool ack_req=true) { if (ClientStream && ClientStream->CheckActive()) ClientStream->QueuePacket(p, ack_req); }
-	std::string GetName() { if(Characters.size()) return Characters[0].Name; else return ""; }
-	int GetLevel() { if (Characters.size()) return Characters[0].Level; else return 0; }
-	int GetRace() { if (Characters.size()) return Characters[0].Race; else return 999; }
-	int GetClass() { if (Characters.size()) return Characters[0].Class; else return 999; }
+	inline void QueuePacket(const EQApplicationPacket *p, bool ack_req = true) {
+		if (ClientStream && ClientStream->CheckActive())
+			ClientStream->QueuePacket(p, ack_req);
+	}
+	std::string GetName() {
+		if (Characters.size())
+			return Characters[0].Name;
+		else
+			return "";
+	}
+	int GetLevel() {
+		if (Characters.size())
+			return Characters[0].Level;
+		else
+			return 0;
+	}
+	int GetRace() {
+		if (Characters.size())
+			return Characters[0].Race;
+		else
+			return 999;
+	}
+	int GetClass() {
+		if (Characters.size())
+			return Characters[0].Class;
+		else
+			return 999;
+	}
 	void JoinChannels(std::string ChannelList);
 	void LeaveChannels(std::string ChannelList);
 	void LeaveAllChannels(bool SendUpdatedChannelList = true);
 	void AddToChannelList(ChatChannel *JoinedChannel);
 	void RemoveFromChannelList(ChatChannel *JoinedChannel);
 	void SendChannelMessage(std::string Message);
-	void SendChannelMessage(std::string ChannelName, std::string Message, Client *Sender);
+	void SendChannelMessage(std::string ChannelName, std::string Message,
+	                        Client *Sender);
 	void SendChannelMessageByNumber(std::string Message);
 	void SendChannelList();
 	void CloseConnection();
@@ -138,8 +170,12 @@ public:
 	bool InvitesAllowed() { return AllowInvites; }
 	bool IsRevoked() { return Revoked; }
 	void SetRevoked(bool r) { Revoked = r; }
-	inline bool IsChannelAdmin() { return (Status >= RuleI(Channels, RequiredStatusAdmin)); }
-	inline bool CanListAllChannels() { return (Status >= RuleI(Channels, RequiredStatusListAll)); }
+	inline bool IsChannelAdmin() {
+		return (Status >= RuleI(Channels, RequiredStatusAdmin));
+	}
+	inline bool CanListAllChannels() {
+		return (Status >= RuleI(Channels, RequiredStatusListAll));
+	}
 	void SendHelp();
 	inline bool GetForceDisconnect() { return ForceDisconnect; }
 	void SetConnectionType(char c);
@@ -150,7 +186,7 @@ public:
 	int GetCharID();
 	void SendUptime();
 
-private:
+   private:
 	std::vector<CharacterEntry> Characters;
 	ChatChannel *JoinedChannels[MAX_JOINED_CHANNELS];
 	bool Announce;
@@ -161,33 +197,31 @@ private:
 	bool Revoked;
 	bool stale;
 
-	//Anti Spam Stuff
+	// Anti Spam Stuff
 	Timer *AccountGrabUpdateTimer;
 	uint32 TotalKarma;
 
-	Timer *GlobalChatLimiterTimer; //60 seconds
+	Timer *GlobalChatLimiterTimer;  // 60 seconds
 	int AttemptedMessages;
 	bool ForceDisconnect;
 	ConnectionType TypeOfConnection;
 };
 
 class Clientlist {
-
-public:
+   public:
 	Clientlist(int ChatPort);
-	void	Process();
-	void	CloseAllConnections();
+	void Process();
+	void CloseAllConnections();
 	Client *FindCharacter(std::string CharacterName);
-	void	CheckForStaleConnections(Client *c);
-	void	CLClearStaleConnections();
+	void CheckForStaleConnections(Client *c);
+	void CLClearStaleConnections();
 	Client *IsCharacterOnline(std::string CharacterName);
 	void ProcessOPChatCommand(Client *c, std::string CommandString);
 
-private:
-
+   private:
 	EQStreamFactory *chatsf;
 
-	std::deque<Client*> ClientChatConnections;
+	std::deque<Client *> ClientChatConnections;
 	Mutex MClientChatConnections;
 
 	OpcodeManager *ChatOpMgr;

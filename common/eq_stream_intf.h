@@ -1,27 +1,30 @@
 #ifndef EQSTREAMINTF_H_
 #define EQSTREAMINTF_H_
 
-//this is the only part of an EQStream that is seen by the application.
+// this is the only part of an EQStream that is seen by the application.
 
 #include <string>
+
 #include "emu_versions.h"
 
 typedef enum {
 	ESTABLISHED,
-	CLOSING,		//waiting for pending data to flush.
-	DISCONNECTING,	//have sent disconnect, waiting for their disconnect reply.
-	CLOSED,			//received a disconnect from remote side.
+	CLOSING,        // waiting for pending data to flush.
+	DISCONNECTING,  // have sent disconnect, waiting for their disconnect reply.
+	CLOSED,         // received a disconnect from remote side.
 	UNESTABLISHED
 } EQStreamState;
 
 class EQApplicationPacket;
 
 class EQStreamInterface {
-public:
+   public:
 	virtual ~EQStreamInterface() {}
 
-	virtual void QueuePacket(const EQApplicationPacket *p, bool ack_req=true) = 0;
-	virtual void FastQueuePacket(EQApplicationPacket **p, bool ack_req=true) = 0;
+	virtual void QueuePacket(const EQApplicationPacket *p,
+	                         bool ack_req = true) = 0;
+	virtual void FastQueuePacket(EQApplicationPacket **p,
+	                             bool ack_req = true) = 0;
 	virtual EQApplicationPacket *PopPacket() = 0;
 	virtual void Close() = 0;
 
@@ -36,7 +39,9 @@ public:
 	virtual const uint32 GetBytesRecieved() const { return 0; }
 	virtual const uint32 GetBytesSentPerSecond() const { return 0; }
 	virtual const uint32 GetBytesRecvPerSecond() const { return 0; }
-	virtual const EQ::versions::ClientVersion ClientVersion() const { return EQ::versions::ClientVersion::Unknown; }
+	virtual const EQ::versions::ClientVersion ClientVersion() const {
+		return EQ::versions::ClientVersion::Unknown;
+	}
 	virtual bool IsInUse() = 0;
 };
 

@@ -11,7 +11,7 @@ enum EQEmuExePlatform
 	ExePlatformLogin,
 	ExePlatformQueryServ,
 	ExePlatformWebInterface,
-	ExePlatformUCS,
+	ExePlatformUCS, 
 	ExePlatformLaunch,
 	ExePlatformSharedMemory,
 	ExePlatformClientImport,

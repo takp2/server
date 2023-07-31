@@ -2,25 +2,25 @@
 #define MYSQL_REQUEST_ROW_H
 
 #ifdef _WINDOWS
-	#include <winsock2.h>
-	#include <windows.h>
+#include <winsock2.h>
+#include <windows.h>
 #endif
 
 #include <mysql.h>
+
 #include <iterator>
+
 #include "types.h"
 
-class MySQLRequestRow : public std::iterator<std::input_iterator_tag, MYSQL_ROW>
-{
-
-private:
+class MySQLRequestRow
+    : public std::iterator<std::input_iterator_tag, MYSQL_ROW> {
+   private:
 	MYSQL_RES* m_Result;
 	MYSQL_ROW m_MySQLRow;
 
-public:
-
+   public:
 	MySQLRequestRow();
-	MySQLRequestRow(MYSQL_RES *result);
+	MySQLRequestRow(MYSQL_RES* result);
 	MySQLRequestRow(const MySQLRequestRow& row);
 	MySQLRequestRow(MySQLRequestRow&& moveItem);
 	MySQLRequestRow& operator=(MySQLRequestRow& moveItem);
@@ -30,9 +30,6 @@ public:
 	bool operator!=(const MySQLRequestRow& rhs);
 	MySQLRequestRow operator*();
 	char* operator[](int index);
-
 };
-
-
 
 #endif

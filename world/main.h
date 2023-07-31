@@ -1,16 +1,17 @@
 #ifndef WIN32
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #else
-#include <cerrno>
 #include <fcntl.h>
-#include <winsock2.h>
 #include <windows.h>
+#include <winsock2.h>
+
+#include <cerrno>
 #endif
 
 void CatchSignal(int sig_num);

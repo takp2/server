@@ -6,19 +6,19 @@
 #include "eq_stream.h"
 #include <map>
 
-
-//note: all encoders and decoders must be valid functions.
-//so if you specify set_defaults=false
+// note: all encoders and decoders must be valid functions.
+// so if you specify set_defaults=false
 StructStrategy::StructStrategy() {
 	int r;
-	for(r = 0; r < _maxEmuOpcode; r++) {
+	for (r = 0; r < _maxEmuOpcode; r++) {
 		encoders[r] = PassEncoder;
 		decoders[r] = PassDecoder;
 	}
 }
 
-void StructStrategy::Encode(EQApplicationPacket **p, EQStreamInterface *dest, bool ack_req) const {
-	if((*p)->GetOpcodeBypass() != 0) {
+void StructStrategy::Encode(EQApplicationPacket **p, EQStreamInterface *dest,
+                            bool ack_req) const {
+	if ((*p)->GetOpcodeBypass() != 0) {
 		PassEncoder(p, dest, ack_req);
 		return;
 	}
@@ -34,72 +34,50 @@ void StructStrategy::Decode(EQApplicationPacket *p) const {
 	proc(p);
 }
 
-
-void StructStrategy::ErrorEncoder(EQApplicationPacket **in_p, EQStreamInterface *dest, bool ack_req) {
+void StructStrategy::ErrorEncoder(EQApplicationPacket **in_p,
+                                  EQStreamInterface *dest, bool ack_req) {
 	EQApplicationPacket *p = *in_p;
 	*in_p = nullptr;
 
-	Log(Logs::General, Logs::Netcode, "[STRUCTS] Error encoding opcode %s: no encoder provided. Dropping.", OpcodeManager::EmuToName(p->GetOpcode()));
+	Log(Logs::General, Logs::Netcode,
+	    "[STRUCTS] Error encoding opcode %s: no encoder provided. Dropping.",
+	    OpcodeManager::EmuToName(p->GetOpcode()));
 
 	delete p;
 }
 
 void StructStrategy::ErrorDecoder(EQApplicationPacket *p) {
-	Log(Logs::General, Logs::Netcode, "[STRUCTS] Error decoding opcode %s: no decoder provided. Invalidating.", OpcodeManager::EmuToName(p->GetOpcode()));
+	Log(Logs::General, Logs::Netcode,
+	    "[STRUCTS] Error decoding opcode %s: no decoder provided. "
+	    "Invalidating.",
+	    OpcodeManager::EmuToName(p->GetOpcode()));
 	p->SetOpcode(OP_Unknown);
 }
 
-void StructStrategy::PassEncoder(EQApplicationPacket **p, EQStreamInterface *dest, bool ack_req) {
+void StructStrategy::PassEncoder(EQApplicationPacket **p,
+                                 EQStreamInterface *dest, bool ack_req) {
 	dest->FastQueuePacket(p, ack_req);
 }
 
 void StructStrategy::PassDecoder(EQApplicationPacket *p) {
-	//do nothing since we decode in place
+	// do nothing since we decode in place
 }
 
-
-
-
-//effectively a singleton, but I decided to do it this way for no apparent reason.
+// effectively a singleton, but I decided to do it this way for no apparent
+// reason.
 namespace StructStrategyFactory {
 
-	static std::map<EmuOpcode, const StructStrategy *> strategies;
+static std::map<EmuOpcode, const StructStrategy *> strategies;
 
-	void RegisterPatch(EmuOpcode first_opcode, const StructStrategy *structs) {
-		strategies[first_opcode] = structs;
-	}
+void RegisterPatch(EmuOpcode first_opcode, const StructStrategy *structs) {
+	strategies[first_opcode] = structs;
+}
 
-	const StructStrategy *FindPatch(EmuOpcode first_opcode) {
-		std::map<EmuOpcode, const StructStrategy *>::const_iterator res;
-		res = strategies.find(first_opcode);
-		if(res == strategies.end())
-			return(nullptr);
-		return(res->second);
-	}
+const StructStrategy *FindPatch(EmuOpcode first_opcode) {
+	std::map<EmuOpcode, const StructStrategy *>::const_iterator res;
+	res = strategies.find(first_opcode);
+	if (res == strategies.end()) return (nullptr);
+	return (res->second);
+}
 
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+};  // namespace StructStrategyFactory

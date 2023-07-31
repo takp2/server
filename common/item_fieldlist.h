@@ -1,11 +1,3 @@
-/*
-
-
-These fields must be in the order of how they are serialized!
-
-
-
-*/
 
 F(itemclass)
 F(name)
