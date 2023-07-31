@@ -90,7 +90,7 @@ SET(common_sources
 	tinyxml/tinyxml.cpp
 	tinyxml/tinyxmlerror.cpp
 	tinyxml/tinyxmlparser.cpp
-)
+) 
 
 SET(repositories
 	# Base Repositories
@@ -503,3 +503,12 @@ IF(UNIX)
 ENDIF(UNIX)
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+
+FILE(GLOB_RECURSE common_tests
+	"*_test.cpp"
+)
+
+ADD_EXECUTABLE(common_tests ${common_tests})
+TARGET_LINK_LIBRARIES(common_tests gtest gtest_main)
+
+# ADD_TEST(NAME common COMMAND common)

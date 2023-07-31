@@ -15,5 +15,6 @@
 		"-DEQEMU_BUILD_LUA=ON",
 		"Unix Makefiles"
 	],
-	"cmake.configureOnOpen": false
+	"testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
+	"cmake.configureOnOpen": false,
 }
