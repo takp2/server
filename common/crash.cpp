@@ -5,6 +5,7 @@
 #include "process/process.h"
 
 #include <cstdio>
+#include <regex>
 
 #if WINDOWS
 #define popen _popen
@@ -147,7 +148,7 @@ void print_trace() {
 			LogCrash(
 			    "[Error] Current user does not have passwordless sudo "
 			    "installed. It is required to automatically process crash "
-			    "dumps with GDB as non-root.");
+			    "dumps with GDB as non-root");
 			std::exit(1);
 		}
 	}
@@ -177,9 +178,20 @@ void print_trace() {
 		waitpid(child_pid, nullptr, 0);
 	}
 
+	std::regex pattern(".*\\((.*):(\\d+)\\)");
+	std::smatch matches;
+
 	std::ifstream input(temp_output_file);
 	for (std::string line; getline(input, line);) {
-		LogCrash("{}", line);
+		// get regex pattern path:line
+		std::regex_search(line, matches, pattern);
+		if (matches.size() != 3) {
+			continue;
+		}
+		std::string path = matches[1];
+		std::string line_number = matches[2];
+		LogCrash("{}:{}", path, line_number);
+		continue;
 	}
 
 	std::remove(temp_output_file.c_str());

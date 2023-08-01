@@ -11,6 +11,10 @@
 		6000,
 		3306
 	],
+	"remoteEnv": {
+		"LOCALWSF": "${localWorkspaceFolder}",
+		"CONTAINERWSF": "${containerWorkspaceFolder}"
+	},
 	// add ptrace
 	"runArgs": [
 		"--cap-add=SYS_PTRACE",
@@ -32,11 +36,7 @@
 				"ms-vscode.cmake-tools"
 			]
 		}
-	}
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "uname -a",
-	// Configure tool-specific properties.
-	// "customizations": {},
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+	},
+	"workspaceFolder": "/src",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/src,type=bind,consistency=cached"
 }

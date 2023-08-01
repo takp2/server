@@ -29,6 +29,7 @@ shared:
 # Runs zone binary
 .PHONY: zone
 zone:
+	@-rm build/bin/logs/zone/zone*.log
 	cd build/bin && ./zone
 
 # Runs world binary
@@ -36,6 +37,18 @@ zone:
 world:
 	@-rm build/bin/logs/world*.log
 	cd build/bin && ./world
+
+# Runs ucs binary
+.PHONY: ucs
+ucs:
+	@-rm build/bin/logs/ucs*.log
+	cd build/bin && ./ucs
+
+# Runs queryserv binary
+.PHONY: queryserv
+queryserv:
+	@-rm build/bin/logs/query_server*.log
+	cd build/bin && ./queryserv
 
 # Start mariaDB standalone
 .PHONY: mariadb
