@@ -1724,7 +1724,7 @@ bool Database::ZoneConnected(uint32 id, const char* name) {
 	if (!connect_results.Success()) {
 		Log(Logs::Detail, Logs::Error,
 		    "Error updating zone status in webdata_servers table from "
-		    "ZoneConnected.");
+		    "ZoneConnected");
 		return false;
 	}
 	return true;
@@ -1771,7 +1771,7 @@ bool Database::LSConnected(uint32 port) {
 	if (!connect_results.Success()) {
 		Log(Logs::Detail, Logs::Error,
 		    "Error updating LoginServer status in webdata_servers table from "
-		    "LSConnected.");
+		    "LSConnected");
 		return false;
 	}
 	return true;
@@ -1784,14 +1784,14 @@ bool Database::LSDisconnect() {
 	auto results = QueryDatabase(query);
 	Log(Logs::Detail, Logs::WebInterfaceServer,
 	    "LSConnected should have written to webdata_servers for LoginServer "
-	    "connected status 0.");
+	    "connected status 0");
 	if (!results.Success()) {
 		Log(Logs::Detail, Logs::Error,
-		    "Error updating webdata_servers table from LSDisconnect.");
+		    "Error updating webdata_servers table from LSDisconnect");
 		return false;
 	}
 	Log(Logs::Detail, Logs::WebInterfaceServer,
-	    "Updated webdata_servers table from LSDisconnect.");
+	    "Updated webdata_servers table from LSDisconnect");
 	return true;
 }
 

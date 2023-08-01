@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
 
-	Log(Logs::General, Logs::Status, "Shared Memory Loader Program");
+	LogInfo("Starting SharedMemory v{}", VERSION);
 	if (!EQEmuConfig::LoadConfig()) {
 		LogError("Unable to load configuration file.");
 		return 1;

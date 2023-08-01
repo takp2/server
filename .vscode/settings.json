@@ -26,6 +26,7 @@
 		"fstream": "cpp",
 		"type_traits": "cpp",
 		"utility": "cpp",
-		"cstring": "cpp"
+		"cstring": "cpp",
+		"*.tcc": "cpp"
 	},
 }

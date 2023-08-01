@@ -1,7 +1,7 @@
 #include <signal.h>
 
 #include <list>
- 
+
 #include "../common/crash.h"
 #include "../common/eq_stream_factory.h"
 #include "../common/eqemu_logsys.h"
@@ -35,7 +35,7 @@ int main() {
 	set_exception_handler();
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does auto-reconnect
 
-	LogInfo("Starting EQMacEmu QueryServ.");
+	LogInfo("Starting QueryServ v{}", VERSION);
 	if (!queryservconfig::LoadConfig()) {
 		LogInfo("Loading server configuration failed.");
 		return 1;

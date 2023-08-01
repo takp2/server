@@ -12,6 +12,7 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <algorithm>
+#include <string_view>
 
 std::ofstream process_log;
 
@@ -26,17 +27,6 @@ std::ofstream process_log;
 #include <unistd.h>
 #include <sys/stat.h>
 #endif
-
-/* Linux ANSI console color defines */
-#define LC_RESET "\033[0m"
-#define LC_BLACK "\033[30m"   /* Black */
-#define LC_RED "\033[31m"     /* Red */
-#define LC_GREEN "\033[32m"   /* Green */
-#define LC_YELLOW "\033[33m"  /* Yellow */
-#define LC_BLUE "\033[34m"    /* Blue */
-#define LC_MAGENTA "\033[35m" /* Magenta */
-#define LC_CYAN "\033[36m"    /* Cyan */
-#define LC_WHITE "\033[37m"   /* White */
 
 namespace Console {
 enum Color {
@@ -171,15 +161,21 @@ bool EQEmuLogSys::IsRfc5424LogCategory(uint16 log_category) {
 }
 
 std::string EQEmuLogSys::FormatOutMessageString(uint16 log_category,
+                                                const char* file, const char* func, int line,
                                                 const std::string& in_message) {
-	std::string return_string;
-
-	if (IsRfc5424LogCategory(log_category)) {
-		return_string = "[" + GetPlatformName() + "] ";
+	std::ostringstream out_message;
+	if (log_category == Logs::Crash) {
+		out_message << in_message;
+		return out_message.str();
 	}
 
-	return return_string + "[" + Logs::LogCategoryName[log_category] + "] " +
-	       in_message;
+	out_message << file << ":"
+	            << line << " ";
+	if (log_category != Logs::Info) {
+		out_message << Logs::LogCategoryName[log_category] << " ";
+	}
+	out_message << in_message;
+	return out_message.str();
 }
 
 void EQEmuLogSys::ProcessGMSay(uint16 debug_level, uint16 log_category,
@@ -211,52 +207,6 @@ void EQEmuLogSys::ProcessLogWrite(uint16 debug_level, uint16 log_category,
 	EQEmuLogSys::SetCurrentTimeStamp(time_stamp);
 
 	if (process_log) process_log << time_stamp << " " << message << std::endl;
-}
-
-uint16 EQEmuLogSys::GetWindowsConsoleColorFromCategory(uint16 log_category) {
-	switch (log_category) {
-		case Logs::Status:
-		case Logs::Normal:
-			return Console::Color::Yellow;
-		case Logs::MySQLError:
-		case Logs::Error:
-		case Logs::QuestErrors:
-			return Console::Color::LightRed;
-		case Logs::MySQLQuery:
-		case Logs::Debug:
-			return Console::Color::LightGreen;
-		case Logs::Quests:
-			return Console::Color::LightCyan;
-		case Logs::Commands:
-			return Console::Color::LightMagenta;
-		case Logs::Crash:
-			return Console::Color::LightRed;
-		default:
-			return Console::Color::Yellow;
-	}
-}
-
-std::string EQEmuLogSys::GetLinuxConsoleColorFromCategory(uint16 log_category) {
-	switch (log_category) {
-		case Logs::Status:
-		case Logs::Normal:
-			return LC_YELLOW;
-		case Logs::MySQLError:
-		case Logs::QuestErrors:
-		case Logs::Error:
-			return LC_RED;
-		case Logs::MySQLQuery:
-		case Logs::Debug:
-			return LC_GREEN;
-		case Logs::Quests:
-			return LC_CYAN;
-		case Logs::Commands:
-			return LC_MAGENTA;
-		case Logs::Crash:
-			return LC_RED;
-		default:
-			return LC_YELLOW;
-	}
 }
 
 uint16 EQEmuLogSys::GetGMSayColorFromCategory(uint16 log_category) {
@@ -293,14 +243,9 @@ void EQEmuLogSys::ProcessConsoleMessage(uint16 debug_level, uint16 log_category,
 	info.FontWeight = FW_NORMAL;
 	wcscpy(info.FaceName, L"Lucida Console");
 	SetCurrentConsoleFontEx(console_handle, NULL, &info);
-	SetConsoleTextAttribute(
-	    console_handle,
-	    EQEmuLogSys::GetWindowsConsoleColorFromCategory(log_category));
 	std::cout << message << "\n";
-	SetConsoleTextAttribute(console_handle, Console::Color::White);
 #else
-	std::cout << EQEmuLogSys::GetLinuxConsoleColorFromCategory(log_category)
-	          << message << LC_RESET << std::endl;
+	std::cout << message << std::endl;
 #endif
 }
 
@@ -375,7 +320,7 @@ void EQEmuLogSys::Out(Logs::DebugLevel debug_level, uint16 log_category,
 	va_end(args);
 
 	std::string output_debug_message =
-	    EQEmuLogSys::FormatOutMessageString(log_category, output_message);
+	    EQEmuLogSys::FormatOutMessageString(log_category, file, func, line, output_message);
 
 	if (log_to_console)
 		EQEmuLogSys::ProcessConsoleMessage(debug_level, log_category,
@@ -431,7 +376,7 @@ void EQEmuLogSys::StartFileLogs(const std::string& log_name) {
 
 		if (platform_file_name.empty()) return;
 
-		LogInfo("Starting File Log [logs/{0}_{1}.log]",
+		LogInfo("Logging to logs/{0}_{1}.log",
 		        platform_file_name.c_str(), getpid());
 
 		/**
@@ -451,7 +396,7 @@ void EQEmuLogSys::StartFileLogs(const std::string& log_name) {
 		 */
 		if (platform_file_name.empty()) return;
 
-		LogInfo("Starting File Log [logs/{0}_{1}.log]",
+		LogInfo("Logging to logs/{0}_{1}.log",
 		        platform_file_name.c_str(), getpid());
 
 		process_log.open(StringFormat("logs/%s_%i.log",

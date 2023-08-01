@@ -362,7 +362,7 @@ int main(int argc, char** argv) {
 			worldserver.Process();
 
 			if (!eqsf.IsOpen() && Config->ZonePort != 0) {
-				LogInfo("Starting EQ Network server on port {} ",
+				LogInfo("Listening on port {} ",
 				        Config->ZonePort);
 				if (!eqsf.Open(Config->ZonePort)) {
 					LogError("Failed to open port {} ", Config->ZonePort);

@@ -289,9 +289,8 @@ class EQEmuLogSys {
 	    on_log_console_hook;
 
 	std::string FormatOutMessageString(uint16 log_category,
+	                                   const char* file, const char* func, int line,
 	                                   const std::string& in_message);
-	std::string GetLinuxConsoleColorFromCategory(uint16 log_category);
-	uint16 GetWindowsConsoleColorFromCategory(uint16 log_category);
 
 	void ProcessConsoleMessage(
 	    uint16 debug_level, uint16 log_category,

@@ -158,12 +158,13 @@ static void ProcessCommandIgnore(Client *c, std::string Ignoree) {
 
 	safe_delete(outapp);
 }
+
 Clientlist::Clientlist(int ChatPort) {
 	chatsf = new EQStreamFactory(ChatStream, ChatPort, 60000);
 
 	ChatOpMgr = new RegularOpcodeManager;
 
-	if (!ChatOpMgr->LoadOpcodes("chat_opcodes.conf")) exit(1);
+	if (!ChatOpMgr->LoadOpcodes("assets/patches/chat_opcodes.conf")) exit(1);
 
 	if (chatsf->Open()) {
 		LogF(Logs::Detail, Logs::LoginServer,
