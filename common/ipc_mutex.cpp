@@ -11,7 +11,7 @@
 #endif
 #include "types.h"
 #include "eqemu_exception.h"
-#include "eqemu_config.h"
+#include "config.h"
 
 namespace EQ {
 struct IPCMutex::Implementation {
@@ -35,7 +35,7 @@ IPCMutex::IPCMutex(std::string name) : locked_(false) {
 		EQ_EXCEPT("IPC Mutex", "Could not create mutex.");
 	}
 #else
-	auto Config = EQEmuConfig::get();
+	auto Config = Config::get();
 	std::string final_name = Config->SharedMemDir + name;
 	final_name += ".lock";
 

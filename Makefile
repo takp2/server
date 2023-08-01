@@ -1,4 +1,4 @@
-VERSION ?= 0.0.1
+VERSION ?= 0.0.2
 
 MARIADB_VERSION := 10.11.4
 MARIADB_FOLDER := mariadb-${MARIADB_VERSION}-linux-systemd-x86_64
@@ -11,7 +11,7 @@ prep:
 	@-cd build/bin && unlink assets
 	@cd build/bin && ln -s ../../base/assets assets
 	@cp -R -u -p base/login.ini build/bin/login.ini
-	@cp -R -u -p base/eqemu_config.json build/bin/eqemu_config.json
+	@cp -R -u -p base/config.yaml build/bin/config.yaml
 	@mkdir -p build/bin/logs
 	@mkdir -p build/bin/shared
 	@echo "Done."
@@ -89,7 +89,15 @@ init-mariadb:
 	cd build/bin/db/${MARIADB_FOLDER}/scripts && ./mariadb-install-db --defaults-file=${PWD}/build/bin/db/my.cnf --datadir=${PWD}/build/bin/db/data --basedir=${PWD}/build/bin/db/${MARIADB_FOLDER}
 	@#cd build/bin/db/${MARIADB_FOLDER}/bin && ./mysqld_safe --initialize-insecure --datadir=${PWD}/build/bin/db/data --defaults-file=${PWD}/build/bin/db/my.cnf
 	@echo "MariaDB is now initialized. Use 'make mariadb' to run it."
-	
+
+
+.PHONY: inject-mariadb
+inject-mariadb:
+	-mysql -u vscode -S build/bin/db/mysql/mysqld.sock -e 'CREATE DATABASE takp;'
+	-mysql -u vscode -S build/bin/db/mysql/mysqld.sock -e "CREATE USER 'takp'@'127.0.0.1' IDENTIFIED BY 'takppass';"
+	-mysql -u vscode -S build/bin/db/mysql/mysqld.sock -e "GRANT ALL PRIVILEGES ON *.* TO 'takp'@'127.0.0.1';"
+	-unzip -p base/db.sql.zip | mysql -u vscode -S build/bin/db/mysql/mysqld.sock --database takp
+
 # CICD triggers this
 .PHONY: set-variable
 set-version:

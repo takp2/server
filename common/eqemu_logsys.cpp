@@ -172,7 +172,7 @@ std::string EQEmuLogSys::FormatOutMessageString(uint16 log_category,
 	out_message << file << ":"
 	            << line << " ";
 	if (log_category != Logs::Info) {
-		out_message << Logs::LogCategoryName[log_category] << " ";
+		out_message << "[" << Logs::LogCategoryName[log_category] << "] ";
 	}
 	out_message << in_message;
 	return out_message.str();

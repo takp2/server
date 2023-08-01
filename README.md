@@ -17,13 +17,17 @@ Check out [installer](https://github.com/takp2/installer).
 - Download [Visual Studio Code](https://code.visualstudio.com/)
 - Open your project in vscode.
 - You should get a prompt to reopen the project in a dev container. Say yes. If you miss the prompt, click the bottom left area and a drop down will appear that lets you reopen in dev container.
-- Once in the dev container, copy these contents to .vscode/settings.json
+- Once in the dev container, run CMake, pick the GCC 11.3.0 x86_64-linux-gnu toolkit, and Build
 
 **Database**
 
 - We'll be using a standalone binary mysql install for dev purposes.
 - `make init-mariadb`. This will create build/bin/db and download/create a standalone copy of mariadb.
 - `make mariadb`. This will start a mysql server.
+
+**Prep**
+
+- Two ways to do this: run `make inject-mariadb`, OR follow steps manually below.
 - `mysql -u vscode -S build/bin/db/mysql/mysqld.sock`, Starts a mysql root console
 - `CREATE DATABASE takp;` Create a database called takp
 - `CREATE USER 'takp'@'127.0.0.1' IDENTIFIED BY 'takppass';` Create a user named takp with password takppass
@@ -32,6 +36,8 @@ Check out [installer](https://github.com/takp2/installer).
 - `mysql -u takp -h 127.0.0.1 -p` Starts a myql takp user console, will prompt for password, type `takppass` and enter.
 - Above worked? Awesome. CTRL+C to exit
 - `unzip -p base/db.sql.zip | mysql -u vscode -S build/bin/db/mysql/mysqld.sock --database takp` Source a database
+- Or if you're lazy, copy paste th
+
 
 **Build**
 
@@ -43,4 +49,4 @@ Check out [installer](https://github.com/takp2/installer).
 
 **Debugging**
 
-(gdb) attach is a debug launch.json that you can attach to an already running instance.
+Use the (gdb) prefixed debuggers to start each process.

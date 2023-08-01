@@ -17,7 +17,7 @@ SET(common_sources
 	eqdb.cpp
 	eqdb_res.cpp
 	eqemu_exception.cpp
-	eqemu_config.cpp
+	config.cpp
 	eqemu_logsys.cpp
 	eq_limits.cpp
 	eq_packet.cpp
@@ -35,7 +35,6 @@ SET(common_sources
 	ipc_mutex.cpp
 	item_data.cpp
 	item_instance.cpp
-	json_config.cpp
 	light_source.cpp
 	md5.cpp
 	memory_buffer.cpp
@@ -71,7 +70,6 @@ SET(common_sources
 	worldconn.cpp
 	platform.cpp
 	process/process.cpp
-	json/jsoncpp.cpp
 	patches/patches.cpp
 	patches/mac.cpp
 	patches/mac_limits.cpp
@@ -317,8 +315,7 @@ SET(common_headers
 	eqdb.h
 	eqdb_res.h
 	eqemu_exception.h
-	eqemu_config.h
-	eqemu_config_elements.h
+	config.h
 	eqemu_logsys.h
 	eqemu_logsys_log_aliases.h
 	eq_limits.h
@@ -347,7 +344,6 @@ SET(common_headers
 	item_data.h
 	item_fieldlist.h
 	item_instance.h
-	json_config.h
 	languages.h
 	light_source.h
 	linked_list.h
@@ -398,8 +394,6 @@ SET(common_headers
 	worldconn.h
 	zone_numbers.h
 	platform.h
-	json/json.h
-	json/json-forwards.h
 	patches/patches.h
 	patches/mac.h
 	patches/mac_limits.h
@@ -417,11 +411,6 @@ SOURCE_GROUP(Event FILES
 	event/task.h
 )
 
-SOURCE_GROUP(Json FILES
-	json/json.h
-	json/jsoncpp.cpp
-	json/json-forwards.h
-)
 
 SOURCE_GROUP(Patches FILES
 	patches/patches.h
@@ -458,16 +447,7 @@ SOURCE_GROUP(StackWalker FILES
 	StackWalker/StackWalker.cpp
 )
 
-SOURCE_GROUP(TinyXML FILES
-	tinyxml/tinystr.h
-	tinyxml/tinyxml.h
-	tinyxml/tinystr.cpp
-	tinyxml/tinyxml.cpp
-	tinyxml/tinyxmlerror.cpp
-	tinyxml/tinyxmlparser.cpp
-)
-
-INCLUDE_DIRECTORIES(Patches SocketLib StackWalker TinyXML)
+INCLUDE_DIRECTORIES(Patches SocketLib StackWalker)
 
 ADD_LIBRARY(common ${common_sources} ${common_headers} ${repositories})
 

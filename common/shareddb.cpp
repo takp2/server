@@ -23,7 +23,7 @@
 #include "loottable.h"
 #include "faction.h"
 #include "features.h"
-#include "eqemu_config.h"
+#include "config.h"
 #include "data_verification.h"
 
 namespace ItemField {
@@ -427,7 +427,7 @@ bool SharedDatabase::LoadItems(const std::string& prefix) {
 	items_mmf.reset(nullptr);
 
 	try {
-		auto Config = EQEmuConfig::get();
+		auto Config = Config::get();
 		EQ::IPCMutex mutex("items");
 		mutex.Lock();
 		std::string file_name =
@@ -841,7 +841,7 @@ bool SharedDatabase::LoadNPCFactionLists(const std::string& prefix) {
 	faction_hash.reset(nullptr);
 
 	try {
-		auto Config = EQEmuConfig::get();
+		auto Config = Config::get();
 		EQ::IPCMutex mutex("faction");
 		mutex.Lock();
 		std::string file_name =
@@ -1058,7 +1058,7 @@ bool SharedDatabase::LoadSkillCaps(const std::string& prefix) {
 	uint32 size = (class_count * skill_count * level_count * sizeof(uint16));
 
 	try {
-		auto Config = EQEmuConfig::get();
+		auto Config = Config::get();
 		EQ::IPCMutex mutex("skill_caps");
 		mutex.Lock();
 		std::string file_name =
@@ -1223,7 +1223,7 @@ bool SharedDatabase::LoadSpells(const std::string& prefix, int32* records,
 	spells_mmf.reset(nullptr);
 
 	try {
-		auto Config = EQEmuConfig::get();
+		auto Config = Config::get();
 		EQ::IPCMutex mutex("spells");
 		mutex.Lock();
 
@@ -1473,7 +1473,7 @@ bool SharedDatabase::LoadBaseData(const std::string& prefix) {
 	base_data_mmf.reset(nullptr);
 
 	try {
-		auto Config = EQEmuConfig::get();
+		auto Config = Config::get();
 		EQ::IPCMutex mutex("base_data");
 		mutex.Lock();
 
@@ -1760,7 +1760,7 @@ bool SharedDatabase::LoadLoot(const std::string& prefix) {
 	loot_drop_mmf.reset(nullptr);
 
 	try {
-		auto Config = EQEmuConfig::get();
+		auto Config = Config::get();
 		EQ::IPCMutex mutex("loot");
 		mutex.Lock();
 		std::string file_name_lt =

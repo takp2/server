@@ -7,7 +7,6 @@
 #include "../common/md5.h"
 #include "../common/packet_dump.h"
 #include "clientlist.h"
-#include "web_interface.h"
 #include "world_config.h"
 #include "zonelist.h"
 #include "zoneserver.h"

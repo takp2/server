@@ -15,6 +15,8 @@
 	"cmake.configureArgs": [
 		"-DEQEMU_BUILD_LOGIN=ON",
 		"-DEQEMU_BUILD_LUA=ON",
+		"-DYAML_BUILD_SHARED_LIBS=ON",
+		"-DYAML_CPP_BUILD_TOOLS=OFF",
 		"Unix Makefiles"
 	],
 	"testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
@@ -98,6 +100,7 @@
 		"typeinfo": "cpp",
 		"valarray": "cpp",
 		"variant": "cpp",
-		"csetjmp": "cpp"
+		"csetjmp": "cpp",
+		"charconv": "cpp"
 	},
 }

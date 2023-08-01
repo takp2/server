@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.13)
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/" ${CMAKE_MODULE_PATH})
 
@@ -85,6 +85,7 @@ FIND_PACKAGE(OpenSSL)
 FIND_PACKAGE(Lua51)
 FIND_PACKAGE(mbedTLS)
 FIND_PACKAGE(CURL REQUIRED)
+FIND_PACKAGE(yaml-cpp REQUIRED)
 
 MESSAGE(STATUS "**************************************************")
 MESSAGE(STATUS "* Library Detection                              *")
@@ -290,7 +291,7 @@ MESSAGE(STATUS "* zlib:                                  ${ZLIB_LIBRARY_TYPE} *"
 MESSAGE(STATUS "**************************************************")
 
 #setup server libs and headers
-SET(SERVER_LIBS common ${DATABASE_LIBRARY_LIBS} ${ZLIB_LIBRARY_LIBS} ${Boost_LIBRARIES} uv_a fmt RecastNavigation::Detour ${CURL_LIBRARY})
+SET(SERVER_LIBS common ${DATABASE_LIBRARY_LIBS} ${ZLIB_LIBRARY_LIBS} ${Boost_LIBRARIES} uv_a fmt RecastNavigation::Detour ${CURL_LIBRARY} ${YAML_CPP_LIBRARIES})
 
 INCLUDE_DIRECTORIES(SYSTEM "${DATABASE_LIBRARY_INCLUDE}")
 INCLUDE_DIRECTORIES(SYSTEM "${ZLIB_LIBRARY_INCLUDE}")
@@ -305,6 +306,7 @@ INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigat
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigation/DetourTileCache/Include")
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/recastnavigation/Recast/Include")
 INCLUDE_DIRECTORIES(SYSTEM "${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp")
+INCLUDE_DIRECTORIES(${YAML_INCLUDE_DIRS})
 
 OPTION(EQEMU_BUILD_LOGGING "Build Logging (To speed up compilation)" ON)
 IF(EQEMU_BUILD_LOGGING)

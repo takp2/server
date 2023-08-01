@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "../common/crash.h"
-#include "../common/eqemu_config.h"
+#include "../common/config.h"
 #include "../common/eqemu_exception.h"
 #include "../common/eqemu_logsys.h"
 #include "../common/global_define.h"
@@ -24,12 +24,13 @@ int main(int argc, char **argv) {
 	set_exception_handler();
 
 	LogInfo("Starting SharedMemory v{}", VERSION);
-	if (!EQEmuConfig::LoadConfig()) {
-		LogError("Unable to load configuration file.");
+	auto load_result = Config::LoadConfig();
+	if (!load_result.empty()) {
+		LogError("{}", load_result);
 		return 1;
 	}
 
-	auto Config = EQEmuConfig::get();
+	auto Config = Config::get();
 
 	SharedDatabase database;
 	Log(Logs::General, Logs::Status, "Connecting to database...");

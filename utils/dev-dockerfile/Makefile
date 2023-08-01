@@ -1,8 +1,10 @@
-VERSION=0.0.4
-NAME=takp-dev
-REPOSITORY=xackery
+VERSION ?= 0.0.5
+NAME := takp-dev
+REPOSITORY := xackery
+
 docker-build:
 	docker build -t $(NAME) .
+	
 docker-push: docker-build
 	docker tag $(NAME) $(REPOSITORY)/$(NAME):$(VERSION)
 	docker push $(REPOSITORY)/$(NAME):$(VERSION)

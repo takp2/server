@@ -36,15 +36,16 @@ int main() {
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does auto-reconnect
 
 	LogInfo("Starting QueryServ v{}", VERSION);
-	if (!queryservconfig::LoadConfig()) {
-		LogInfo("Loading server configuration failed.");
+	auto load_result = Config::LoadConfig();
+	if (!load_result.empty()) {
+		LogError("{}", load_result);
 		return 1;
 	}
 
 	Config = queryservconfig::get();
 	WorldShortName = Config->ShortName;
 
-	LogInfo("Connecting to MySQL...");
+	LogInfo("Connecting to MySQL");
 
 	/* MySQL Connection */
 	if (!database.Connect(

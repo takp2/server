@@ -95,9 +95,10 @@ int main(int argc, char** argv) {
 
 	LogInfo("Starting Zone v{}", VERSION);
 
-	LogInfo("Loading server configuration..");
-	if (!ZoneConfig::LoadConfig()) {
-		LogError("Loading server configuration failed.");
+	LogInfo("Loading config.yaml");
+	auto load_result = ZoneConfig::LoadConfig();
+	if (!load_result.empty()) {
+		LogError("{}", load_result);
 		return 1;
 	}
 	Config = ZoneConfig::get();

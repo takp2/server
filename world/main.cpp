@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-#include "../common/crash.h" 
+#include "../common/crash.h"
 #include "../common/eq_packet.h"
 #include "../common/eq_stream_factory.h"
 #include "../common/eq_stream_ident.h"
@@ -100,16 +100,15 @@ void LoadDatabaseConnections() {
 }
 
 void LoadServerConfig() {
-	// Load server configuration
-	LogInfo("Loading server configuration..");
-	if (!WorldConfig::LoadConfig()) {
-		LogError("Loading server configuration failed.");
+	LogInfo("Loading config.yaml");
+	auto load_result = WorldConfig::LoadConfig();
+	if (!load_result.empty()) {
+		LogError("{}", load_result);
 		std::exit(1);
 	}
 }
 
 void RegisterLoginservers() {
-	// add login server config to list
 	if (Config->LoginCount == 0) {
 		if (Config->LoginHost.length()) {
 			loginserverlist.Add(Config->LoginHost.c_str(), Config->LoginPort,

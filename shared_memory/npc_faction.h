@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "../common/eqemu_config.h"
+#include "../common/config.h"
 
 class SharedDatabase;
 void LoadFactions(SharedDatabase *database, const std::string &prefix);
