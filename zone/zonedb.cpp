@@ -308,8 +308,6 @@ void ZoneDatabase::UpdateBug(BugReport_Struct* bug_report, uint32 clienttype) {
 	char uitext[16];
 	if (clienttype == EQ::versions::bit_MacPC)
 		strcpy(uitext, "PC");
-	else if (clienttype == EQ::versions::bit_MacIntel)
-		strcpy(uitext, "Intel");
 	else if (clienttype == EQ::versions::bit_MacPPC)
 		strcpy(uitext, "PPC");
 

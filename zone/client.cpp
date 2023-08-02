@@ -4588,9 +4588,7 @@ void Client::SendClientVersion() {
 	if (ClientVersion() == EQ::versions::RoF2) {
 		std::string string("RoF2");
 		std::string type;
-		if (ClientVersionBit() == EQ::versions::bit_MacIntel)
-			type = "Intel";
-		else if (ClientVersionBit() == EQ::versions::bit_MacPPC)
+		if (ClientVersionBit() == EQ::versions::bit_MacPPC)
 			type = "PowerPC";
 		else if (ClientVersionBit() == EQ::versions::bit_MacPC)
 			type = "PC";

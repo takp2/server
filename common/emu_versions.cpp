@@ -25,8 +25,6 @@ const char* EQ::versions::ClientVersionName(ClientVersion client_version) {
 			return "Unused";
 		case ClientVersion::MacPC:
 			return "PC Version";
-		case ClientVersion::MacIntel:
-			return "Intel Version";
 		case ClientVersion::MacPPC:
 			return "PPC Version";
 		case ClientVersion::RoF2:
@@ -45,8 +43,6 @@ uint32 EQ::versions::ConvertClientVersionToClientVersionBit(
 			return bit_Unused;
 		case ClientVersion::MacPC:
 			return bit_MacPC;
-		case ClientVersion::MacIntel:
-			return bit_MacIntel;
 		case ClientVersion::MacPPC:
 			return bit_MacPPC;
 		case ClientVersion::RoF2:
@@ -67,9 +63,6 @@ EQ::versions::ConvertClientVersionBitToClientVersion(
 		case (
 		    (uint32)1 << (static_cast<unsigned int>(ClientVersion::MacPC) - 1)):
 			return ClientVersion::MacPC;
-		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::MacIntel) -
-		                    1)):
-			return ClientVersion::MacIntel;
 		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::MacPPC) -
 		                    1)):
 			return ClientVersion::MacPPC;

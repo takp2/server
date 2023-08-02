@@ -1281,7 +1281,6 @@ void ClientList::SendClientVersionSummary(const char* Name) {
 	std::vector<uint32> unique_ips;
 	std::map<EQ::versions::ClientVersionBit, int> client_count = {
 	    {EQ::versions::ClientVersionBit::bit_MacPC, 0},
-	    {EQ::versions::ClientVersionBit::bit_MacIntel, 0},
 	    {EQ::versions::ClientVersionBit::bit_MacPPC, 0}};
 
 	LinkedListIterator<ClientListEntry*> Iterator(clientlist);
@@ -1304,7 +1303,6 @@ void ClientList::SendClientVersionSummary(const char* Name) {
 	}
 
 	uint32 total_clients = (client_count[EQ::versions::ClientVersionBit::bit_MacPC] +
-	                        client_count[EQ::versions::ClientVersionBit::bit_MacIntel] +
 	                        client_count[EQ::versions::ClientVersionBit::bit_MacPPC]);
 
 	if (client_count[EQ::versions::ClientVersionBit::bit_MacPC]) {
@@ -1316,18 +1314,6 @@ void ClientList::SendClientVersionSummary(const char* Name) {
 		    fmt::format(
 		        "Client Counts | PC: {} ",
 		        client_count[EQ::versions::ClientVersionBit::bit_MacPC])
-		        .c_str());
-	}
-
-	if (client_count[EQ::versions::ClientVersionBit::bit_MacIntel]) {
-		zoneserver_list.SendEmoteMessage(
-		    Name,
-		    0,
-		    AccountStatus::Player,
-		    CC_NPCQuestSay,
-		    fmt::format(
-		        "Client Counts | Intel: {} ",
-		        client_count[EQ::versions::ClientVersionBit::bit_MacIntel])
 		        .c_str());
 	}
 
@@ -1348,7 +1334,6 @@ void ClientList::SendClientVersionSummary(const char* Name) {
 
 void ClientList::ConsoleClientVersionSummary(const char* to, WorldTCPConnection* connection) {
 	uint32 ClientPCCount = 0;
-	uint32 ClientIntelCount = 0;
 
 	fmt::memory_buffer out;
 
@@ -1367,10 +1352,6 @@ void ClientList::ConsoleClientVersionSummary(const char* to, WorldTCPConnection*
 							++ClientPCCount;
 							break;
 						}
-						case 4: {
-							++ClientIntelCount;
-							break;
-						}
 					}
 					break;
 				}
@@ -1382,7 +1363,6 @@ void ClientList::ConsoleClientVersionSummary(const char* to, WorldTCPConnection*
 		Iterator.Advance();
 	}
 
-	fmt::format_to(out, " {} PC {} Intel clients online.\r\n", ClientPCCount, ClientIntelCount);
 	auto output = fmt::to_string(out);
 	connection->SendEmoteMessageRaw(to, 0, AccountStatus::Player, CC_NPCQuestSay, output.c_str());
 }

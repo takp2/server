@@ -11,7 +11,6 @@ enum ClientVersion {
 	Unknown = 0,
 	Unused,
 	MacPC,
-	MacIntel,
 	MacPPC,
 	RoF2
 };
@@ -20,7 +19,6 @@ enum ClientVersionBit : uint32 {
 	bit_Unknown = 0,
 	bit_Unused = 0x00000001,
 	bit_MacPC = 0x00000002,
-	bit_MacIntel = 0x00000004,
 	bit_MacPPC = 0x00000008,
 	bit_Mac = 0x0000000E,
 	bit_AllClients = 0xFFFFFFFF
