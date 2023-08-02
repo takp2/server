@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: true
-    
+
     - name: Set Version
       run: make set-version
 
@@ -28,7 +28,7 @@ jobs:
       uses: lukka/get-cmake@latest
 
     - name: Install Dependencies
-      run: sudo apt install -y --no-install-recommends build-essential libtool cmake curl debconf-utils  git liblua5.1-0  liblua5.1-0-dev libluabind-dev libmysql++-dev  libsodium-dev  libmysqlclient-dev libssl-dev lua5.1  minizip make locales nano open-vm-tools unzip uuid-dev iputils-ping zlibc wget libcurl4-openssl-dev gdb libyaml-cpp-dev
+      run: sudo apt install -y --no-install-recommends build-essential libtool cmake curl debconf-utils  git liblua5.1-0  liblua5.1-0-dev libluabind-dev libmysql++-dev  libsodium-dev  libmysqlclient-dev libssl-dev lua5.1  minizip make locales nano open-vm-tools unzip uuid-dev iputils-ping zlibc wget libcurl4-openssl-dev gdb libyaml-cpp-dev libgtest-dev
 
     - name: Run CMake
       run: mkdir -p build && cd build && cmake -DEQEMU_BUILD_LOGIN=ON -DEQEMU_BUILD_LUA=ON -G 'Unix Makefiles' ..
