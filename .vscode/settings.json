@@ -106,4 +106,21 @@
 		"csetjmp": "cpp",
 		"charconv": "cpp"
 	},
+	"cmake.statusbar.advanced": {
+		"kit": {
+			"visibility": "hidden",
+		},
+		"debug": {
+			"visibility": "hidden",
+		},
+		"buildTarget": {
+			"visibility": "hidden",
+		},
+		"launch": {
+			"visibility": "hidden",
+		},
+		"ctest": {
+			"visibility": "icon",
+		}
+	}
 }

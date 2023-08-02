@@ -7,4 +7,4 @@ RUN sudo apt update && \
 	libmysql++-dev libsodium-dev \
 	libmysqlclient-dev libssl-dev lua5.1 minizip make mariadb-client locales \
 	nano open-vm-tools unzip uuid-dev iputils-ping wget libcurl4-openssl-dev gdb \
-	libyaml-cpp-dev
+	libyaml-cpp-dev libgtest-dev
