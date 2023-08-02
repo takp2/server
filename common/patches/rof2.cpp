@@ -1,7 +1,7 @@
 #include "../global_define.h"
 #include "../config.h"
 #include "../eqemu_logsys.h"
-#include "mac.h"
+#include "rof2.h"
 #include "../opcodemgr.h"
 #include "../eq_stream_ident.h"
 #include "../crc32.h"
@@ -12,12 +12,12 @@
 #include "../packet_functions.h"
 #include "../strings.h"
 #include "../inventory_profile.h"
-#include "mac_structs.h"
+#include "rof2_structs.h"
 #include "../rulesys.h"
 
 namespace Mac {
 
-static const char *name = "Mac";
+static const char *name = "rof2";
 static OpcodeManager *opcodes = nullptr;
 static Strategy struct_strategy;
 
@@ -100,7 +100,7 @@ Strategy::Strategy()
     : StructStrategy(){
 // all opcodes default to passthrough.
 #include "ss_register.h"
-#include "mac_ops.h"
+#include "rof2_ops.h"
       }
 
       std::string Strategy::Describe() const {

@@ -4586,7 +4586,7 @@ void Client::SendSoulMarks(SoulMarkList_Struct* SMS) {
 
 void Client::SendClientVersion() {
 	if (ClientVersion() == EQ::versions::Mac) {
-		std::string string("Mac");
+		std::string string("RoF2");
 		std::string type;
 		if (ClientVersionBit() == EQ::versions::bit_MacIntel)
 			type = "Intel";

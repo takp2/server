@@ -4,7 +4,7 @@
 #include "types.h"
 #include "eq_constants.h"
 #include "emu_versions.h"
-#include "../common/patches/mac_limits.h"
+#include "../common/patches/rof2_limits.h"
 
 namespace EQ {
 namespace inventory {

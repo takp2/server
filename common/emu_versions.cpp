@@ -149,7 +149,7 @@ const char* EQ::versions::MobVersionName(MobVersion Mob_version) {
 		case MobVersion::Unused:
 			return "Unused";
 		case MobVersion::Mac:
-			return "Mac";
+			return "RoF2";
 		case MobVersion::NPC:
 			return "NPC";
 		case MobVersion::NPCMerchant:

@@ -23,7 +23,7 @@ class Strategy : public StructStrategy {
 	virtual const EQ::versions::ClientVersion ClientVersion() const;
 // magic macro to declare our opcodes
 #include "ss_declare.h"
-#include "mac_ops.h"
+#include "rof2_ops.h"
 };
 
 };  // namespace Mac

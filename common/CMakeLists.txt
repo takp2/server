@@ -71,8 +71,8 @@ SET(common_sources
 	platform.cpp
 	process/process.cpp
 	patches/patches.cpp
-	patches/mac.cpp
-	patches/mac_limits.cpp
+	patches/rof2.cpp
+	patches/rof2_limits.cpp
 	StackWalker/StackWalker.cpp
 )
 
@@ -395,10 +395,10 @@ SET(common_headers
 	zone_numbers.h
 	platform.h
 	patches/patches.h
-	patches/mac.h
-	patches/mac_limits.h
-	patches/mac_ops.h
-	patches/mac_structs.h
+	patches/rof2.h
+	patches/rof2_limits.h
+	patches/rof2_ops.h
+	patches/rof2_structs.h
 	patches/ss_declare.h
 	patches/ss_define.h
 	patches/ss_register.h
@@ -418,12 +418,12 @@ SOURCE_GROUP(Patches FILES
 	patches/ss_define.h
 	patches/ss_register.h
 	patches/patches.cpp
-	patches/mac.h
-	patches/mac_ops.h
-	patches/mac_structs.h
-	patches/mac_limits.h
-	patches/mac.cpp
-	patches/mac_limits.cpp
+	patches/rof2.h
+	patches/rof2_ops.h
+	patches/rof2_structs.h
+	patches/rof2_limits.h
+	patches/rof2.cpp
+	patches/rof2_limits.cpp
 )
 
 SOURCE_GROUP(SocketLib FILES
@@ -452,7 +452,7 @@ INCLUDE_DIRECTORIES(Patches SocketLib StackWalker)
 ADD_LIBRARY(common ${common_sources} ${common_headers} ${repositories})
 
 IF(UNIX)
-	SET_SOURCE_FILES_PROPERTIES("patches/mac.cpp" PROPERTIES COMPILE_FLAGS -O0)
+	SET_SOURCE_FILES_PROPERTIES("patches/rof2.cpp" PROPERTIES COMPILE_FLAGS -O0)
 ENDIF(UNIX)
 
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
