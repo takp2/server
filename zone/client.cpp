@@ -1207,8 +1207,6 @@ void Client::WhoAll(Who_All_Struct* whom) {
 		whoall->guildid = whom->guildid;
 		worldserver.SendPacket(pack);
 		safe_delete(pack);
-
-		Log(Logs::General, Logs::EQMac, "WhoAll filters: whom %s lvllow %d lvlhigh %d gm %d class %d race %d guild %d", whom->whom, whom->lvllow, whom->lvlhigh, whom->gmlookup, whom->wclass, whom->wrace, whom->guildid);
 	}
 }
 

@@ -829,8 +829,9 @@ structs::Item_Struct *MacItem(const EQ::ItemInstance *inst, int16 slot_id_in, in
 	structs::Item_Struct *mac_pop_item = new structs::Item_Struct;
 	memset(mac_pop_item, 0, sizeof(structs::Item_Struct));
 
-	if (item->GMFlag == -1)
-		Log(Logs::Detail, Logs::EQMac, "Item %s is flagged for GMs.", item->Name);
+	if (item->GMFlag == -1) {
+		Log(Logs::Detail, Logs::General, "Item %s is flagged for GMs.", item->Name);
+	}
 
 	// General items
 	if (type == 0) {

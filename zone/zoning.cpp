@@ -605,7 +605,7 @@ void Client::ZonePC(uint32 zoneID, float x, float y, float z, float heading,
 		zone_mode = zm;
 
 		if (zm == ZoneSolicited || zm == ZoneToSafeCoords) {
-			Log(Logs::Detail, Logs::EQMac,
+			Log(Logs::Detail, Logs::General,
 			    "Zoning packet about to be sent (ZS/ZTS). We are headed to "
 			    "zone: %i, at %f, %f, %f",
 			    zoneID, x, y, z);
@@ -631,7 +631,7 @@ void Client::ZonePC(uint32 zoneID, float x, float y, float z, float heading,
 			// player correctly (it starts the zoning process, then disconnect.)
 			// OP_GMGoto seems to work 90% of the time. It's a hack, but it
 			// works...
-			Log(Logs::Detail, Logs::EQMac,
+			Log(Logs::Detail, Logs::General,
 			    "Zoning packet about to be sent (ZTB). We are headed to zone: "
 			    "%i, at %f, %f, %f",
 			    zoneID, x, y, z);
@@ -650,7 +650,7 @@ void Client::ZonePC(uint32 zoneID, float x, float y, float z, float heading,
 		} else if (zm == GateToBindPoint) {
 			// we hide the real zoneid we want to evac/succor to here
 			zonesummon_id = zoneID;
-			Log(Logs::Detail, Logs::EQMac,
+			Log(Logs::Detail, Logs::General,
 			    "Zoning packet about to be sent (GTB). We are headed to zone: "
 			    "%i, at %f, %f, %f",
 			    zoneID, x, y, z);
@@ -679,7 +679,7 @@ void Client::ZonePC(uint32 zoneID, float x, float y, float z, float heading,
 			outapp->priority = 6;
 			FastQueuePacket(&outapp);
 		} else if (zm == EvacToSafeCoords) {
-			Log(Logs::Detail, Logs::EQMac,
+			Log(Logs::Detail, Logs::General,
 			    "Zoning packet about to be sent (ETSC). We are headed to zone: "
 			    "%i, at %f, %f, %f",
 			    zoneID, x, y, z);
@@ -709,7 +709,7 @@ void Client::ZonePC(uint32 zoneID, float x, float y, float z, float heading,
 			FastQueuePacket(&outapp);
 		} else {
 			if (zoneID == GetZoneID()) {
-				Log(Logs::Detail, Logs::EQMac,
+				Log(Logs::Detail, Logs::General,
 				    "Zoning packet about to be sent (GOTO). We are headed to "
 				    "zone: %i, at %f, %f, %f",
 				    zoneID, x, y, z);
@@ -733,15 +733,15 @@ void Client::ZonePC(uint32 zoneID, float x, float y, float z, float heading,
 			gmg->z = z;
 			gmg->heading =
 			    heading *
-			    2.0f;  // this doubling is necessary because we are storing
-			           // halved headings for players/mobs and this packet
-			           // expects the normal 512 range heading
+			    2.0f;          // this doubling is necessary because we are storing
+			                   // halved headings for players/mobs and this packet
+			                   // expects the normal 512 range heading
 			gmg->type = 0x01;  // an observed value, not sure of meaning
 			outapp->priority = 6;
 			FastQueuePacket(&outapp);
 		}
 
-		Log(Logs::Detail, Logs::EQMac,
+		Log(Logs::Detail, Logs::General,
 		    "Player %s has requested a zoning to LOC x=%f, y=%f, z=%f, "
 		    "heading=%f in zoneid=%i and type=%i",
 		    GetName(), x, y, z, heading, zoneID, zm);

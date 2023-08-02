@@ -4739,7 +4739,6 @@ void EntityList::RepopNPCsByNPCID(uint32 npcid) {
 			if (current) {
 				for (unsigned int i = 0; i < entityids.size(); ++i) {
 					if (entityids[i] == current->GetID()) {
-						Log(Logs::General, Logs::EQMac, "Repopping %s EntityID %d.", current->GetName(), current->GetID());
 						current->ForceRepop();
 						break;
 					}

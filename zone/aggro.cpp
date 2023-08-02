@@ -532,7 +532,7 @@ int EntityList::FleeAllyCount(Mob *attacker, Mob *exclude) {
 				continue;
 		}
 
-		Log(Logs::Detail, Logs::EQMac, "%s on faction %d with AggroRange %0.2f is at %0.2f, %0.2f, %0.2f and will count as an ally for %s", mob->GetName(), mob->GetPrimaryFaction(), AggroRange, mob->GetX(), mob->GetY(), mob->GetZ(), exclude->GetName());
+		Log(Logs::Detail, Logs::Combat, "%s on faction %d with AggroRange %0.2f is at %0.2f, %0.2f, %0.2f and will count as an ally for %s", mob->GetName(), mob->GetPrimaryFaction(), AggroRange, mob->GetX(), mob->GetY(), mob->GetZ(), exclude->GetName());
 		++count;
 	}
 

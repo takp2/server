@@ -42,15 +42,15 @@ float Mob::GetBaseEXP() {
 	float basexp = exp * zemmod * server_bonus * npc_pct;
 	float logged_xp = basexp;
 
-	Log(Logs::General, Logs::EQMac, "Starting base exp is mob_level(%i)^2 * ZEM(%.0f) * server_bonus(%.2f) * npc_pct(%.2f) = %.0f exp",
+	Log(Logs::Detail, Logs::Combat, "Starting base exp is mob_level(%i)^2 * ZEM(%.0f) * server_bonus(%.2f) * npc_pct(%.2f) = %.0f exp",
 	    level, zemmod, server_bonus, npc_pct, basexp);
 
 	if (ds_damage + npc_damage >= total_damage) {
 		basexp = 0;
-		Log(Logs::General, Logs::EQMac, "%s was completely damaged by a damage shield/NPC. No XP for you one year.", GetName());
+		Log(Logs::Detail, Logs::Combat, "%s was completely damaged by a damage shield/NPC. No XP for you one year.", GetName());
 	} else if (player_damage == 0) {
 		basexp *= 0.25f;
-		Log(Logs::General, Logs::EQMac, "%s was not damaged by a player. Exp reduced to 25 percent of normal", GetName());
+		Log(Logs::Detail, Logs::Combat, "%s was not damaged by a player. Exp reduced to 25 percent of normal", GetName());
 	} else if (dire_pet_damage > 0) {
 		float pet_dmg_pct = static_cast<float>(dire_pet_damage) / total_damage;
 		float reduced_pct = 1.0f;
@@ -62,7 +62,7 @@ float Mob::GetBaseEXP() {
 			basexp *= reduced_pct;
 		}
 
-		Log(Logs::General, Logs::EQMac, "%s was %0.1f percent damaged by a dire charmed pet (%d/%d). Exp gained is %0.1f percent of normal",
+		Log(Logs::Detail, Logs::Combat, "%s was %0.1f percent damaged by a dire charmed pet (%d/%d). Exp gained is %0.1f percent of normal",
 		    GetName(), pet_dmg_pct * 100.0f, dire_pet_damage, total_damage, reduced_pct * 100.0f);
 	}
 
@@ -158,7 +158,7 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 	if (killed_mob->IsNPC() && RuleB(AlKabor, ReduceAEExp) && killed_mob->pbaoe_damage > (killed_mob->GetMaxHP() / 2)) {
 		float reduction_mult = killed_mob->CastToNPC()->GetPBAoEReduction(GetLevel());
 		if (reduction_mult < 1.0) {
-			Log(Logs::Moderate, Logs::EQMac, "Experience reduced to %0.2f percent due to PBAoE reduction.", reduction_mult * 100.0);
+			Log(Logs::Detail, Logs::Combat, "Experience reduced to %0.2f percent due to PBAoE reduction.", reduction_mult * 100.0);
 			add_exp *= reduction_mult;
 		}
 	}
@@ -205,7 +205,7 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 
 	if (add_exp > xp_cap) {
 		add_exp = xp_cap;
-		Log(Logs::Moderate, Logs::EQMac, "Exp capped to 13 percent of level exp");
+		Log(Logs::Detail, Logs::Combat, "Exp capped to 13 percent of level exp");
 	}
 
 	if (killed_mob->IsZomm()) {
@@ -215,9 +215,9 @@ void Client::AddEXP(uint32 in_add_exp, uint8 conlevel, Mob* killed_mob, int16 av
 	}
 
 	if (add_aaxp)
-		Log(Logs::Moderate, Logs::EQMac, "[Exp Multipliers] Light Blue: %0.2f  HBM: %0.3f  MLM: %0.3f  ConRule: %0.2f  ExpRule: %0.2f  AARule: %0.2f  Race: %0.2f", lb_mult, hbm, mlm, con_mult, totalmod, aa_mult, race_mult);
+		Log(Logs::Detail, Logs::Combat, "[Exp Multipliers] Light Blue: %0.2f  HBM: %0.3f  MLM: %0.3f  ConRule: %0.2f  ExpRule: %0.2f  AARule: %0.2f  Race: %0.2f", lb_mult, hbm, mlm, con_mult, totalmod, aa_mult, race_mult);
 	else
-		Log(Logs::Moderate, Logs::EQMac, "[Exp Multipliers] Light Blue: %0.2f  HBM: %0.3f  MLM: %0.3f  ConRule: %0.2f  ExpRule: %0.2f", lb_mult, hbm, mlm, con_mult, totalmod);
+		Log(Logs::Detail, Logs::Combat, "[Exp Multipliers] Light Blue: %0.2f  HBM: %0.3f  MLM: %0.3f  ConRule: %0.2f  ExpRule: %0.2f", lb_mult, hbm, mlm, con_mult, totalmod);
 
 	uint32 new_exp = GetEXP() + add_exp;
 	uint32 old_aaexp = GetAAXP();

@@ -1369,17 +1369,17 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 	m_pp.fatigue = GetFatiguePercent();
 
 	uint32 max_slots = GetMaxBuffSlots();
-	bool stripbuffs = false;
+	bool is_buff_strip = false;
 
 	if (firstlogon || !zone->CanCastOutdoor() || zone->GetZoneID() == sseru) {
 		BuffFadeByEffect(SE_SummonHorse);
 	}
 
 	if (RuleB(AlKabor, StripBuffsOnLowHP) && GetHP() < itembonuses.HP)
-		stripbuffs = true;
+		is_buff_strip = true;
 
 	for (int i = 0; i < max_slots; i++) {
-		if ((buffs[i].spellid != SPELL_UNKNOWN && !stripbuffs) ||
+		if ((buffs[i].spellid != SPELL_UNKNOWN && !is_buff_strip) ||
 		    IsResurrectionEffects(buffs[i].spellid)) {
 			m_pp.buffs[i].spellid = buffs[i].spellid;
 			m_pp.buffs[i].bard_modifier = buffs[i].instrumentmod;
@@ -1401,8 +1401,8 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 		}
 	}
 
-	if (stripbuffs) {
-		Log(Logs::General, Logs::EQMac, "Removing buffs from %s. HP is: %i MaxHP is: %i BaseHP is: %i HP from items is: %i HP from spells is: %i", GetName(), GetHP(), GetMaxHP(), GetBaseHP(), itembonuses.HP, spellbonuses.HP);
+	if (is_buff_strip) {
+		Log(Logs::Detail, Logs::Combat, "Removing buffs from %s. HP is: %i MaxHP is: %i BaseHP is: %i HP from items is: %i HP from spells is: %i", GetName(), GetHP(), GetMaxHP(), GetBaseHP(), itembonuses.HP, spellbonuses.HP);
 		BuffFadeAll(true);
 		SetHP(itembonuses.HP);
 	}

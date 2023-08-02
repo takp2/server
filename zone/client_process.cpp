@@ -1812,11 +1812,11 @@ void Client::DoStaminaUpdate() {
 				// We are famished and are slowly losing endurance.
 				// Rate of End loss is 10 minutes (1% per tic) regardless of race. This is handled in SetEndurance()
 				endurance_degen = true;
-				Log(Logs::General, Logs::EQMac, "DoStaminaUpdate(): Setting endurance_degen to true.");
+				Log(Logs::Detail, Logs::Combat, "DoStaminaUpdate(): Setting endurance_degen to true.");
 			}
 		}
 
-		Log(Logs::Detail, Logs::EQMac, "%s has digested %f units of food and %f units of water. Our hunger is: %i and our thirst is: %i. Our race is: %i and timer is set to: %i. Famished is: %i. Endurance is: %i (%i percent) Fatigue is: %i Desert: %i Horse: %i AAMod: %i", GetName(), loss, loss + waterloss, m_pp.hunger_level, m_pp.thirst_level, GetRace(), stamina_timer.GetDuration(), Famished(), GetEndurance(), GetEndurancePercent(), GetFatiguePercent(), desert, horse, aamod);
+		Log(Logs::Detail, Logs::Combat, "%s has digested %f units of food and %f units of water. Our hunger is: %i and our thirst is: %i. Our race is: %i and timer is set to: %i. Famished is: %i. Endurance is: %i (%i percent) Fatigue is: %i Desert: %i Horse: %i AAMod: %i", GetName(), loss, loss + waterloss, m_pp.hunger_level, m_pp.thirst_level, GetRace(), stamina_timer.GetDuration(), Famished(), GetEndurance(), GetEndurancePercent(), GetFatiguePercent(), desert, horse, aamod);
 
 		m_pp.fatigue = GetFatiguePercent();
 		sta->food = m_pp.hunger_level > value ? value : m_pp.hunger_level;

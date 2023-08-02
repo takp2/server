@@ -2257,7 +2257,7 @@ void Zone::ApplyRandomLoc(uint32 zoneid, float& x, float& y) {
 	tmp_x = zone->random.Int(0, (random_loc * 2)) - random_loc;
 	tmp_y = zone->random.Int(0, (random_loc * 2)) - random_loc;
 
-	Log(Logs::General, Logs::EQMac, "random loc: %d Original coords are %0.1f, %0.1f. Updated diffs are %0.1f, %0.1f. FINAL coords are %0.1f, %0.1f", random_loc, x, y, tmp_x, tmp_y, x + tmp_x, y + tmp_y);
+	Log(Logs::General, Logs::AI, "random loc: %d Original coords are %0.1f, %0.1f. Updated diffs are %0.1f, %0.1f. FINAL coords are %0.1f, %0.1f", random_loc, x, y, tmp_x, tmp_y, x + tmp_x, y + tmp_y);
 
 	x = x + tmp_x;
 	y = y + tmp_y;
