@@ -16,14 +16,30 @@ namespace inventory {}  // namespace inventory
 namespace invtype {
 using namespace RoF2::invtype::enum_;
 
+using RoF2::invtype::ALT_STORAGE_SIZE;
+using RoF2::invtype::ARCHIVED_SIZE;
 using RoF2::invtype::BANK_SIZE;
 using RoF2::invtype::BAZAAR_SIZE;
 using RoF2::invtype::CORPSE_SIZE;
+using RoF2::invtype::DELETED_SIZE;
+using RoF2::invtype::GUILD_TRIBUTE_SIZE;
+using RoF2::invtype::GUILD_TROPHY_TRIBUTE_SIZE;
 using RoF2::invtype::INSPECT_SIZE;
+using RoF2::invtype::KRONO_SIZE;
 using RoF2::invtype::LIMBO_SIZE;
+using RoF2::invtype::MAIL_SIZE;
 using RoF2::invtype::MERCHANT_SIZE;
+using RoF2::invtype::OTHER_SIZE;
 using RoF2::invtype::POSSESSIONS_SIZE;
+using RoF2::invtype::REAL_ESTATE_SIZE;
+using RoF2::invtype::SHARED_BANK_SIZE;
 using RoF2::invtype::TRADE_SIZE;
+using RoF2::invtype::TRIBUTE_SIZE;
+using RoF2::invtype::TROPHY_TRIBUTE_SIZE;
+using RoF2::invtype::VIEW_MOD_BANK_SIZE;
+using RoF2::invtype::VIEW_MOD_LIMBO_SIZE;
+using RoF2::invtype::VIEW_MOD_PC_SIZE;
+using RoF2::invtype::VIEW_MOD_SHARED_BANK_SIZE;
 using RoF2::invtype::WORLD_SIZE;
 
 using RoF2::invtype::TRADE_NPC_SIZE;
@@ -44,6 +60,10 @@ using namespace RoF2::invslot::enum_;
 using RoF2::invslot::SLOT_BEGIN;
 using RoF2::invslot::SLOT_INVALID;
 
+using RoF2::invslot::SLOT_TRADESKILL_EXPERIMENT_COMBINE;
+
+const int16 SLOT_AUGMENT_GENERIC_RETURN = 1001;  // clients don't appear to use this method... (internal inventory return value)
+
 using RoF2::invslot::POSSESSIONS_BEGIN;
 using RoF2::invslot::POSSESSIONS_COUNT;
 using RoF2::invslot::POSSESSIONS_END;
@@ -63,6 +83,9 @@ using RoF2::invslot::BONUS_STAT_END;
 using RoF2::invslot::BANK_BEGIN;
 using RoF2::invslot::BANK_END;
 
+using RoF2::invslot::SHARED_BANK_BEGIN;
+using RoF2::invslot::SHARED_BANK_END;
+
 using RoF2::invslot::TRADE_BEGIN;
 using RoF2::invslot::TRADE_END;
 
@@ -71,13 +94,22 @@ using RoF2::invslot::TRADE_NPC_END;
 using RoF2::invslot::WORLD_BEGIN;
 using RoF2::invslot::WORLD_END;
 
+using RoF2::invslot::TRIBUTE_BEGIN;
+using RoF2::invslot::TRIBUTE_END;
+
+using RoF2::invslot::GUILD_TRIBUTE_BEGIN;
+using RoF2::invslot::GUILD_TRIBUTE_END;
+
 const int16 CORPSE_BEGIN = invslot::slotGeneral1;
-const int16 CORPSE_END = CORPSE_BEGIN + invslot::slotGeneral8;
+const int16 CORPSE_END = CORPSE_BEGIN + invslot::slotCursor;
 
 const int16 CURSOR_QUEUE_BEGIN = 8000;
 const int16 CURSOR_QUEUE_END = 8999;
 
 using RoF2::invslot::CORPSE_BITMASK;
+using RoF2::invslot::CURSOR_BITMASK;
+using RoF2::invslot::EQUIPMENT_BITMASK;
+using RoF2::invslot::GENERAL_BITMASK;
 using RoF2::invslot::POSSESSIONS_BITMASK;
 
 using RoF2::invslot::GetInvPossessionsSlotName;
@@ -118,11 +150,21 @@ using RoF2::invbag::GetInvBagIndexName;
 
 }  // namespace invbag
 
+namespace invaug {
+using RoF2::invaug::SOCKET_BEGIN;
+using RoF2::invaug::SOCKET_COUNT;
+using RoF2::invaug::SOCKET_END;
+using RoF2::invaug::SOCKET_INVALID;
+
+using RoF2::invaug::GetInvAugIndexName;
+
+}  // namespace invaug
+
 namespace constants {
 // database
 static const EQ::versions::ClientVersion CharacterCreationClient =
     EQ::versions::ClientVersion::RoF2;  // adjust according to starting item
-                                       // placement and target client
+                                        // placement and target client
 using RoF2::constants::CHARACTER_CREATION_LIMIT;
 
 const size_t SAY_LINK_OPENER_SIZE = 1;
@@ -133,9 +175,16 @@ const size_t SAY_LINK_MAXIMUM_SIZE =
     (SAY_LINK_OPENER_SIZE + SAY_LINK_BODY_SIZE + SAY_LINK_TEXT_SIZE +
      SAY_LINK_CLOSER_SIZE);
 
-enum GravityBehavior : int8 { Ground, Flying, Levitating, Water };
+enum GravityBehavior : int8 { Ground,
+	                          Flying,
+	                          Levitating,
+	                          Water };
 
-enum SpawnAnimations : uint8 { Standing, Sitting, Crouching, Laying, Looting };
+enum SpawnAnimations : uint8 { Standing,
+	                           Sitting,
+	                           Crouching,
+	                           Laying,
+	                           Looting };
 
 extern const std::map<int, std::string>& GetLanguageMap();
 std::string GetLanguageName(int language_id);
@@ -222,10 +271,13 @@ CategoryID CategoryNameToCategoryID(const char* category_name);
 
 }  // namespace bug
 
-enum WaypointStatus : int { QuestControlNoGrid = -2, QuestControlGrid = -1 };
+enum WaypointStatus : int { QuestControlNoGrid = -2,
+	                        QuestControlGrid = -1 };
 }  // namespace EQ
 
-enum ServerLockType : int { List, Lock, Unlock };
+enum ServerLockType : int { List,
+	                        Lock,
+	                        Unlock };
 
 enum AccountStatus : uint8 {
 	Player = 0,

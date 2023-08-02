@@ -747,13 +747,13 @@ bool Database::SaveCharacterCreate(uint32 character_id, uint32 account_id,
 /* This only for new Character creation storing */
 bool Database::StoreCharacter(uint32 account_id, PlayerProfile_Struct* pp,
                               EQ::InventoryProfile* inv) {
-	uint32 charid = 0;
+	uint32 char_id = 0;
 	char zone[50];
 	float x, y, z;
-	charid = GetCharacterID(pp->name);
+	char_id = GetCharacterID(pp->name);
 
-	if (!charid) {
-		LogError("StoreCharacter: no character id");
+	if (!char_id) {
+		LogError("StoreCharacter no character id for name {}", pp->name);
 		return false;
 	}
 
@@ -771,7 +771,7 @@ bool Database::StoreCharacter(uint32 account_id, PlayerProfile_Struct* pp,
 	z = pp->z;
 
 	/* Saves Player Profile Data */
-	SaveCharacterCreate(charid, account_id, pp);
+	SaveCharacterCreate(char_id, account_id, pp);
 
 	/* Insert starting inventory... */
 	std::string invquery;
@@ -781,7 +781,7 @@ bool Database::StoreCharacter(uint32 account_id, PlayerProfile_Struct* pp,
 			invquery = StringFormat(
 			    "INSERT INTO `character_inventory` (id, slotid, itemid, "
 			    "charges) VALUES (%u, %i, %u, %i)",
-			    charid, i, newinv->GetItem()->ID, newinv->GetCharges());
+			    char_id, i, newinv->GetItem()->ID, newinv->GetCharges());
 
 			auto results = QueryDatabase(invquery);
 		}
