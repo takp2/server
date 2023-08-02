@@ -23,9 +23,7 @@ class WorldDatabase : public SharedDatabase {
 
 	bool LoadCharacterCreateAllocations();
 	bool LoadCharacterCreateCombos();
-	bool LoadSoulMarksForClient(uint32 charid,
-	                            std::vector<SoulMarkEntry_Struct> &outData);
-	bool GITInfo();
+	bool LoadSoulMarksForClient(uint32 charid, std::vector<SoulMarkEntry_Struct> &outData);
 
    protected:
 };
