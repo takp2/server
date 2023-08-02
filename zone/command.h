@@ -52,7 +52,6 @@ void command_connectworldserver(Client *c, const Seperator *sep);
 void command_coredump(Client *c, const Seperator *sep);
 void command_corpse(Client *c, const Seperator *sep);
 void command_crashtest(Client *c, const Seperator *sep);
-void command_cvs(Client *c, const Seperator *sep);
 void command_d1(Client *c, const Seperator *sep);
 void command_damage(Client *c, const Seperator *sep);
 void command_damagetotals(Client *c, const Seperator *sep);

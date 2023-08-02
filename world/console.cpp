@@ -657,8 +657,6 @@ void Console::ProcessCommand(const char* command) {
 				zoneserver_list.SendZoneCountConsole(0, admin, this);
 			} else if (strcasecmp(sep.arg[0], "tradercount") == 0) {
 				client_list.ConsoleTraderCount(0, this);
-			} else if (strcasecmp(sep.arg[0], "clientcount") == 0) {
-				client_list.ConsoleClientVersionSummary(0, this);
 			} else if (strcasecmp(sep.arg[0], "exit") == 0 || strcasecmp(sep.arg[0], "quit") == 0) {
 				SendMessage(1, "Bye Bye.");
 				state = CONSOLE_STATE_CLOSED;

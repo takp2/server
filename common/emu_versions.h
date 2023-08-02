@@ -9,18 +9,13 @@ namespace EQ {
 namespace versions {
 enum ClientVersion {
 	Unknown = 0,
-	Unused,
-	MacPC,
-	MacPPC,
-	RoF2
+	RoF2  // Build: 'May 10 2013 23:30:08'
 };
 
 enum ClientVersionBit : uint32 {
-	bit_Unknown = 0,
-	bit_Unused = 0x00000001,
-	bit_MacPC = 0x00000002,
-	bit_MacPPC = 0x00000008,
-	bit_Mac = 0x0000000E,
+	bit_Unknown = 0x00000000,
+	bit_RoF2 = 0x00000040,
+	bit_maskRoF2AndLater = 0xFFFFFFC0,
 	bit_AllClients = 0xFFFFFFFF
 };
 
@@ -35,19 +30,18 @@ ClientVersion ConvertClientVersionBitToClientVersion(uint32 client_version_bit);
 
 enum class MobVersion {
 	Unknown = 0,
-	Unused,
 	RoF2,
 	NPC,
 	NPCMerchant,
 	ClientPet,
 	NPCPet,
-	OfflineMac
+	OfflineRoF2
 };
 
-const MobVersion LastMobVersion = MobVersion::OfflineMac;
+const MobVersion LastMobVersion = MobVersion::OfflineRoF2;
 const MobVersion LastPCMobVersion = MobVersion::RoF2;
 const MobVersion LastNonPCMobVersion = MobVersion::NPCPet;
-const MobVersion LastOfflinePCMobVersion = MobVersion::OfflineMac;
+const MobVersion LastOfflinePCMobVersion = MobVersion::OfflineRoF2;
 const size_t MobVersionCount = (static_cast<size_t>(LastMobVersion) + 1);
 
 bool IsValidMobVersion(MobVersion Mob_version);

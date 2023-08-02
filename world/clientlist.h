@@ -40,9 +40,6 @@ class ClientList {
 	void SendFriendsWho(ServerFriendsWho_Struct* FriendsWho,
 	                    WorldTCPConnection* connection);
 	void SendOnlineGuildMembers(uint32 FromID, uint32 GuildID);
-	void SendClientVersionSummary(const char* Name);
-	void ConsoleClientVersionSummary(const char* to,
-	                                 WorldTCPConnection* connection);
 	void ConsoleSendWhoAll(const char* to, int16 admin, Who_All_Struct* whom,
 	                       WorldTCPConnection* connection);
 	void SendCLEList(const int16& admin, const char* to,

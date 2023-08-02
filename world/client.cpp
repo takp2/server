@@ -129,6 +129,45 @@ void Client::SendLogServer() {
 	safe_delete(outapp);
 }
 
+bool Client::ChecksumVerificationCRCEQGame(uint64 checksum) {
+	uint64_t wanted_checksum = RuleR(World, ChecksumEQGame);
+	if (wanted_checksum == 0) {
+		return true;
+	}
+
+	if (wanted_checksum != checksum) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Client::ChecksumVerificationCRCSkillCaps(uint64 checksum) {
+	uint64_t wanted_checksum = RuleR(World, ChecksumSkillCaps);
+	if (wanted_checksum == 0) {
+		return true;
+	}
+
+	if (wanted_checksum != checksum) {
+		return false;
+	}
+
+	return true;
+}
+
+bool Client::ChecksumVerificationCRCBaseData(uint64 checksum) {
+	uint64_t wanted_checksum = RuleR(World, ChecksumBaseData);
+	if (wanted_checksum == 0) {
+		return true;
+	}
+
+	if (wanted_checksum != checksum) {
+		return false;
+	}
+
+	return true;
+}
+
 void Client::SendEnterWorld(std::string name) {
 	char char_name[64] = {0};
 	if (pZoning && database.GetLiveChar(GetAccountID(), char_name)) {
@@ -137,7 +176,7 @@ void Client::SendEnterWorld(std::string name) {
 			return;
 		} else {
 			Log(Logs::Detail, Logs::WorldServer,
-			    "Telling client to continue session.");
+			    "Telling client to continue session");
 		}
 	}
 
@@ -216,7 +255,7 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 #else
 	if (loginserverlist.Connected() == false && !pZoning) {
 		Log(Logs::Detail, Logs::WorldServer,
-		    "Error: Login server login while not connected to login server.");
+		    "Error: Login server login while not connected to login server");
 		return false;
 	}
 
@@ -228,17 +267,11 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 
 		if (cle->Online() < CLE_Status_Online) cle->SetOnline();
 
-		if (eqs->ClientVersion() == EQ::versions::ClientVersion::RoF2) {
-			// EQMac PC Windows client is 2, passed from the loginserver.  This
-			// is world, it detects MacOSX Intel (4) and PPC (8) clients here.
-			if (cle->GetMacClientVersion() !=
-			    EQ::versions::ClientVersion::MacPC) {
-				cle->SetMacClientVersion(li->macversion);
-			}
-			m_ClientVersionBit = cle->GetMacClientVersion();
-		} else {
-			m_ClientVersionBit = EQ::versions::ClientVersion::Unused;
+		if (eqs->ClientVersion() != EQ::versions::ClientVersion::RoF2) {
+			LogError("Client requested unsupported client {}, disconnecting");
+			return false;
 		}
+		m_ClientVersionBit = EQ::versions::bit_RoF2;
 
 		Log(Logs::Detail, Logs::WorldServer, "ClientVersionBit is: %i",
 		    m_ClientVersionBit);
@@ -335,18 +368,18 @@ bool Client::HandleNameApprovalPacket(const EQApplicationPacket *app) {
 	bool valid = false;
 	if (!database.CheckNameFilter(char_name)) {
 		Log(Logs::Detail, Logs::WorldServer,
-		    "Name is not valid or did not pass the filter.");
+		    "Name is not valid or did not pass the filter");
 		valid = false;
 	}
 	/* Name must begin with an upper-case letter. */
 	else if (islower(char_name[0])) {
-		Log(Logs::Detail, Logs::WorldServer, "Name must begin with uppercase.");
+		Log(Logs::Detail, Logs::WorldServer, "Name must begin with uppercase");
 		valid = false;
 	} else if (database.ReserveName(GetAccountID(), char_name)) {
-		Log(Logs::Detail, Logs::WorldServer, "Name is valid.");
+		Log(Logs::Detail, Logs::WorldServer, "Name is valid");
 		valid = true;
 	} else {
-		Log(Logs::Detail, Logs::WorldServer, "Name is not valid.");
+		Log(Logs::Detail, Logs::WorldServer, "Name is not valid");
 		valid = false;
 	}
 
@@ -369,8 +402,8 @@ bool Client::HandleGenerateRandomNamePacket(const EQApplicationPacket *app) {
 	bool dlc = false;
 	bool vwl = false;
 	bool dbl = false;
-	if (rndnum > 63) {  // rndnum is 0 - 75 where 64-75 is cons pair, 17-63 is
-		                // cons, 0-16 is vowel
+	if (rndnum > 63) {               // rndnum is 0 - 75 where 64-75 is cons pair, 17-63 is
+		                             // cons, 0-16 is vowel
 		rndnum = (rndnum - 61) * 2;  // name can't start with "ng" "nd" or "rk"
 		rndname[0] = paircons[rndnum];
 		rndname[1] = paircons[rndnum + 1];
@@ -390,8 +423,8 @@ bool Client::HandleGenerateRandomNamePacket(const EQApplicationPacket *app) {
 			rndnum = emu_random.Int(0, 62);
 			if (rndnum > 46) {       // pick a cons pair
 				if (i > namlen - 3)  // last 2 chars in name?
-				{  // name can only end in cons pair "rk" "st" "sh" "th" "ph"
-				   // "sk" "nd" or "ng"
+				{                    // name can only end in cons pair "rk" "st" "sh" "th" "ph"
+					                 // "sk" "nd" or "ng"
 					rndnum = emu_random.Int(0, 7) * 2;
 				} else {  // pick any from the set
 					rndnum = (rndnum - 47) * 2;
@@ -431,7 +464,7 @@ bool Client::HandleGenerateRandomNamePacket(const EQApplicationPacket *app) {
 bool Client::HandleCharacterCreatePacket(const EQApplicationPacket *app) {
 	if (GetAccountID() == 0) {
 		Log(Logs::Detail, Logs::WorldServer,
-		    "Account ID not set; unable to create character.");
+		    "Account ID not set; unable to create character");
 		return false;
 	} else if (app->size != sizeof(CharCreate_Struct)) {
 		Log(Logs::Detail, Logs::WorldServer,
@@ -466,14 +499,14 @@ bool Client::HandleEnterWorldPacket(const EQApplicationPacket *app) {
 	}
 
 	if (GetAdmin() < 0) {
-		Log(Logs::Detail, Logs::WorldServer, "Account banned or suspended.");
+		Log(Logs::Detail, Logs::WorldServer, "Account banned or suspended");
 		eqs->Close();
 		return true;
 	}
 
 	// if (RuleI(World, MaxClientsPerIP) >= 0) {
 	//	client_list.GetCLEIP(this->GetIP()); //Check current CLE Entry IPs
-	//against incoming connection
+	// against incoming connection
 	// }
 	if (GetSessionLimit()) return false;
 
@@ -675,36 +708,38 @@ bool Client::HandleDeleteCharacterPacket(const EQApplicationPacket *app) {
 }
 
 bool Client::HandleChecksumPacket(const EQApplicationPacket *app) {
-	if (GetClientVersionBit() > EQ::versions::ClientVersionBit::bit_MacPC ||
-	    GetAdmin() >= 80)
-		return true;
-
 	if (app->size != sizeof(Checksum_Struct)) {
-		Log(Logs::Detail, Logs::WorldServer, "Checksum packet is BAD!");
+		Log(Logs::Detail, Logs::WorldServer, "Invalid checksum packet from account {} ip {}", GetAccountName(), GetIP());
 		return false;
 	}
 
-	Checksum_Struct *cs = (Checksum_Struct *)app->pBuffer;
-	uint64 checksum = cs->checksum;
-
-	if (GetClientVersionBit() == EQ::versions::ClientVersionBit::bit_MacPC) {
-		// Pristine spell file.
-		if (checksum == 8148330249184697) {
-			Log(Logs::Detail, Logs::WorldServer,
-			    "Original Spell Checksum is GOOD!");
+	auto *cs = (Checksum_Struct *)app->pBuffer;
+	switch (app->GetOpcode()) {
+		case OP_World_Client_CRC1:  // eqgame.exe
+		{
+			bool is_valid = ChecksumVerificationCRCEQGame(cs->checksum);
+			if (!is_valid && GetAdmin() < RuleI(World, ChecksumStatusBypass)) {
+				return false;
+			}
+			return true;
 		}
-		// Hobart's updated file.
-		else if (checksum == 8148329455921329) {
-			Log(Logs::Detail, Logs::WorldServer,
-			    "Updated Spell Checksum is GOOD!");
-		} else if (checksum == 29639760219562021) {
-			Log(Logs::Detail, Logs::WorldServer, "Exe Checksum is GOOD!");
-		} else {
-			Log(Logs::Detail, Logs::WorldServer, "Checksum is BAD!");
-			return false;
+		case OP_World_Client_CRC2:  // SkillCaps.txt
+		{
+			bool is_valid = ChecksumVerificationCRCSkillCaps(cs->checksum);
+			if (!is_valid && GetAdmin() < RuleI(World, ChecksumStatusBypass)) {
+				return false;
+			}
+			return true;
+		}
+		case OP_World_Client_CRC3:  // BaseData.txt
+		{
+			bool is_valid = ChecksumVerificationCRCBaseData(cs->checksum);
+			if (!is_valid && GetAdmin() < RuleI(World, ChecksumStatusBypass)) {
+				return false;
+			}
+			return true;
 		}
 	}
-
 	return true;
 }
 
@@ -815,7 +850,7 @@ bool Client::Process() {
 
 	if (autobootup_timeout.Check()) {
 		Log(Logs::Detail, Logs::WorldServer,
-		    "Zone bootup timer expired, bootup failed or too slow.");
+		    "Zone bootup timer expired, bootup failed or too slow");
 		ZoneUnavail();
 	}
 	if (connect.Check()) {
@@ -875,7 +910,7 @@ void Client::EnterWorld(bool TryBootup) {
 			pwaitingforbootup = zoneserver_list.TriggerBootup(zoneID);
 			if (pwaitingforbootup == 0) {
 				Log(Logs::Detail, Logs::WorldServer,
-				    "No zoneserver available to boot up.");
+				    "No zoneserver available to boot up");
 				ZoneUnavail();
 			}
 			return;
@@ -904,7 +939,7 @@ void Client::EnterWorld(bool TryBootup) {
 	if (seencharsel) {
 		if (GetAdmin() < 80 && zoneserver_list.IsZoneLocked(zoneID)) {
 			Log(Logs::Detail, Logs::WorldServer,
-			    "Enter world failed. Zone is locked.");
+			    "Enter world failed. Zone is locked");
 			ZoneUnavail();
 			return;
 		}
@@ -1202,9 +1237,9 @@ bool Client::OPCharCreate(char *name, CharCreate_Struct *cc) {
 
 	// Log(Logs::Detail, Logs::WorldServer, "Current location: %s  %0.2f, %0.2f,
 	// %0.2f, %0.2f", 	database.GetZoneName(pp.zone_id), pp.x, pp.y, pp.z,
-	//pp.heading); Log(Logs::Detail, Logs::WorldServer, "Bind location: %s
+	// pp.heading); Log(Logs::Detail, Logs::WorldServer, "Bind location: %s
 	// %0.2f, %0.2f, %0.2f", 	database.GetZoneName(pp.binds[0].zoneId),
-	//pp.binds[0].x, pp.binds[0].y, pp.binds[0].z);
+	// pp.binds[0].x, pp.binds[0].y, pp.binds[0].z);
 
 	/* Starting Items inventory */
 	database.SetStartingItems(&pp, &inv, pp.race, pp.class_, pp.deity,
@@ -1227,7 +1262,7 @@ bool Client::OPCharCreate(char *name, CharCreate_Struct *cc) {
 bool CheckCharCreateInfo(CharCreate_Struct *cc) {
 	if (!cc) return false;
 
-	Log(Logs::Detail, Logs::WorldServer, "Validating char creation info...");
+	Log(Logs::Detail, Logs::WorldServer, "Validating char creation info..");
 
 	RaceClassCombos class_combo;
 	bool found = false;

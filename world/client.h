@@ -115,6 +115,9 @@ class Client {
 	bool HandleEnterWorldPacket(const EQApplicationPacket *app);
 	bool HandleDeleteCharacterPacket(const EQApplicationPacket *app);
 	bool HandleChecksumPacket(const EQApplicationPacket *app);
+	bool ChecksumVerificationCRCEQGame(uint64 checksum);
+	bool ChecksumVerificationCRCSkillCaps(uint64 checksum);
+	bool ChecksumVerificationCRCBaseData(uint64 checksum);
 
 	EQStreamInterface *const eqs;
 

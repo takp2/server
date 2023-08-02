@@ -819,21 +819,12 @@ void Client::SendTraderPacket(Client* Trader) {
 }
 
 void Client::Trader_CustomerBrowsing(Client* Customer) {
-	if (ClientVersionBit() == EQ::versions::bit_MacPC) {
-		auto outapp = new EQApplicationPacket(OP_Trader, sizeof(BuyerBrowse_Struct));
-		BuyerBrowse_Struct* sis = (BuyerBrowse_Struct*)outapp->pBuffer;
-		sis->Code = BazaarTrader_CustomerBrowsing;
-		sis->TraderID = Customer->GetID();
-		QueuePacket(outapp);
-		safe_delete(outapp);
-	} else {
-		auto outapp = new EQApplicationPacket(OP_Trader, sizeof(TraderStatus_Struct));
-		TraderStatus_Struct* sis = (TraderStatus_Struct*)outapp->pBuffer;
-		sis->Code = BazaarTrader_CustomerBrowsing;
-		sis->TraderID = Customer->GetID();
-		QueuePacket(outapp);
-		safe_delete(outapp);
-	}
+	auto outapp = new EQApplicationPacket(OP_Trader, sizeof(TraderStatus_Struct));
+	TraderStatus_Struct* sis = (TraderStatus_Struct*)outapp->pBuffer;
+	sis->Code = BazaarTrader_CustomerBrowsing;
+	sis->TraderID = Customer->GetID();
+	QueuePacket(outapp);
+	safe_delete(outapp);
 }
 
 void Client::Trader_CustomerBought(Client* Customer, uint32 Price, uint32 ItemID, uint32 Quantity, const char* ItemName, uint8 SlotID) {

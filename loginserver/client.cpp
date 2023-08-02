@@ -289,36 +289,15 @@ void Client::Handle_Login(const char* data, unsigned int size,
 			account_id = d_account_id;
 			account_name = username.c_str();
 
-			if (client == "OSX") {
-				auto outapp = new EQApplicationPacket(
-				    OP_LoginAccepted, sizeof(SessionIdEQMacPPC_Struct));
-				SessionIdEQMacPPC_Struct* s_id =
-				    (SessionIdEQMacPPC_Struct*)outapp->pBuffer;
-				// this is submitted to world server as "username"
-				sprintf(s_id->session_id, "LS#%i", account_id);
-				strcpy(s_id->unused, "unused");
-				s_id->unknown = 4;
-				connection->QueuePacket(outapp);
-				delete outapp;
-
-				string buf = server.options.GetNetworkIP();
-				auto outapp2 = new EQApplicationPacket(
-				    OP_ServerName, (uint32)buf.length() + 1);
-				strncpy((char*)outapp2->pBuffer, buf.c_str(), buf.length() + 1);
-				connection->QueuePacket(outapp2);
-				delete outapp2;
-				sentsessioninfo = true;
-			} else {
-				auto outapp = new EQApplicationPacket(OP_LoginAccepted,
-				                                      sizeof(SessionId_Struct));
-				SessionId_Struct* s_id = (SessionId_Struct*)outapp->pBuffer;
-				// this is submitted to world server as "username"
-				sprintf(s_id->session_id, "LS#%i", account_id);
-				strcpy(s_id->unused, "unused");
-				s_id->unknown = 4;
-				connection->QueuePacket(outapp);
-				delete outapp;
-			}
+			auto outapp = new EQApplicationPacket(OP_LoginAccepted,
+			                                      sizeof(SessionId_Struct));
+			SessionId_Struct* s_id = (SessionId_Struct*)outapp->pBuffer;
+			// this is submitted to world server as "username"
+			sprintf(s_id->session_id, "LS#%i", account_id);
+			strcpy(s_id->unused, "unused");
+			s_id->unknown = 4;
+			connection->QueuePacket(outapp);
+			delete outapp;
 		}
 	} else {
 		FatalError("Invalid username or password.");

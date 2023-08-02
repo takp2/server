@@ -117,6 +117,11 @@ RULE_INT(World, StreamDataRate, 50)          // Sets the datarate for EQOldStrea
 RULE_INT(World, WhoListLimit, 20)            // The max players returned in /who all.
 RULE_INT(World, MuleToonLimit, 8)            // The number of characters a mule account can create/access.
 RULE_BOOL(World, DontBootDynamics, false)    // If true, dynamic zones will not boot when a player tries to enter them.
+RULE_INT(World, ChecksumStatusBypass, 50)    // Default 50, if account status is equal or greater to this than checksum is ignored
+RULE_REAL(World, ChecksumEQGame, 0)          // Default 0, if set will cause checksum validation of eqgame.exe
+RULE_REAL(World, ChecksumSkillCaps, 0)       // Default 0, if set will cause checksum validation of skill caps
+RULE_REAL(World, ChecksumBaseData, 0)        // Default 0, if set will cause checksum validation of base data
+
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(Zone)

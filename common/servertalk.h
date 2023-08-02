@@ -117,7 +117,6 @@
 #define ServerOP_WhoAll 0x0210
 #define ServerOP_FriendsWho 0x0211
 #define ServerOP_LFGMatches 0x0212
-#define ServerOP_ClientVersionSummary 0x0215
 #define ServerOP_Soulmark 0x0216
 #define ServerOP_AddSoulmark 0x0217
 #define ServerOP_ReloadSkills 0x0218
@@ -931,10 +930,6 @@ struct ServerQGlobalDelete_Struct {
 struct ServerRequestOnlineGuildMembers_Struct {
 	uint32 FromID;
 	uint32 GuildID;
-};
-
-struct ServerRequestClientVersionSummary_Struct {
-	char Name[64];
 };
 
 struct ServerLeaderboardRequest_Struct {

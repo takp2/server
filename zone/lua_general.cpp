@@ -1604,7 +1604,6 @@ luabind::scope lua_register_client_version() {
 	return luabind::class_<ClientVersions>("ClientVersion")
 	    .enum_("constants")
 	        [luabind::value("Unknown", static_cast<int>(EQ::versions::Unknown)),
-	         luabind::value("Unused", static_cast<int>(EQ::versions::Unused)),
 	         luabind::value("RoF2", static_cast<int>(EQ::versions::RoF2))];
 }
 

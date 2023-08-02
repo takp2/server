@@ -21,14 +21,8 @@ const char* EQ::versions::ClientVersionName(ClientVersion client_version) {
 	switch (client_version) {
 		case ClientVersion::Unknown:
 			return "Unknown Version";
-		case ClientVersion::Unused:
-			return "Unused";
-		case ClientVersion::MacPC:
-			return "PC Version";
-		case ClientVersion::MacPPC:
-			return "PPC Version";
 		case ClientVersion::RoF2:
-			return "All Clients";
+			return "RoF2";
 		default:
 			return "Invalid Version";
 	};
@@ -39,14 +33,8 @@ uint32 EQ::versions::ConvertClientVersionToClientVersionBit(
 	switch (client_version) {
 		case ClientVersion::Unknown:
 			return bit_Unknown;
-		case ClientVersion::Unused:
-			return bit_Unused;
-		case ClientVersion::MacPC:
-			return bit_MacPC;
-		case ClientVersion::MacPPC:
-			return bit_MacPPC;
 		case ClientVersion::RoF2:
-			return bit_Mac;
+			return bit_RoF2;
 		default:
 			return bit_Unknown;
 	};
@@ -56,16 +44,6 @@ EQ::versions::ClientVersion
 EQ::versions::ConvertClientVersionBitToClientVersion(
     uint32 client_version_bit) {
 	switch (client_version_bit) {
-		case (uint32) static_cast<unsigned int>(ClientVersion::Unknown):
-		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::Unused) -
-		                    1)):
-			return ClientVersion::Unused;
-		case (
-		    (uint32)1 << (static_cast<unsigned int>(ClientVersion::MacPC) - 1)):
-			return ClientVersion::MacPC;
-		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::MacPPC) -
-		                    1)):
-			return ClientVersion::MacPPC;
 		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::RoF2) - 1)):
 			return ClientVersion::RoF2;
 		default:
@@ -139,8 +117,6 @@ const char* EQ::versions::MobVersionName(MobVersion Mob_version) {
 	switch (Mob_version) {
 		case MobVersion::Unknown:
 			return "Unknown Version";
-		case MobVersion::Unused:
-			return "Unused";
 		case MobVersion::RoF2:
 			return "RoF2";
 		case MobVersion::NPC:
@@ -151,8 +127,8 @@ const char* EQ::versions::MobVersionName(MobVersion Mob_version) {
 			return "Client Pet";
 		case MobVersion::NPCPet:
 			return "NPC Pet";
-		case MobVersion::OfflineMac:
-			return "Offline Mac";
+		case MobVersion::OfflineRoF2:
+			return "Offline RoF2";
 		default:
 			return "Invalid Version";
 	};
@@ -161,9 +137,6 @@ const char* EQ::versions::MobVersionName(MobVersion Mob_version) {
 EQ::versions::ClientVersion EQ::versions::ConvertMobVersionToClientVersion(
     MobVersion Mob_version) {
 	switch (Mob_version) {
-		case MobVersion::Unknown:
-		case MobVersion::Unused:
-			return ClientVersion::Unused;
 		case MobVersion::RoF2:
 			return ClientVersion::RoF2;
 		default:
@@ -174,9 +147,6 @@ EQ::versions::ClientVersion EQ::versions::ConvertMobVersionToClientVersion(
 EQ::versions::MobVersion EQ::versions::ConvertClientVersionToMobVersion(
     ClientVersion client_version) {
 	switch (client_version) {
-		case ClientVersion::Unknown:
-		case ClientVersion::Unused:
-			return MobVersion::Unused;
 		case ClientVersion::RoF2:
 			return MobVersion::RoF2;
 		default:
@@ -188,7 +158,7 @@ EQ::versions::MobVersion EQ::versions::ConvertPCMobVersionToOfflinePCMobVersion(
     MobVersion Mob_version) {
 	switch (Mob_version) {
 		case MobVersion::RoF2:
-			return MobVersion::OfflineMac;
+			return MobVersion::OfflineRoF2;
 		default:
 			return MobVersion::Unknown;
 	}
@@ -197,7 +167,7 @@ EQ::versions::MobVersion EQ::versions::ConvertPCMobVersionToOfflinePCMobVersion(
 EQ::versions::MobVersion EQ::versions::ConvertOfflinePCMobVersionToPCMobVersion(
     MobVersion Mob_version) {
 	switch (Mob_version) {
-		case MobVersion::OfflineMac:
+		case MobVersion::OfflineRoF2:
 			return MobVersion::RoF2;
 		default:
 			return MobVersion::Unknown;
@@ -208,7 +178,7 @@ EQ::versions::ClientVersion
 EQ::versions::ConvertOfflinePCMobVersionToClientVersion(
     MobVersion Mob_version) {
 	switch (Mob_version) {
-		case MobVersion::OfflineMac:
+		case MobVersion::OfflineRoF2:
 			return ClientVersion::RoF2;
 		default:
 			return ClientVersion::Unknown;
@@ -220,7 +190,7 @@ EQ::versions::ConvertClientVersionToOfflinePCMobVersion(
     ClientVersion client_version) {
 	switch (client_version) {
 		case ClientVersion::RoF2:
-			return MobVersion::OfflineMac;
+			return MobVersion::OfflineRoF2;
 		default:
 			return MobVersion::Unknown;
 	}

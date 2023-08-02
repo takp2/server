@@ -963,7 +963,6 @@ class Client : public Mob {
 	uint16 GetActiveDiscSpell() { return active_disc_spell; }
 	bool HasInstantDisc(uint16 skill_type = 0);
 
-	void SendClientVersion();
 	void FixClientXP();
 	void SendToBoat(bool messageonly = false);
 

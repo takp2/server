@@ -35,7 +35,6 @@ ClientListEntry::ClientListEntry(uint32 in_id, uint32 iLSID,
 	strn0cpy(pForumName, iForumName, sizeof(pForumName));
 	pworldadmin = iWorldAdmin;
 	plocal = (local == 1);
-	pversion = version;
 }
 
 ClientListEntry::ClientListEntry(uint32 in_id, ZoneServer* iZS,
@@ -53,10 +52,6 @@ ClientListEntry::ClientListEntry(uint32 in_id, ZoneServer* iZS,
 	paccountid = scl->AccountID;
 	strn0cpy(paccountname, scl->AccountName, sizeof(paccountname));
 	padmin = scl->Admin;
-	// THIS IS FOR AN ALTERNATE LOGIN METHOD FOR RAPID TESTING. Hardcoded to the
-	// PC client because only PCs should be using this 'hackish' login method.
-	// Requires password field set in the database.
-	pversion = 2;
 
 	if (iOnline >= CLE_Status_Zoning)
 		Update(iZS, scl, iOnline);

@@ -306,10 +306,7 @@ void ZoneDatabase::UpdateBug(BugReport_Struct* bug_report, uint32 clienttype) {
 	}
 
 	char uitext[16];
-	if (clienttype == EQ::versions::bit_MacPC)
-		strcpy(uitext, "PC");
-	else if (clienttype == EQ::versions::bit_MacPPC)
-		strcpy(uitext, "PPC");
+	strcpy(uitext, "RoF2");
 
 	std::string query = StringFormat(
 	    "INSERT INTO bugs (zone, name, ui, x, y, z, type, flag, target, bug, _can_duplicate, _crash_bug, _target_info, _character_flags, date) "

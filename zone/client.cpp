@@ -4584,36 +4584,6 @@ void Client::SendSoulMarks(SoulMarkList_Struct* SMS) {
 	safe_delete(outapp);
 }
 
-void Client::SendClientVersion() {
-	if (ClientVersion() == EQ::versions::RoF2) {
-		std::string string("RoF2");
-		std::string type;
-		if (ClientVersionBit() == EQ::versions::bit_MacPPC)
-			type = "PowerPC";
-		else if (ClientVersionBit() == EQ::versions::bit_MacPC)
-			type = "PC";
-		else
-			type = "Invalid";
-
-		if (GetGM())
-			Message(CC_Yellow, "[GM Debug] Your client version is: %s (%i). Your client type is: %s.", string.c_str(), ClientVersion(), type.c_str());
-		else
-			Log(Logs::Detail, Logs::Debug, "%s: Client version is: %s. The client type is: %s.", GetName(), string.c_str(), type.c_str());
-
-	} else {
-		std::string string;
-		if (ClientVersion() == EQ::versions::Unused)
-			string = "Unused";
-		else
-			string = "Unknown";
-
-		if (GetGM())
-			Message(CC_Yellow, "[GM Debug] Your client version is: %s (%i).", string.c_str(), ClientVersion());
-		else
-			Log(Logs::Detail, Logs::Debug, "%s: Client version is: %s.", GetName(), string.c_str());
-	}
-}
-
 void Client::FixClientXP() {
 	// This is only necessary when the XP formula changes. However, it should be left for toons that have not been converted.
 

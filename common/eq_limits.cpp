@@ -11,14 +11,6 @@ static const EQ::inventory::LookupEntry
          ClientUnknown::INULL, ClientUnknown::INULL, ClientUnknown::INULL,
 
          false, false, false, false},
-        {// ClientUnused
-         ClientUnused::INULL, ClientUnused::INULL, ClientUnused::INULL,
-         ClientUnused::INULL, ClientUnused::INULL, ClientUnused::INULL,
-         ClientUnused::INULL, ClientUnused::INULL, ClientUnused::INULL,
-
-         ClientUnused::INULL, ClientUnused::INULL, ClientUnused::INULL,
-
-         false, false, false, false},
         {// RoF2
          EQ::invtype::POSSESSIONS_SIZE, RoF2::invtype::BANK_SIZE,
          RoF2::invtype::TRADE_SIZE, RoF2::invtype::WORLD_SIZE,
@@ -73,7 +65,7 @@ static const EQ::inventory::LookupEntry
          EntityLimits::NPCPet::INULL, EntityLimits::NPCPet::INULL, 0,
 
          false, false, false, false},
-        {// OfflineMac
+        {// OfflineRoF2
          RoF2::INULL, RoF2::INULL, RoF2::invtype::TRADE_SIZE, RoF2::INULL,
          RoF2::INULL, RoF2::invtype::MERCHANT_SIZE, RoF2::INULL,
          RoF2::invtype::BAZAAR_SIZE, RoF2::invtype::INSPECT_SIZE,
@@ -93,8 +85,6 @@ static const EQ::behavior::LookupEntry
     behavior_lookup_entries[EQ::versions::MobVersionCount] = {
         {// Unknown
          true},
-        {// ClientUnused
-         true},
         {// RoF2
          RoF2::behavior::CoinHasWeight},
         {
@@ -113,7 +103,7 @@ static const EQ::behavior::LookupEntry
             // NPCPet
             EQ::behavior::CoinHasWeight /*CoinHasWeight*/
         },
-        {// OfflineMac
+        {// OfflineRoF2
          RoF2::behavior::CoinHasWeight}};
 
 const EQ::behavior::LookupEntry* EQ::behavior::Lookup(

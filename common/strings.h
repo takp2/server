@@ -28,6 +28,7 @@ class Strings {
    public:
 	static bool Contains(std::vector<std::string> container,
 	                     std::string element);
+	static int64 ToBigInt(const std::string& s, int64 fallback = 0);
 	static bool Contains(const std::string& subject, const std::string& search);
 	static bool IsNumber(const std::string& s);
 	static const std::string ToLower(std::string s);
@@ -52,8 +53,7 @@ class Strings {
 	static std::string NumberToWords(unsigned long long int n);
 	static std::string Replace(std::string subject, const std::string& search,
 	                           const std::string& replace);
-	static std::string SecondsToTime(int duration,
-	                                 bool is_milliseconds = false);
+	static std::string SecondsToTime(int duration, bool is_milliseconds = false);
 	static std::string::size_type SearchDelim(const std::string& haystack,
 	                                          const std::string& needle,
 	                                          const char deliminator = ',');

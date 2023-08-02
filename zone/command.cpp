@@ -139,7 +139,6 @@ int command_init(void) {
 #endif
 	    command_add("corpse", "- Manipulate corpses, use with no arguments for help.", AccountStatus::EQSupport, command_corpse) ||
 	    command_add("crashtest", "- Crash the zoneserver.", AccountStatus::GMImpossible, command_crashtest) ||
-	    command_add("cvs", "- Summary of client versions currently online.", AccountStatus::GMCoder, command_cvs) ||
 
 	    command_add("damage", "[amount] - Damage your target.", AccountStatus::QuestMaster, command_damage) ||
 	    command_add("damagetotals", "Displays a list of what has damaged your NPC target.", AccountStatus::GMAdmin, command_damagetotals) ||
@@ -8541,15 +8540,6 @@ void command_distance(Client *c, const Seperator *sep) {
 
 		c->Message(CC_Default, "Your target, %s, is %1.1f units from you.", c->GetTarget()->GetName(), Distance(c->GetPosition(), target->GetPosition()));
 	}
-}
-
-void command_cvs(Client *c, const Seperator *sep) {
-	auto pack = new ServerPacket(ServerOP_ClientVersionSummary, sizeof(ServerRequestClientVersionSummary_Struct));
-	ServerRequestClientVersionSummary_Struct *srcvss = (ServerRequestClientVersionSummary_Struct *)pack->pBuffer;
-	strn0cpy(srcvss->Name, c->GetName(), sizeof(srcvss->Name));
-	worldserver.SendPacket(pack);
-
-	safe_delete(pack);
 }
 
 void command_maxallskills(Client *c, const Seperator *sep) {

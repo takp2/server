@@ -346,8 +346,8 @@ bool ZoneServer::Process() {
 				    (ServerDisbandGroup_Struct*)pack->pBuffer;
 				if (sdbg->groupid > 0)
 					client_list.ClearGroup(
-					    sdbg->groupid);  // clear groupid from all matching
-					                     // CLE's
+					    sdbg->groupid);            // clear groupid from all matching
+					                               // CLE's
 				zoneserver_list.SendPacket(pack);  // bounce it to all zones
 				break;
 			}
@@ -1018,12 +1018,6 @@ bool ZoneServer::Process() {
 				    srogms->FromID, srogms->GuildID);
 				client_list.SendOnlineGuildMembers(srogms->FromID,
 				                                   srogms->GuildID);
-				break;
-			}
-			case ServerOP_ClientVersionSummary: {
-				ServerRequestClientVersionSummary_Struct* srcvss =
-				    (ServerRequestClientVersionSummary_Struct*)pack->pBuffer;
-				client_list.SendClientVersionSummary(srcvss->Name);
 				break;
 			}
 			case ServerOP_ReloadLogs: {
