@@ -3,6 +3,8 @@
 	"editor.insertSpaces": false,
 	"editor.tabSize": 4,
 	"editor.autoIndent": "full",
+	"editor.trimAutoWhitespace": true,
+	"files.trimTrailingWhitespace": true,
 	"editor.formatOnSave": true,
 	"C_Cpp.clang_format_style": "{ BasedOnStyle: Google, UseTab: ForIndentation, IndentWidth: 4, TabWidth: 4, IncludeBlocks: Preserve, ColumnLimit: 0, SortIncludes: false}",
 	"search.exclude": {
@@ -19,6 +21,7 @@
 		"-DYAML_CPP_BUILD_TOOLS=OFF",
 		"Unix Makefiles"
 	],
+	"cmake.skipConfigureIfCachePresent": true,
 	"testMate.cpp.test.executables": "{build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*",
 	"cmake.configureOnOpen": false,
 	"files.associations": {

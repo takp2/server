@@ -583,7 +583,7 @@ void Zone::GetMerchantDataForZoneLoad() {
 	                                                                                            spawngroupID
 	                                                                                                FROM
 	                                                                                                    spawn2
-	                                                                                                        WHERE 
+	                                                                                                        WHERE
 							`zone` = '{}')))
 	                                ORDER BY
 	                                    merchantlist.slot),

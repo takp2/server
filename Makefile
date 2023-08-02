@@ -5,9 +5,8 @@ MARIADB_FOLDER := mariadb-${MARIADB_VERSION}-linux-systemd-x86_64
 OS := $(shell uname -s)
 
 .PHONY: prep
-prep:
+prep: set-version
 	@echo "Preparing build/bin for usage..."
-	@sed -i 's/#define VERSION ".*/#define VERSION "$(VERSION)"/g' common/version.h
 	@-cd build/bin && unlink assets
 	@cd build/bin && ln -s ../../base/assets assets
 	@cp -R -u -p base/login.ini build/bin/login.ini
@@ -99,6 +98,7 @@ inject-mariadb:
 	-unzip -p base/db.sql.zip | mysql -u vscode -S build/bin/db/mysql/mysqld.sock --database takp
 
 # CICD triggers this
-.PHONY: set-variable
+.PHONY: set-version
 set-version:
-	@echo "VERSION=${VERSION}" >> $$GITHUB_ENV	
+	sed -i 's/#define VERSION ".*/#define VERSION "$(VERSION)"/g' common/version.h
+	@echo "VERSION=${VERSION}" >> $$GITHUB_ENV

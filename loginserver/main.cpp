@@ -33,7 +33,7 @@ int main() {
 
 	/* Parse out login.ini */
 	server.config = new Config();
-	LogInfo("Config System Init.");
+	LogInfo("Config System Init");
 	server.config->Parse("login.ini");
 
 	if (server.config->GetVariable("options", "unregistered_allowed")
@@ -116,7 +116,7 @@ int main() {
 	/* Create database connection */
 	if (server.config->GetVariable("database", "subsystem").compare("MySQL") ==
 	    0) {
-		LogInfo("MySQL Database Init.");
+		LogInfo("MySQL Database Init");
 		server.db = (Database*)new Database(
 		    server.config->GetVariable("database", "user"),
 		    server.config->GetVariable("database", "password"),
@@ -127,39 +127,39 @@ int main() {
 
 	/* Make sure our database got created okay, otherwise cleanup and exit. */
 	if (!server.db) {
-		LogError("Database Initialization Failure.");
-		LogInfo("Config System Shutdown.");
+		LogError("Database Initialization Failure");
+		LogInfo("Config System Shutdown");
 		delete server.config;
-		LogInfo("Log System Shutdown.");
+		LogInfo("Log System Shutdown");
 		return 1;
 	}
 
 	// create our server manager.
-	LogInfo("Server Manager Initialize.");
+	LogInfo("Server Manager Initialize");
 	server.server_manager = new ServerManager();
 	if (!server.server_manager) {
 		// We can't run without a server manager, cleanup and exit.
-		LogError("Server Manager Failed to Start.");
+		LogError("Server Manager Failed to Start");
 
-		LogInfo("Database System Shutdown.");
+		LogInfo("Database System Shutdown");
 		delete server.db;
-		LogInfo("Config System Shutdown.");
+		LogInfo("Config System Shutdown");
 		delete server.config;
 		return 1;
 	}
 
 	// create our client manager.
-	LogInfo("Client Manager Initialize.");
+	LogInfo("Client Manager Initialize");
 	server.client_manager = new ClientManager();
 	if (!server.client_manager) {
 		// We can't run without a client manager, cleanup and exit.
-		LogError("Client Manager Failed to Start.");
-		LogInfo("Server Manager Shutdown.");
+		LogError("Client Manager Failed to Start");
+		LogInfo("Server Manager Shutdown");
 		delete server.server_manager;
 
-		LogInfo("Database System Shutdown.");
+		LogInfo("Database System Shutdown");
 		delete server.db;
-		LogInfo("Config System Shutdown.");
+		LogInfo("Config System Shutdown");
 		delete server.config;
 		return 1;
 	}
@@ -172,7 +172,7 @@ int main() {
 #endif
 #endif
 
-	LogInfo("Server Started.");
+	LogInfo("Server Started");
 	while (run_server) {
 		Timer::SetCurrentTime();
 		server.client_manager->Process();
@@ -181,18 +181,18 @@ int main() {
 		Sleep(100);
 	}
 
-	LogInfo("Server Shutdown.");
+	LogInfo("Server Shutdown");
 
-	LogInfo("Client Manager Shutdown.");
+	LogInfo("Client Manager Shutdown");
 	delete server.client_manager;
 
-	LogInfo("Server Manager Shutdown.");
+	LogInfo("Server Manager Shutdown");
 	delete server.server_manager;
 
-	LogInfo("Database System Shutdown.");
+	LogInfo("Database System Shutdown");
 	delete server.db;
 
-	LogInfo("Config System Shutdown.");
+	LogInfo("Config System Shutdown");
 	delete server.config;
 	LogSys.CloseFileLogs();
 

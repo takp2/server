@@ -1,7 +1,7 @@
 world:
   is_locked: false
-  short_name: req
-  long_name: RebuildEQ
+  short_name: takp
+  long_name: TAKP2 Test (Xack)
   wan_address: 0.0.0.0
   lan_address: 0.0.0.0
   max_clients: -1
@@ -28,13 +28,14 @@ query_serv:
   password: takppass
 zone:
   default_status: 0
-  port_min: 7000
-  port_max: 6400
+  port_min: 7000 # min port zones occupy
+  port_max: 7400 # max port zones occupy
+  max_zones: 5 # Number of zones to start with manager
 login_server:
 - port: 5998
-  account: 
-  password: 
-  host: login.projecteq.net 
+  account:
+  password:
+  host: login.projecteq.net
   type: 0
 dir:
   patches: assets/patches/
@@ -45,4 +46,6 @@ dir:
   plugins: quests/plugins/
   maps: maps/
   logs: logs/
-
+other:
+  talkeq: talkeq
+  githubeq: githubeq

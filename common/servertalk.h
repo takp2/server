@@ -16,20 +16,17 @@
 #define ServerOP_SetZone 0x0003         // client -> server zoneinfo
 #define ServerOP_ShutdownAll 0x0004     // exit(0);
 #define ServerOP_ZoneShutdown 0x0005    // unload all data, goto sleep mode
-#define ServerOP_ZoneBootup \
-	0x0006  // come out of sleep mode and load zone specified
+#define ServerOP_ZoneBootup 0x0006      // come out of sleep mode and load zone specified
 #define ServerOP_ZoneStatus 0x0007      // Shows status of all zones
 #define ServerOP_SetConnectInfo 0x0008  // Tells server address and port #
 #define ServerOP_EmoteMessage 0x0009    // Worldfarts
-#define ServerOP_ClientList \
-	0x000A                   // Update worldserver's client list, for #whos
-#define ServerOP_Who 0x000B  // #who
-#define ServerOP_ZonePlayer 0x000C  // #zone, or #summon
-#define ServerOP_KickPlayer 0x000D  // #kick
+#define ServerOP_ClientList 0x000A      // Update worldserver's client list, for #whos
+#define ServerOP_Who 0x000B             // #who
+#define ServerOP_ZonePlayer 0x000C      // #zone, or #summon
+#define ServerOP_KickPlayer 0x000D      // #kick
 
-#define ServerOP_RefreshGuild \
-	0x000E  // Notice to all zoneservers to refresh their guild cache for ID# in
-	        // packet (ServerGuildRefresh_Struct)
+#define ServerOP_RefreshGuild 0x000E  // Notice to all zoneservers to refresh their guild cache for ID# in
+	                                  // packet (ServerGuildRefresh_Struct)
 // #define ServerOP_GuildInvite		0x0010
 #define ServerOP_DeleteGuild 0x0011  // ServerGuildID_Struct
 #define ServerOP_GuildRankUpdate 0x0012
@@ -38,8 +35,7 @@
 #define ServerOP_RequestOnlineGuildMembers 0x0015
 #define ServerOP_OnlineGuildMembersResponse 0x0016
 
-#define ServerOP_FlagUpdate \
-	0x0018  // GM Flag updated for character, refresh the memory cache
+#define ServerOP_FlagUpdate 0x0018  // GM Flag updated for character, refresh the memory cache
 #define ServerOP_GMGoto 0x0019
 #define ServerOP_MultiLineMsg 0x001A
 #define ServerOP_Lock 0x001B  // For #lock/#unlock inside server
@@ -535,8 +531,8 @@ struct ServerLSClientAuth {
 	char account_name[30];      // username in login server's db
 	char key[30];               // the Key the client will present
 	uint8 lsadmin;              // login server admin level
-	int16 worldadmin;  // login's suggested worldadmin level setting for this
-	                   // user, up to the world if they want to obey it
+	int16 worldadmin;           // login's suggested worldadmin level setting for this
+	                            // user, up to the world if they want to obey it
 	uint32 ip;
 	uint8 local;    // 1 if the client is from the local network
 	uint8 version;  // Client version if Mac
@@ -796,7 +792,9 @@ struct LauncherConnectInfo {
 	char name[64];
 };
 
-typedef enum { ZR_Start, ZR_Restart, ZR_Stop } ZoneRequestCommands;
+typedef enum { ZR_Start,
+	           ZR_Restart,
+	           ZR_Stop } ZoneRequestCommands;
 
 struct LauncherZoneRequest {
 	uint8 command;
