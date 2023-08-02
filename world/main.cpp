@@ -89,7 +89,7 @@ void LoadDatabaseConnections() {
 	                      Config->DatabaseUsername.c_str(),
 	                      Config->DatabasePassword.c_str(),
 	                      Config->DatabaseDB.c_str(), Config->DatabasePort)) {
-		LogError("Cannot continue without a database connection.");
+		LogError("Failed to connect to database");
 
 		std::exit(1);
 	}
@@ -343,9 +343,9 @@ int main(int argc, char** argv) {
 			zoneserver_list.worldclock.getEQTimeOfDay(time(0), &tod);
 			if (!database.SaveTime(tod.minute, tod.hour, tod.day, tod.month,
 			                       tod.year)) {
-				LogError("Failed to save eqtime.");
+				LogError("Failed to save eqtime");
 			} else {
-				LogDebug("EQTime successfully saved.");
+				LogDebug("EQTime successfully saved");
 			}
 		}
 
@@ -387,17 +387,14 @@ int main(int argc, char** argv) {
 		}
 		Sleep(20);
 	}
-	LogInfo("World main loop completed.");
-	LogInfo("Shutting down console connections (if any).");
 	console_list.KillAll();
-	LogInfo("Shutting down zone connections (if any).");
 	zoneserver_list.KillAll();
-	LogInfo("Zone (TCP) listener stopped.");
+	LogInfo("TCP listener stopped");
 	tcps.Close();
-	LogInfo("Client (UDP) listener stopped.");
+	LogInfo("UDP listener stopped");
 	eqsf.Close();
 	LogSys.CloseFileLogs();
-
+	LogInfo("World shutdown complete");
 	return 0;
 }
 
