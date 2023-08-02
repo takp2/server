@@ -10,7 +10,7 @@
 #include "../common/timer.h"
 
 class LoginServer {
-   public: 
+   public:
 	LoginServer(const char*, uint16, const char*, const char*, uint8);
 	~LoginServer();
 
@@ -30,6 +30,7 @@ class LoginServer {
 	bool CanUpdate() { return CanAccountUpdate; }
 
    private:
+	bool IsConnectedBefore;
 	EmuTCPConnection* tcpc;
 	char LoginServerAddress[256];
 	uint32 LoginServerIP;

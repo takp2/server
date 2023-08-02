@@ -33,6 +33,7 @@ uint32 ChatMessagesSent = 0;
 volatile bool RunLoops = true;
 
 void CatchSignal(int sig_num) {
+	LogInfo("Caught signal {}, Shutting down", sig_num);
 	RunLoops = false;
 
 	if (worldserver) worldserver->Disconnect();

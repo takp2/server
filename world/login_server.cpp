@@ -238,35 +238,33 @@ bool LoginServer::InitLoginServer() {
 bool LoginServer::Connect() {
 	char errbuf[TCPConnection_ErrorBufferSize];
 	if ((LoginServerIP = ResolveIP(LoginServerAddress, errbuf)) == 0) {
-		Log(Logs::Detail, Logs::WorldServer, "Unable to resolve '%s' to an IP.",
-		    LoginServerAddress);
+		LogError("Failed to resolve loginserver IP: {}", LoginServerAddress);
 		database.LSDisconnect();
 		return false;
 	}
 
 	if (LoginServerIP == 0 || LoginServerPort == 0) {
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Connect info incomplete, cannot connect: %s:%d",
-		    LoginServerAddress, LoginServerPort);
+		LogError("Failed to connect to loginserver, IP/Port incomplete {}:{}", LoginServerAddress,
+		         LoginServerPort);
 		database.LSDisconnect();
 		return false;
 	}
 
-	if (tcpc->ConnectIP(LoginServerIP, LoginServerPort, errbuf)) {
-		Log(Logs::Detail, Logs::WorldServer, "Connected to Loginserver: %s:%d",
-		    LoginServerAddress, LoginServerPort);
-		database.LSConnected(LoginServerPort);
-		SendNewInfo();
-		SendStatus();
-		zoneserver_list.SendLSZones();
-		return true;
-	} else {
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Could not connect to login server: %s:%d %s", LoginServerAddress,
-		    LoginServerPort, errbuf);
+	if (!tcpc->ConnectIP(LoginServerIP, LoginServerPort, errbuf)) {
+		LogError("Failed to connect to loginserver %s:%d: %s", LoginServerAddress,
+		         LoginServerPort, errbuf);
 		database.LSDisconnect();
 		return false;
 	}
+	if (!IsConnectedBefore) {
+		LogInfo("Connected to loginserver {}:{}", LoginServerAddress, LoginServerPort);
+		IsConnectedBefore = true;
+	}
+	database.LSConnected(LoginServerPort);
+	SendNewInfo();
+	SendStatus();
+	zoneserver_list.SendLSZones();
+	return true;
 }
 void LoginServer::SendInfo() {
 	const WorldConfig* Config = WorldConfig::get();

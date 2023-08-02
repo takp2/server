@@ -432,7 +432,6 @@ bool SharedDatabase::LoadItems(const std::string& prefix) {
 		mutex.Lock();
 		std::string file_name =
 		    Config->SharedMemDir + prefix + std::string("items");
-		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		items_mmf = std::unique_ptr<EQ::MemoryMappedFile>(
 		    new EQ::MemoryMappedFile(file_name));
 		items_hash = std::unique_ptr<EQ::FixedMemoryHashSet<EQ::ItemData>>(
@@ -1063,7 +1062,6 @@ bool SharedDatabase::LoadSkillCaps(const std::string& prefix) {
 		mutex.Lock();
 		std::string file_name =
 		    Config->SharedMemDir + prefix + std::string("skill_caps");
-		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		skill_caps_mmf = std::unique_ptr<EQ::MemoryMappedFile>(
 		    new EQ::MemoryMappedFile(file_name));
 		mutex.Unlock();

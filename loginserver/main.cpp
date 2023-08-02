@@ -116,7 +116,6 @@ int main() {
 	/* Create database connection */
 	if (server.config->GetVariable("database", "subsystem").compare("MySQL") ==
 	    0) {
-		LogInfo("MySQL Database Init");
 		server.db = (Database*)new Database(
 		    server.config->GetVariable("database", "user"),
 		    server.config->GetVariable("database", "password"),
@@ -125,7 +124,6 @@ int main() {
 		    server.config->GetVariable("database", "db"));
 	}
 
-	/* Make sure our database got created okay, otherwise cleanup and exit. */
 	if (!server.db) {
 		LogError("Database Initialization Failure");
 		LogInfo("Config System Shutdown");
@@ -134,8 +132,6 @@ int main() {
 		return 1;
 	}
 
-	// create our server manager.
-	LogInfo("Server Manager Initialize");
 	server.server_manager = new ServerManager();
 	if (!server.server_manager) {
 		// We can't run without a server manager, cleanup and exit.
@@ -148,8 +144,6 @@ int main() {
 		return 1;
 	}
 
-	// create our client manager.
-	LogInfo("Client Manager Initialize");
 	server.client_manager = new ClientManager();
 	if (!server.client_manager) {
 		// We can't run without a client manager, cleanup and exit.

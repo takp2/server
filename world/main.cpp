@@ -77,7 +77,6 @@ EQ::Random emu_random;
 volatile bool RunLoops = true;
 uint32 numclients = 0;
 uint32 numzones = 0;
-bool holdzones = false;
 const WorldConfig* Config;
 EQEmuLogSys LogSys;
 
@@ -86,9 +85,6 @@ extern ConsoleList console_list;
 void CatchSignal(int sig_num);
 
 void LoadDatabaseConnections() {
-	LogInfo("Connecting to MySQL {0}@{1}:{2}...",
-	        Config->DatabaseUsername.c_str(), Config->DatabaseHost.c_str(),
-	        Config->DatabasePort);
 	if (!database.Connect(Config->DatabaseHost.c_str(),
 	                      Config->DatabaseUsername.c_str(),
 	                      Config->DatabasePassword.c_str(),
@@ -100,7 +96,6 @@ void LoadDatabaseConnections() {
 }
 
 void LoadServerConfig() {
-	LogInfo("Loading config.yaml");
 	auto load_result = WorldConfig::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
@@ -109,30 +104,16 @@ void LoadServerConfig() {
 }
 
 void RegisterLoginservers() {
-	if (Config->LoginCount == 0) {
-		if (Config->LoginHost.length()) {
-			loginserverlist.Add(Config->LoginHost.c_str(), Config->LoginPort,
-			                    Config->LoginAccount.c_str(),
-			                    Config->LoginPassword.c_str(),
-			                    Config->LoginType);
-			LogInfo("Added loginserver [{0}]:[{1}]", Config->LoginHost.c_str(),
-			        Config->LoginPort);
-		}
-	} else {
-		LinkedList<LoginConfig*> loginlist = Config->loginlist;
-		LinkedListIterator<LoginConfig*> iterator(loginlist);
-		iterator.Reset();
-		while (iterator.MoreElements()) {
-			loginserverlist.Add(iterator.GetData()->LoginHost.c_str(),
-			                    iterator.GetData()->LoginPort,
-			                    iterator.GetData()->LoginAccount.c_str(),
-			                    iterator.GetData()->LoginPassword.c_str(),
-			                    iterator.GetData()->LoginType);
-			LogInfo("Added loginserver [{0}]:[{1}]",
-			        iterator.GetData()->LoginHost.c_str(),
-			        iterator.GetData()->LoginPort);
-			iterator.Advance();
-		}
+	LinkedList<LoginConfig*> loginlist = Config->loginlist;
+	LinkedListIterator<LoginConfig*> iterator(loginlist);
+	iterator.Reset();
+	while (iterator.MoreElements()) {
+		loginserverlist.Add(iterator.GetData()->LoginHost.c_str(),
+		                    iterator.GetData()->LoginPort,
+		                    iterator.GetData()->LoginAccount.c_str(),
+		                    iterator.GetData()->LoginPassword.c_str(),
+		                    iterator.GetData()->LoginType);
+		iterator.Advance();
 	}
 }
 
@@ -140,9 +121,7 @@ int main(int argc, char** argv) {
 	RegisterExecutablePlatform(ExePlatformWorld);
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
-
 	LogInfo("Starting World v{}", VERSION);
-
 	LoadServerConfig();
 
 	Config = WorldConfig::get();
@@ -168,59 +147,10 @@ int main(int argc, char** argv) {
 
 	RegisterLoginservers();
 	LoadDatabaseConnections();
-
 	guild_mgr.SetDatabase(&database);
 
 	LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
 
-	if (argc >= 2) {
-		std::string tmp;
-		if (strcasecmp(argv[1], "help") == 0 || strcasecmp(argv[1], "?") == 0 ||
-		    strcasecmp(argv[1], "/?") == 0 || strcasecmp(argv[1], "-?") == 0 ||
-		    strcasecmp(argv[1], "-h") == 0 ||
-		    strcasecmp(argv[1], "-help") == 0) {
-			std::cout << "Worldserver command line commands:" << std::endl;
-			std::cout
-			    << "adduser username password flag    - adds a user account"
-			    << std::endl;
-			std::cout << "flag username flag    - sets GM flag on the account"
-			          << std::endl;
-			std::cout << "startzone zoneshortname    - sets the starting zone"
-			          << std::endl;
-			std::cout << "-holdzones    - reboots lost zones" << std::endl;
-			return 0;
-		} else if (strcasecmp(argv[1], "-holdzones") == 0) {
-			std::cout << "Reboot Zones mode ON" << std::endl;
-			holdzones = true;
-		} else if (strcasecmp(argv[1], "flag") == 0) {
-			if (argc == 4) {
-				if (Seperator::IsNumber(argv[3])) {
-					if (atoi(argv[3]) >= 0 && atoi(argv[3]) <= 255) {
-						if (database.SetAccountStatus(argv[2], atoi(argv[3]))) {
-							std::cout << "Account flagged: Username='"
-							          << argv[2] << "', status=" << argv[3]
-							          << std::endl;
-							return 0;
-						} else {
-							std::cerr << "database.SetAccountStatus failed."
-							          << std::endl;
-							return 1;
-						}
-					}
-				}
-			}
-			std::cout << "Usage: world flag username flag" << std::endl;
-			std::cout << "flag = 0-200" << std::endl;
-			return 0;
-		} else {
-			std::cerr << "Error, unknown command line option" << std::endl;
-			return 1;
-		}
-	}
-
-	LogInfo("Setting git version in database.");
-	database.GITInfo();
-	LogInfo("Loading variables..");
 	database.LoadVariables();
 
 	std::string hotfix_name;
@@ -230,52 +160,40 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	LogInfo("Loading zones..");
 	database.LoadZoneNames();
-	LogInfo("Clearing groups..");
 	database.ClearGroup();
-	LogInfo("Clearing raids..");
 	database.ClearRaid();
 	database.ClearRaidDetails();
-	LogInfo("Loading items..");
-	if (!database.LoadItems(hotfix_name))
-		LogError("Error: Could not load item data. But ignoring");
+	if (!database.LoadItems(hotfix_name)) {
+		LogError("Failed to load item data");
+	}
 
-	LogInfo("Loading skill caps..");
-	if (!database.LoadSkillCaps(std::string(hotfix_name)))
-		LogError("Error: Could not load skill cap data. But ignoring");
+	if (!database.LoadSkillCaps(std::string(hotfix_name))) {
+		LogError("Failed to load skill caps");
+	}
 
-	LogInfo("Loading guilds..");
 	guild_mgr.LoadGuilds();
 	// rules:
 	{
 		std::string tmp;
 		if (database.GetVariable("RuleSet", tmp)) {
-			LogInfo("Loading rule set [{0}]", tmp.c_str());
 			if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
-				LogInfo(
-				    "Failed to load ruleset [{0}], falling back to defaults.",
-				    tmp.c_str());
+				LogError("Failed to load ruleset [{0}], falling back to default values", tmp.c_str());
 			}
 		} else {
 			if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 				LogInfo("No rule set configured, using default rules");
-			} else {
-				LogInfo("Loaded default rule set 'default'", tmp.c_str());
 			}
 		}
 	}
 	if (RuleB(World, ClearTempMerchantlist)) {
-		LogInfo("Clearing temporary merchant lists...");
 		database.ClearMerchantTemp();
 	}
 
 	if (RuleB(World, AdjustRespawnTimes)) {
-		LogInfo("Clearing and adjusting boot time spawn timers...");
 		database.AdjustSpawnTimes();
 	}
 
-	LogInfo("Loading EQ time of day..");
 	TimeOfDay_Struct eqTime;
 	time_t realtime;
 	eqTime = database.LoadTime(realtime);
@@ -283,40 +201,32 @@ int main(int argc, char** argv) {
 	Timer EQTimeTimer(600000);
 	EQTimeTimer.Start(600000);
 
-	LogInfo("Loading launcher list..");
 	launcher_list.LoadList();
 
 	std::string tmp;
-	database.GetVariable("holdzones", tmp);
-	if (tmp.length() == 1 && tmp[0] == '1') {
-		holdzones = true;
+	int delete_count = database.DeleteStalePlayerCorpses();
+	if (delete_count > 0) {
+		LogInfo("Deleted {0} stale player corpses from database", delete_count);
 	}
-	LogInfo("Reboot zone modes [{0}]", holdzones ? "ON" : "OFF");
 
-	LogInfo("Deleted [{0}] stale player corpses from database",
-	        database.DeleteStalePlayerCorpses());
-
-	LogInfo("Clearing active accounts...");
 	database.ClearAllActive();
 
-	LogInfo("Clearing consented characters...");
 	database.ClearAllConsented();
 
-	LogInfo("Loading char create info...");
 	database.LoadCharacterCreateAllocations();
 	database.LoadCharacterCreateCombos();
 
 	char errbuf[TCPConnection_ErrorBufferSize];
 	if (tcps.Open(Config->WorldTCPPort, errbuf)) {
-		LogInfo("Zone (TCP) listener started.");
+		LogInfo("TCP Listening on {}", Config->WorldTCPPort);
 	} else {
-		LogInfo("Failed to start zone (TCP) listener on port [{0}]:",
+		LogInfo("Failed to TCP Listener on port [{0}]:",
 		        Config->WorldTCPPort);
 		LogError("        {0}", errbuf);
 		return 1;
 	}
 	if (eqsf.Open()) {
-		LogInfo("Client (UDP) listener started.");
+		LogInfo("UDP Listening on {}", 9000);
 	} else {
 		LogInfo("Failed to start client (UDP) listener (port 9000)");
 		return 1;
@@ -422,8 +332,7 @@ int main(int argc, char** argv) {
 		while ((tcpc = tcps.NewQueuePop())) {
 			struct in_addr in {};
 			in.s_addr = tcpc->GetrIP();
-			LogInfo("New TCP connection from {0}:{1}", inet_ntoa(in),
-			        tcpc->GetrPort());
+			Log(Logs::Detail, Logs::WorldServer, "New TCP connection from {0}:{1}", inet_ntoa(in), tcpc->GetrPort());
 			console_list.Add(new Console(tcpc));
 			i++;
 			if (i == 5) break;
@@ -493,7 +402,7 @@ int main(int argc, char** argv) {
 }
 
 void CatchSignal(int sig_num) {
-	Log(Logs::General, Logs::WorldServer, "Caught signal %d", sig_num);
+	LogInfo("Caught signal {}, Shutting down", sig_num);
 	RunLoops = false;
 }
 

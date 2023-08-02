@@ -48,11 +48,10 @@ bool Database::Connect(const char* host, const char* user, const char* passwd,
 	uint32 errnum = 0;
 	char errbuf[MYSQL_ERRMSG_SIZE];
 	if (!Open(host, user, passwd, database, port, &errnum, errbuf)) {
-		LogError("[MySQL] Failed to connect to database: Error: [{}] ", errbuf);
+		LogError("Failed to connect to {}@{}:{}/{}: [{}] ", user, host, port, database, errbuf);
 		return false;
 	} else {
-		LogInfo("[MySQL] Using database [{}] at [{}] : [{}] ", database, host,
-		        port);
+		LogInfo("Connected to {}@{}:{}/{} ", user, host, port, database);
 		return true;
 	}
 }

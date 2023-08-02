@@ -25,6 +25,7 @@ WorldServer *worldserver = 0;
 EQEmuLogSys LogSys;
 
 void CatchSignal(int sig_num) {
+	LogInfo("Caught signal {}, Shutting down", sig_num);
 	RunLoops = false;
 	if (worldserver) worldserver->Disconnect();
 }
@@ -35,7 +36,6 @@ int main() {
 	set_exception_handler();
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does auto-reconnect
 
-	LogInfo("Starting QueryServ v{}", VERSION);
 	auto load_result = Config::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
@@ -43,6 +43,7 @@ int main() {
 	}
 
 	Config = queryservconfig::get();
+	LogInfo("Starting QueryServ v{}", VERSION);
 	WorldShortName = Config->ShortName;
 
 	LogInfo("Connecting to MySQL");

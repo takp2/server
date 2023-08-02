@@ -502,6 +502,7 @@ int main(int argc, char** argv) {
 }
 
 void CatchSignal(int sig_num) {
+	LogInfo("Caught signal {}, Shutting down", sig_num);
 #ifdef _WINDOWS
 	LogInfo("Recieved signal: {} ", sig_num);
 #endif
