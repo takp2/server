@@ -16,12 +16,14 @@ SET(ucs_headers
 	ucsconfig.h
 	worldserver.h
 )
- 
+
 ADD_EXECUTABLE(ucs ${ucs_sources} ${ucs_headers})
 
 INSTALL(TARGETS ucs RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 ADD_DEFINITIONS(-DUCS)
+
+TARGET_COMPILE_OPTIONS(ucs PRIVATE $<$<CXX_COMPILER_ID:GNU>:${GCC_IGNORE}>)
 
 TARGET_LINK_LIBRARIES(ucs ${SERVER_LIBS})
 
