@@ -50,7 +50,7 @@ class Client {
 	void Handle_SessionReady(const char* data, unsigned int size);
 
 	/**
-	 * Verifies login and send a reply for Mac clients.
+	 * Verifies login and send a reply for RoF2 clients.
 	 */
 	void Handle_Login(const char* data, unsigned int size, std::string client);
 

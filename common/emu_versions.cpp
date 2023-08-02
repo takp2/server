@@ -29,7 +29,7 @@ const char* EQ::versions::ClientVersionName(ClientVersion client_version) {
 			return "Intel Version";
 		case ClientVersion::MacPPC:
 			return "PPC Version";
-		case ClientVersion::Mac:
+		case ClientVersion::RoF2:
 			return "All Clients";
 		default:
 			return "Invalid Version";
@@ -49,7 +49,7 @@ uint32 EQ::versions::ConvertClientVersionToClientVersionBit(
 			return bit_MacIntel;
 		case ClientVersion::MacPPC:
 			return bit_MacPPC;
-		case ClientVersion::Mac:
+		case ClientVersion::RoF2:
 			return bit_Mac;
 		default:
 			return bit_Unknown;
@@ -73,8 +73,8 @@ EQ::versions::ConvertClientVersionBitToClientVersion(
 		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::MacPPC) -
 		                    1)):
 			return ClientVersion::MacPPC;
-		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::Mac) - 1)):
-			return ClientVersion::Mac;
+		case ((uint32)1 << (static_cast<unsigned int>(ClientVersion::RoF2) - 1)):
+			return ClientVersion::RoF2;
 		default:
 			return ClientVersion::Unknown;
 	}
@@ -148,7 +148,7 @@ const char* EQ::versions::MobVersionName(MobVersion Mob_version) {
 			return "Unknown Version";
 		case MobVersion::Unused:
 			return "Unused";
-		case MobVersion::Mac:
+		case MobVersion::RoF2:
 			return "RoF2";
 		case MobVersion::NPC:
 			return "NPC";
@@ -171,8 +171,8 @@ EQ::versions::ClientVersion EQ::versions::ConvertMobVersionToClientVersion(
 		case MobVersion::Unknown:
 		case MobVersion::Unused:
 			return ClientVersion::Unused;
-		case MobVersion::Mac:
-			return ClientVersion::Mac;
+		case MobVersion::RoF2:
+			return ClientVersion::RoF2;
 		default:
 			return ClientVersion::Unknown;
 	}
@@ -184,8 +184,8 @@ EQ::versions::MobVersion EQ::versions::ConvertClientVersionToMobVersion(
 		case ClientVersion::Unknown:
 		case ClientVersion::Unused:
 			return MobVersion::Unused;
-		case ClientVersion::Mac:
-			return MobVersion::Mac;
+		case ClientVersion::RoF2:
+			return MobVersion::RoF2;
 		default:
 			return MobVersion::Unknown;
 	}
@@ -194,7 +194,7 @@ EQ::versions::MobVersion EQ::versions::ConvertClientVersionToMobVersion(
 EQ::versions::MobVersion EQ::versions::ConvertPCMobVersionToOfflinePCMobVersion(
     MobVersion Mob_version) {
 	switch (Mob_version) {
-		case MobVersion::Mac:
+		case MobVersion::RoF2:
 			return MobVersion::OfflineMac;
 		default:
 			return MobVersion::Unknown;
@@ -205,7 +205,7 @@ EQ::versions::MobVersion EQ::versions::ConvertOfflinePCMobVersionToPCMobVersion(
     MobVersion Mob_version) {
 	switch (Mob_version) {
 		case MobVersion::OfflineMac:
-			return MobVersion::Mac;
+			return MobVersion::RoF2;
 		default:
 			return MobVersion::Unknown;
 	}
@@ -216,7 +216,7 @@ EQ::versions::ConvertOfflinePCMobVersionToClientVersion(
     MobVersion Mob_version) {
 	switch (Mob_version) {
 		case MobVersion::OfflineMac:
-			return ClientVersion::Mac;
+			return ClientVersion::RoF2;
 		default:
 			return ClientVersion::Unknown;
 	}
@@ -226,7 +226,7 @@ EQ::versions::MobVersion
 EQ::versions::ConvertClientVersionToOfflinePCMobVersion(
     ClientVersion client_version) {
 	switch (client_version) {
-		case ClientVersion::Mac:
+		case ClientVersion::RoF2:
 			return MobVersion::OfflineMac;
 		default:
 			return MobVersion::Unknown;

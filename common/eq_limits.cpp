@@ -19,20 +19,20 @@ static const EQ::inventory::LookupEntry
          ClientUnused::INULL, ClientUnused::INULL, ClientUnused::INULL,
 
          false, false, false, false},
-        {// Mac
-         EQ::invtype::POSSESSIONS_SIZE, Mac::invtype::BANK_SIZE,
-         Mac::invtype::TRADE_SIZE, Mac::invtype::WORLD_SIZE,
-         Mac::invtype::LIMBO_SIZE, Mac::invtype::MERCHANT_SIZE,
-         Mac::invtype::CORPSE_SIZE, Mac::invtype::BAZAAR_SIZE,
-         Mac::invtype::INSPECT_SIZE,
+        {// RoF2
+         EQ::invtype::POSSESSIONS_SIZE, RoF2::invtype::BANK_SIZE,
+         RoF2::invtype::TRADE_SIZE, RoF2::invtype::WORLD_SIZE,
+         RoF2::invtype::LIMBO_SIZE, RoF2::invtype::MERCHANT_SIZE,
+         RoF2::invtype::CORPSE_SIZE, RoF2::invtype::BAZAAR_SIZE,
+         RoF2::invtype::INSPECT_SIZE,
 
-         Mac::invslot::POSSESSIONS_BITMASK, Mac::invslot::CORPSE_BITMASK,
-         Mac::invbag::SLOT_COUNT,
+         RoF2::invslot::POSSESSIONS_BITMASK, RoF2::invslot::CORPSE_BITMASK,
+         RoF2::invbag::SLOT_COUNT,
 
-         Mac::inventory::AllowEmptyBagInBag,
-         Mac::inventory::AllowClickCastFromBag,
-         Mac::inventory::ConcatenateInvTypeLimbo,
-         Mac::inventory::AllowOverLevelEquipment},
+         RoF2::inventory::AllowEmptyBagInBag,
+         RoF2::inventory::AllowClickCastFromBag,
+         RoF2::inventory::ConcatenateInvTypeLimbo,
+         RoF2::inventory::AllowOverLevelEquipment},
         {// NPC
          EQ::invtype::POSSESSIONS_SIZE, EntityLimits::NPC::INULL,
          EntityLimits::NPC::invtype::TRADE_SIZE, EntityLimits::NPC::INULL,
@@ -74,11 +74,11 @@ static const EQ::inventory::LookupEntry
 
          false, false, false, false},
         {// OfflineMac
-         Mac::INULL, Mac::INULL, Mac::invtype::TRADE_SIZE, Mac::INULL,
-         Mac::INULL, Mac::invtype::MERCHANT_SIZE, Mac::INULL,
-         Mac::invtype::BAZAAR_SIZE, Mac::invtype::INSPECT_SIZE,
+         RoF2::INULL, RoF2::INULL, RoF2::invtype::TRADE_SIZE, RoF2::INULL,
+         RoF2::INULL, RoF2::invtype::MERCHANT_SIZE, RoF2::INULL,
+         RoF2::invtype::BAZAAR_SIZE, RoF2::invtype::INSPECT_SIZE,
 
-         Mac::INULL, Mac::INULL, EQ::invbag::SLOT_COUNT,
+         RoF2::INULL, RoF2::INULL, EQ::invbag::SLOT_COUNT,
 
          false, false, false, false},
 };
@@ -95,8 +95,8 @@ static const EQ::behavior::LookupEntry
          true},
         {// ClientUnused
          true},
-        {// Mac
-         Mac::behavior::CoinHasWeight},
+        {// RoF2
+         RoF2::behavior::CoinHasWeight},
         {
             // NPC
             EQ::behavior::CoinHasWeight /*CoinHasWeight*/
@@ -114,7 +114,7 @@ static const EQ::behavior::LookupEntry
             EQ::behavior::CoinHasWeight /*CoinHasWeight*/
         },
         {// OfflineMac
-         Mac::behavior::CoinHasWeight}};
+         RoF2::behavior::CoinHasWeight}};
 
 const EQ::behavior::LookupEntry* EQ::behavior::Lookup(
     versions::MobVersion Mob_version) {

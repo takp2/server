@@ -1,10 +1,10 @@
 
-#ifndef MAC_STRUCTS_H_
-#define MAC_STRUCTS_H_
+#ifndef ROF2_STRUCTS_H_
+#define ROF2_STRUCTS_H_
 
 #include <string>
 
-namespace Mac {
+namespace RoF2 {
 namespace structs {
 
 /*
@@ -157,7 +157,7 @@ struct Spawn_Struct {
 	/*0040*/ TintProfile equipcolors;
 	/*0076*/ uint16 spawn_id;  // Id of new spawn
 	/*0078*/ int16
-	    bodytype;  // 65 is disarmable trap, 66 and 67 are invis triggers/traps
+	    bodytype;            // 65 is disarmable trap, 66 and 67 are invis triggers/traps
 	/*0080*/ int16 cur_hp;   // Current hp's of Spawn
 	/*0082*/ int16 GuildID;  // GuildID - previously Current hp's of Spawn
 	/*0084*/ uint16 race;    // Race
@@ -181,8 +181,8 @@ struct Spawn_Struct {
 	/*0102*/ int8 helm;
 	/*0103*/ uint8 face;
 	/*0104*/ uint16
-	    equipment[9];  // Equipment worn: 0=helm, 1=chest, 2=arm, 3=bracer,
-	                   // 4=hand, 5=leg, 6=boot, 7=melee1, 8=melee2
+	    equipment[9];          // Equipment worn: 0=helm, 1=chest, 2=arm, 3=bracer,
+	                           // 4=hand, 5=leg, 6=boot, 7=melee1, 8=melee2
 	/*0122*/ int16 guildrank;  // ***Placeholder
 	/*0124*/ int16 deity;      // Deity.
 	/*0126*/ int8 temporaryPet;
@@ -223,7 +223,7 @@ struct Item_Struct {
 	/*0000*/ char Name[64];  // Name of item
 	/*0064*/ char Lore[80];  // Lore text
 	/*0144*/ char
-	    IDFile[30];  // This is the filename of the item graphic when held/worn.
+	    IDFile[30];         // This is the filename of the item graphic when held/worn.
 	/*0174*/ uint8 Weight;  // Weight of item
 	/*0175*/ uint8 NoRent;  // Nosave flag 1=normal, 0=nosave, -1=spell?
 	/*0176*/ uint8 NoDrop;  // Nodrop flag 1=normal, 0=nodrop, -1=??
@@ -236,7 +236,7 @@ struct Item_Struct {
 	                                // short so this is still unknown
 	/*0188*/ int32 Slots;           // Slots where this item is allowed
 	/*0192*/ int32 Price;           // Item cost in copper
-	/*0196*/ float cur_x;  // Here to 227 are named from client struct dump.
+	/*0196*/ float cur_x;           // Here to 227 are named from client struct dump.
 	/*0200*/ float cur_y;
 	/*0204*/ float cur_z;
 	/*0208*/ float heading;
@@ -274,19 +274,19 @@ struct Item_Struct {
 			/*0249*/ uint8 Delay;      // Weapon Delay
 			/*0250*/ uint8 Damage;     // Weapon Damage
 			/*0251*/ int8
-			    EffectType1;  // 0=combat, 1=click anywhere w/o class check,
-			                  // 2=latent/worn, 3=click anywhere EXPENDABLE,
-			                  // 4=click worn, 5=click anywhere w/ class check,
-			                  // -1=no effect
+			    EffectType1;       // 0=combat, 1=click anywhere w/o class check,
+			                       // 2=latent/worn, 3=click anywhere EXPENDABLE,
+			                       // 4=click worn, 5=click anywhere w/ class check,
+			                       // -1=no effect
 			/*0252*/ uint8 Range;  // Range of weapon
 			/*0253*/ uint8
-			    ItemType;  // Skill of this weapon, refer to weaponskill chart
+			    ItemType;                 // Skill of this weapon, refer to weaponskill chart
 			/*0254*/ uint8 Magic;         // Magic flag
 			/*0255*/ uint8 EffectLevel1;  // Casting level
 			/*0256*/ uint32 Material;     // Material
 			/*0260*/ uint32 Color;        // Amounts of RGB in original color
 			/*0264*/ int16
-			    Faction;  // Structs dumped from client has this as Faction
+			    Faction;             // Structs dumped from client has this as Faction
 			/*0266*/ int16 Effect1;  // SpellID of special effect
 			/*0268*/ int32 Classes;  // Classes that can use this item
 			/*0272*/ int32 Races;    // Races that can use this item
@@ -308,26 +308,26 @@ struct Item_Struct {
 			/*0270*/ uint8 IsBagOpen;    // 1 if bag is open, 0 if not.
 			/*0271*/ uint8 BagSize;      // Maximum size item container can hold
 			/*0272*/ uint8 BagWR;        // % weight reduction of container
-			/*0273*/ uint32 buffer3;  // Not used, fills out space in the packet
-			                          // so ShowEQ doesn't complain.
+			/*0273*/ uint32 buffer3;     // Not used, fills out space in the packet
+			                             // so ShowEQ doesn't complain.
 		} container;
 	};
 	/*0277*/ uint8 EffectLevel2;  // Casting level
 	/*0278*/ int8 Charges;        // Number of charges (-1 = unlimited)
 	/*0279*/ int8
-	    EffectType2;  // 0=combat, 1=click anywhere w/o class check,
-	                  // 2=latent/worn, 3=click anywhere EXPENDABLE, 4=click
-	                  // worn, 5=click anywhere w/ class check, -1=no effect
+	    EffectType2;          // 0=combat, 1=click anywhere w/o class check,
+	                          // 2=latent/worn, 3=click anywhere EXPENDABLE, 4=click
+	                          // worn, 5=click anywhere w/ class check, -1=no effect
 	/*0280*/ uint16 Effect2;  // spellId of special effect
 	/*0282*/ int16
-	    Effect2Duration;  // seen in client decompile being set to duration of
-	                      // Effect2 spell but purpose unknown
+	    Effect2Duration;         // seen in client decompile being set to duration of
+	                             // Effect2 spell but purpose unknown
 	/*0284*/ int16 HouseLockID;  // MSG_REQ_HOUSELOCK
 	/*0286*/ uint8 unknown0286[2];
 	/*0288*/ float SellRate;
 	/*0292*/ int32 CastTime;         // Cast time of clicky item in miliseconds
 	/*0296*/ uint8 unknown0296[12];  // ***Placeholder
-	/*0308*/ int32 RecastTime;  // Recast time of clicky item in milliseconds
+	/*0308*/ int32 RecastTime;       // Recast time of clicky item in milliseconds
 	/*0312*/ uint16 SkillModType;
 	/*0314*/ int16 SkillModValue;
 	/*0316*/ int16 BaneDmgRace;
@@ -354,7 +354,7 @@ struct Item_Struct {
 	/*0354*/ int16 BardType;
 	/*0356*/ int16 BardValue;
 	/*0358*/ int16 FocusEffect;  // Confirmed
-	/*0360*/
+	                             /*0360*/
 };
 
 struct PlayerItemsPacket_Struct {
@@ -479,14 +479,14 @@ struct LoginInfo_Struct {
 
 struct SpellBuff_Struct {
 	/*000*/ uint8
-	    bufftype;  // Comment: 0 = Buff not visible, 1 = Visible and permanent
-	               // buff, 2 = Visible and timer on, 4 = reverse effect values,
-	               // used for lifetap type things
+	    bufftype;         // Comment: 0 = Buff not visible, 1 = Visible and permanent
+	                      // buff, 2 = Visible and timer on, 4 = reverse effect values,
+	                      // used for lifetap type things
 	/*001*/ uint8 level;  // Comment: Level of person who casted buff
 	/*002*/ uint8
-	    bard_modifier;  // Comment: this seems to be the bard modifier, it is
-	                    // normally 0x0A because we set in in the CastOn_Struct
-	                    // when its not a bard, else its the instrument mod
+	    bard_modifier;        // Comment: this seems to be the bard modifier, it is
+	                          // normally 0x0A because we set in in the CastOn_Struct
+	                          // when its not a bard, else its the instrument mod
 	/*003*/ uint8 activated;  // Copied from spell data to buff struct.  Only a
 	                          // few spells have this set to 1, the rest are 0
 	/*004*/ uint16 spellid;   // spell id
@@ -528,9 +528,9 @@ struct PlayerProfile_Struct {
 	/*0136*/ uint32 uniqueGuildID;
 	/*0140*/ uint8 gender;        // Player Gender
 	/*0141*/ char genderchar[1];  // ***Placeholder
-	/*0142*/ uint16 race;    // Player Race (Lyenu: Changed to an int16, since
-	                         // races can be over 255)
-	/*0144*/ uint16 class_;  // Player Class
+	/*0142*/ uint16 race;         // Player Race (Lyenu: Changed to an int16, since
+	                              // races can be over 255)
+	/*0144*/ uint16 class_;       // Player Class
 	/*0146*/ uint16 bodytype;
 	/*0148*/ uint8 level;        // Player Level
 	/*0149*/ char levelchar[3];  // ***Placeholder
@@ -548,12 +548,12 @@ struct PlayerProfile_Struct {
 	/*0176*/ int16 WIS;   // Player Wisdom
 	/*0178*/ uint8 face;  //
 	/*0179*/ uint8
-	    EquipType[9];  // i think its the visible parts of the body armor
+	    EquipType[9];                 // i think its the visible parts of the body armor
 	/*0188*/ TintProfile EquipColor;  //
 	/*0224*/ int16
 	    inventory[pp_inventory_size];  // Player Inventory Item Numbers
-	/*0284*/ uint8 languages[32];  // Player Languages - space for 32 but only
-	                               // the first 25 are used
+	/*0284*/ uint8 languages[32];      // Player Languages - space for 32 but only
+	                                   // the first 25 are used
 	/*0316*/ struct ItemProperties_Struct
 	    invItemProperties[pp_inventory_size];    // These correlate with
 	                                             // inventory[30]
@@ -568,9 +568,9 @@ struct PlayerProfile_Struct {
 	/*1746*/ struct ItemProperties_Struct
 	    cursorItemProperties[pp_cursorbaginventory_size];  // just like
 	                                                       // invitemprops[]
-	/*1846*/ int16 spell_book[spells::SPELLBOOK_SIZE];  // Player spells scribed
-	                                                    // in their book
-	/*2358*/ uint8 unknown2374[512];                    // 0xFF
+	/*1846*/ int16 spell_book[spells::SPELLBOOK_SIZE];     // Player spells scribed
+	                                                       // in their book
+	/*2358*/ uint8 unknown2374[512];                       // 0xFF
 	/*2870*/ int16
 	    mem_spells[spells::SPELL_GEM_COUNT];  // Player spells memorized
 	/*2886*/ uint8 unknown2886[16];           // 0xFF
@@ -592,10 +592,10 @@ struct PlayerProfile_Struct {
 	/*2960*/ int32 gold_cursor;
 	/*2964*/ int32 silver_cursor;
 	/*2968*/ int32 copper_cursor;
-	/*2972*/ int32 currency[4];  // Unused currency?
-	/*2988*/ int16 skills[100];  // Player Skills - 100 skills but only the
-	                             // first 74 are used, followed by 25 innates
-	                             // but only the first 14 are used
+	/*2972*/ int32 currency[4];        // Unused currency?
+	/*2988*/ int16 skills[100];        // Player Skills - 100 skills but only the
+	                                   // first 74 are used, followed by 25 innates
+	                                   // but only the first 14 are used
 	/*3188*/ int16 innate_skills[25];  // Like regular skills, these are 255 to
 	                                   // indicate that the player doesn't have
 	                                   // it and 0 means they do have it
@@ -727,6 +727,6 @@ struct ObjectDisplayOnly_Struct {
 };
 
 };  // end namespace structs
-};  // namespace Mac
+};  // namespace RoF2
 
 #endif /*MAC_STRUCTS_H_*/

@@ -8,68 +8,68 @@
 #include "eq_limits.h"
 
 namespace EQ {
-using Mac::IINVALID;
-using Mac::INULL;
+using RoF2::IINVALID;
+using RoF2::INULL;
 
 namespace inventory {}  // namespace inventory
 
 namespace invtype {
-using namespace Mac::invtype::enum_;
+using namespace RoF2::invtype::enum_;
 
-using Mac::invtype::BANK_SIZE;
-using Mac::invtype::BAZAAR_SIZE;
-using Mac::invtype::CORPSE_SIZE;
-using Mac::invtype::INSPECT_SIZE;
-using Mac::invtype::LIMBO_SIZE;
-using Mac::invtype::MERCHANT_SIZE;
-using Mac::invtype::POSSESSIONS_SIZE;
-using Mac::invtype::TRADE_SIZE;
-using Mac::invtype::WORLD_SIZE;
+using RoF2::invtype::BANK_SIZE;
+using RoF2::invtype::BAZAAR_SIZE;
+using RoF2::invtype::CORPSE_SIZE;
+using RoF2::invtype::INSPECT_SIZE;
+using RoF2::invtype::LIMBO_SIZE;
+using RoF2::invtype::MERCHANT_SIZE;
+using RoF2::invtype::POSSESSIONS_SIZE;
+using RoF2::invtype::TRADE_SIZE;
+using RoF2::invtype::WORLD_SIZE;
 
-using Mac::invtype::TRADE_NPC_SIZE;
+using RoF2::invtype::TRADE_NPC_SIZE;
 
-using Mac::invtype::TYPE_BEGIN;
-using Mac::invtype::TYPE_COUNT;
-using Mac::invtype::TYPE_END;
-using Mac::invtype::TYPE_INVALID;
+using RoF2::invtype::TYPE_BEGIN;
+using RoF2::invtype::TYPE_COUNT;
+using RoF2::invtype::TYPE_END;
+using RoF2::invtype::TYPE_INVALID;
 
 int16 GetInvTypeSize(int16 inv_type);
-using Mac::invtype::GetInvTypeName;
+using RoF2::invtype::GetInvTypeName;
 
 }  // namespace invtype
 
 namespace invslot {
-using namespace Mac::invslot::enum_;
+using namespace RoF2::invslot::enum_;
 
-using Mac::invslot::SLOT_BEGIN;
-using Mac::invslot::SLOT_INVALID;
+using RoF2::invslot::SLOT_BEGIN;
+using RoF2::invslot::SLOT_INVALID;
 
-using Mac::invslot::POSSESSIONS_BEGIN;
-using Mac::invslot::POSSESSIONS_COUNT;
-using Mac::invslot::POSSESSIONS_END;
+using RoF2::invslot::POSSESSIONS_BEGIN;
+using RoF2::invslot::POSSESSIONS_COUNT;
+using RoF2::invslot::POSSESSIONS_END;
 
-using Mac::invslot::EQUIPMENT_BEGIN;
-using Mac::invslot::EQUIPMENT_COUNT;
-using Mac::invslot::EQUIPMENT_END;
+using RoF2::invslot::EQUIPMENT_BEGIN;
+using RoF2::invslot::EQUIPMENT_COUNT;
+using RoF2::invslot::EQUIPMENT_END;
 
-using Mac::invslot::GENERAL_BEGIN;
-using Mac::invslot::GENERAL_COUNT;
-using Mac::invslot::GENERAL_END;
+using RoF2::invslot::GENERAL_BEGIN;
+using RoF2::invslot::GENERAL_COUNT;
+using RoF2::invslot::GENERAL_END;
 
-using Mac::invslot::BONUS_BEGIN;
-using Mac::invslot::BONUS_SKILL_END;
-using Mac::invslot::BONUS_STAT_END;
+using RoF2::invslot::BONUS_BEGIN;
+using RoF2::invslot::BONUS_SKILL_END;
+using RoF2::invslot::BONUS_STAT_END;
 
-using Mac::invslot::BANK_BEGIN;
-using Mac::invslot::BANK_END;
+using RoF2::invslot::BANK_BEGIN;
+using RoF2::invslot::BANK_END;
 
-using Mac::invslot::TRADE_BEGIN;
-using Mac::invslot::TRADE_END;
+using RoF2::invslot::TRADE_BEGIN;
+using RoF2::invslot::TRADE_END;
 
-using Mac::invslot::TRADE_NPC_END;
+using RoF2::invslot::TRADE_NPC_END;
 
-using Mac::invslot::WORLD_BEGIN;
-using Mac::invslot::WORLD_END;
+using RoF2::invslot::WORLD_BEGIN;
+using RoF2::invslot::WORLD_END;
 
 const int16 CORPSE_BEGIN = invslot::slotGeneral1;
 const int16 CORPSE_END = CORPSE_BEGIN + invslot::slotGeneral8;
@@ -77,21 +77,21 @@ const int16 CORPSE_END = CORPSE_BEGIN + invslot::slotGeneral8;
 const int16 CURSOR_QUEUE_BEGIN = 8000;
 const int16 CURSOR_QUEUE_END = 8999;
 
-using Mac::invslot::CORPSE_BITMASK;
-using Mac::invslot::POSSESSIONS_BITMASK;
+using RoF2::invslot::CORPSE_BITMASK;
+using RoF2::invslot::POSSESSIONS_BITMASK;
 
-using Mac::invslot::GetInvPossessionsSlotName;
-using Mac::invslot::GetInvSlotName;
+using RoF2::invslot::GetInvPossessionsSlotName;
+using RoF2::invslot::GetInvSlotName;
 
 }  // namespace invslot
 
 namespace invbag {
-using Mac::invbag::SLOT_BEGIN;
-using Mac::invbag::SLOT_COUNT;
-using Mac::invbag::SLOT_END;
-using Mac::invbag::SLOT_INVALID;
+using RoF2::invbag::SLOT_BEGIN;
+using RoF2::invbag::SLOT_COUNT;
+using RoF2::invbag::SLOT_END;
+using RoF2::invbag::SLOT_INVALID;
 
-using Mac::invbag::GENERAL_BAGS_BEGIN;
+using RoF2::invbag::GENERAL_BAGS_BEGIN;
 const int16 GENERAL_BAGS_COUNT = invslot::GENERAL_COUNT * SLOT_COUNT;
 const int16 GENERAL_BAGS_END = (GENERAL_BAGS_BEGIN + GENERAL_BAGS_COUNT) - 1;
 
@@ -103,30 +103,30 @@ const int16 CURSOR_BAG_BEGIN = 330;
 const int16 CURSOR_BAG_COUNT = SLOT_COUNT;
 const int16 CURSOR_BAG_END = (CURSOR_BAG_BEGIN + CURSOR_BAG_COUNT) - 1;
 
-using Mac::invbag::BANK_BAGS_BEGIN;
+using RoF2::invbag::BANK_BAGS_BEGIN;
 const int16 BANK_BAGS_COUNT = (invtype::BANK_SIZE * SLOT_COUNT);
 const int16 BANK_BAGS_END = (BANK_BAGS_BEGIN + BANK_BAGS_COUNT) - 1;
 
 const int16 BANK_BAGS_8_COUNT = 8 * SLOT_COUNT;
 const int16 BANK_BAGS_8_END = (BANK_BAGS_BEGIN + BANK_BAGS_8_COUNT) - 1;
 
-using Mac::invbag::TRADE_BAGS_BEGIN;
+using RoF2::invbag::TRADE_BAGS_BEGIN;
 const int16 TRADE_BAGS_COUNT = invtype::TRADE_SIZE * SLOT_COUNT;
 const int16 TRADE_BAGS_END = (TRADE_BAGS_BEGIN + TRADE_BAGS_COUNT) - 1;
 
-using Mac::invbag::GetInvBagIndexName;
+using RoF2::invbag::GetInvBagIndexName;
 
 }  // namespace invbag
 
 namespace constants {
 // database
 static const EQ::versions::ClientVersion CharacterCreationClient =
-    EQ::versions::ClientVersion::Mac;  // adjust according to starting item
+    EQ::versions::ClientVersion::RoF2;  // adjust according to starting item
                                        // placement and target client
-using Mac::constants::CHARACTER_CREATION_LIMIT;
+using RoF2::constants::CHARACTER_CREATION_LIMIT;
 
 const size_t SAY_LINK_OPENER_SIZE = 1;
-using Mac::constants::SAY_LINK_BODY_SIZE;
+using RoF2::constants::SAY_LINK_BODY_SIZE;
 const size_t SAY_LINK_TEXT_SIZE = 200;
 const size_t SAY_LINK_CLOSER_SIZE = 1;
 const size_t SAY_LINK_MAXIMUM_SIZE =
@@ -176,20 +176,20 @@ enum class CastingSlot : uint32 {
 	AltAbility = 0xFF
 };
 
-using Mac::spells::SPELL_GEM_COUNT;
-using Mac::spells::SPELL_ID_MAX;
-using Mac::spells::SPELLBOOK_SIZE;
+using RoF2::spells::SPELL_GEM_COUNT;
+using RoF2::spells::SPELL_ID_MAX;
+using RoF2::spells::SPELLBOOK_SIZE;
 
 }  // namespace spells
 
 namespace profile {
 
-using Mac::profile::SKILL_ARRAY_SIZE;
+using RoF2::profile::SKILL_ARRAY_SIZE;
 
 }  // namespace profile
 
 namespace behavior {
-using Mac::behavior::CoinHasWeight;
+using RoF2::behavior::CoinHasWeight;
 
 }  // namespace behavior
 

@@ -1,11 +1,11 @@
-#ifndef MAC_H_
-#define MAC_H_
+#ifndef ROF2_H_
+#define ROF2_H_
 
 #include "../struct_strategy.h"
 
 class EQStreamIdentifier;
 
-namespace Mac {
+namespace RoF2 {
 
 // these are the only public member of this namespace.
 extern void Register(EQStreamIdentifier &into);
@@ -26,6 +26,6 @@ class Strategy : public StructStrategy {
 #include "rof2_ops.h"
 };
 
-};  // namespace Mac
+};  // namespace RoF2
 
 #endif /*TEMPLATE_H_*/

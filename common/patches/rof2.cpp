@@ -15,7 +15,7 @@
 #include "rof2_structs.h"
 #include "../rulesys.h"
 
-namespace Mac {
+namespace RoF2 {
 
 static const char *name = "rof2";
 static OpcodeManager *opcodes = nullptr;
@@ -113,11 +113,11 @@ Strategy::Strategy()
 #include "ss_define.h"
 
 const EQ::versions::ClientVersion Strategy::ClientVersion() const {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 DECODE(OP_SendLoginInfo) {
-	// Intel Mac client and Windows client are 200 bytes, PPC is 196 bytes
+	// Intel RoF2 client and Windows client are 200 bytes, PPC is 196 bytes
 	int len = __packet->size;
 	DECODE_LENGTH_ATLEAST(structs::LoginInfo_Struct);
 	SETUP_DIRECT_DECODE(LoginInfo_Struct, structs::LoginInfo_Struct);
@@ -1039,4 +1039,4 @@ static inline uint32 MacToServerCorpseSlot(int16 MacCorpse) {
 	return MacCorpse;
 }
 
-}  // end namespace Mac
+}  // namespace RoF2

@@ -964,7 +964,7 @@ void Client::Handle_Connect_OP_ZoneEntry(const EQApplicationPacket *app) {
 	SetClientVersion(Connection()->ClientVersion());
 	m_ClientVersionBit = EQ::versions::ConvertClientVersionToClientVersionBit(Connection()->ClientVersion());
 
-	if (ClientVersion() == EQ::versions::ClientVersion::Mac) {
+	if (ClientVersion() == EQ::versions::ClientVersion::RoF2) {
 		m_ClientVersionBit = versionbit;
 	} else {
 		m_ClientVersionBit = EQ::versions::Unused;

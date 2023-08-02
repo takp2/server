@@ -1,17 +1,17 @@
-#ifndef COMMON_MAC_LIMITS_H
-#define COMMON_MAC_LIMITS_H
+#ifndef COMMON_ROF2_LIMITS_H
+#define COMMON_ROF2_LIMITS_H
 
 #include "../emu_versions.h"
 #include "../skills.h"
 #include "../types.h"
 
-namespace Mac {
+namespace RoF2 {
 const int16 IINVALID = -1;
 const int16 INULL = 0;
 
 namespace inventory {
 inline EQ::versions::ClientVersion GetInventoryRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 const bool ConcatenateInvTypeLimbo = true;
@@ -24,7 +24,7 @@ const bool AllowClickCastFromBag = false;
 
 namespace invtype {
 inline EQ::versions::ClientVersion GetInvTypeRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 namespace enum_ {
@@ -68,7 +68,7 @@ bool IsInvTypePersistent(int16 inv_type);
 
 namespace invslot {
 inline EQ::versions::ClientVersion GetInvSlotRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 namespace enum_ {
@@ -152,7 +152,7 @@ const char* GetInvSlotName(int16 inv_type, int16 inv_slot);
 
 namespace invbag {
 inline EQ::versions::ClientVersion GetInvBagRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 const int16 SLOT_INVALID = IINVALID;
@@ -182,7 +182,7 @@ const char* GetInvBagIndexName(int16 bag_index);
 
 namespace item {
 inline EQ::versions::ClientVersion GetItemRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 enum ItemPacketType : int {
@@ -200,7 +200,7 @@ enum ItemPacketType : int {
 
 namespace profile {
 inline EQ::versions::ClientVersion GetProfileRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 const int16 SKILL_ARRAY_SIZE = 100;
@@ -209,7 +209,7 @@ const int16 SKILL_ARRAY_SIZE = 100;
 
 namespace constants {
 inline EQ::versions::ClientVersion GetConstantsRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 const size_t CHARACTER_CREATION_LIMIT =
@@ -221,7 +221,7 @@ const size_t SAY_LINK_BODY_SIZE = 7;
 
 namespace behavior {
 inline EQ::versions::ClientVersion GetBehaviorRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 const bool CoinHasWeight = true;
@@ -230,7 +230,7 @@ const bool CoinHasWeight = true;
 
 namespace skills {
 inline EQ::versions::ClientVersion GetSkillsRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 const size_t LastUsableSkill = EQ::skills::SkillTaunt;
@@ -239,7 +239,7 @@ const size_t LastUsableSkill = EQ::skills::SkillTaunt;
 
 namespace spells {
 inline EQ::versions::ClientVersion GetSkillsRef() {
-	return EQ::versions::ClientVersion::Mac;
+	return EQ::versions::ClientVersion::RoF2;
 }
 
 enum class CastingSlot : uint32 {
@@ -263,6 +263,6 @@ const int SPELL_GEM_COUNT = static_cast<uint32>(CastingSlot::MaxGems);
 
 }  // namespace spells
 
-};  // namespace Mac
+};  // namespace RoF2
 
 #endif /*COMMON_MAC_LIMITS_H_*/

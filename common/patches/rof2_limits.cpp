@@ -2,7 +2,7 @@
 
 #include "../strings.h"
 
-int16 Mac::invtype::GetInvTypeSize(int16 inv_type) {
+int16 RoF2::invtype::GetInvTypeSize(int16 inv_type) {
 	switch (inv_type) {
 		case invtype::typePossessions:
 			return invtype::POSSESSIONS_SIZE;
@@ -27,7 +27,7 @@ int16 Mac::invtype::GetInvTypeSize(int16 inv_type) {
 	}
 }
 
-const char* Mac::invtype::GetInvTypeName(int16 inv_type) {
+const char* RoF2::invtype::GetInvTypeName(int16 inv_type) {
 	switch (inv_type) {
 		case invtype::TYPE_INVALID:
 			return "Invalid Type";
@@ -54,7 +54,7 @@ const char* Mac::invtype::GetInvTypeName(int16 inv_type) {
 	}
 }
 
-bool Mac::invtype::IsInvTypePersistent(int16 inv_type) {
+bool RoF2::invtype::IsInvTypePersistent(int16 inv_type) {
 	switch (inv_type) {
 		case invtype::typePossessions:
 		case invtype::typeBank:
@@ -67,7 +67,7 @@ bool Mac::invtype::IsInvTypePersistent(int16 inv_type) {
 	}
 }
 
-const char* Mac::invslot::GetInvPossessionsSlotName(int16 inv_slot) {
+const char* RoF2::invslot::GetInvPossessionsSlotName(int16 inv_slot) {
 	switch (inv_slot) {
 		case invslot::SLOT_INVALID:
 			return "Invalid Slot";
@@ -136,7 +136,7 @@ const char* Mac::invslot::GetInvPossessionsSlotName(int16 inv_slot) {
 	}
 }
 
-const char* Mac::invslot::GetInvCorpseSlotName(int16 inv_slot) {
+const char* RoF2::invslot::GetInvCorpseSlotName(int16 inv_slot) {
 	if (!invtype::GetInvTypeSize(invtype::typeCorpse) ||
 	    inv_slot == invslot::SLOT_INVALID)
 		return "Invalid Slot";
@@ -152,7 +152,7 @@ const char* Mac::invslot::GetInvCorpseSlotName(int16 inv_slot) {
 	return ret_str.c_str();
 }
 
-const char* Mac::invslot::GetInvSlotName(int16 inv_type, int16 inv_slot) {
+const char* RoF2::invslot::GetInvSlotName(int16 inv_type, int16 inv_slot) {
 	if (inv_type == invtype::typePossessions)
 		return invslot::GetInvPossessionsSlotName(inv_slot);
 	else if (inv_type == invtype::typeCorpse)
@@ -170,7 +170,7 @@ const char* Mac::invslot::GetInvSlotName(int16 inv_type, int16 inv_slot) {
 	return ret_str.c_str();
 }
 
-const char* Mac::invbag::GetInvBagIndexName(int16 bag_index) {
+const char* RoF2::invbag::GetInvBagIndexName(int16 bag_index) {
 	if (bag_index == invbag::SLOT_INVALID) return "Invalid Bag";
 
 	if ((size_t)bag_index >= invbag::SLOT_COUNT) return "Unknown Bag";

@@ -228,7 +228,7 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 
 		if (cle->Online() < CLE_Status_Online) cle->SetOnline();
 
-		if (eqs->ClientVersion() == EQ::versions::ClientVersion::Mac) {
+		if (eqs->ClientVersion() == EQ::versions::ClientVersion::RoF2) {
 			// EQMac PC Windows client is 2, passed from the loginserver.  This
 			// is world, it detects MacOSX Intel (4) and PPC (8) clients here.
 			if (cle->GetMacClientVersion() !=
