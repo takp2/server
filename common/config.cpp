@@ -92,8 +92,6 @@ void Config::parse_config() {
 		WorldTCPPort = 0;
 	}
 
-	LoginCount = 0;
-
 	loginlist.Clear();
 	for (std::size_t i = 0; i < _root["login_server"].size(); i++) {
 		auto loginconfig = new LoginConfig;

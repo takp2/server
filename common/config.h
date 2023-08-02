@@ -32,7 +32,6 @@ class Config {
 	std::string LoginPassword;
 	uint8 LoginType;
 	uint16 LoginPort;
-	uint32 LoginCount;
 	LinkedList<LoginConfig *> loginlist;
 	bool Locked;
 	uint16 WorldTCPPort;
