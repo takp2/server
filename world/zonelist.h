@@ -11,7 +11,7 @@
 class WorldTCPConnection;
 class ServerPacket;
 class ZoneServer;
- 
+
 class ZSList {
    public:
 	enum { MaxLockedZones = 10 };
@@ -51,8 +51,6 @@ class ZSList {
 	bool SendPacket(ServerPacket* pack);
 	bool SendPacket(uint32 zoneid, ServerPacket* pack);
 	inline uint32 GetNextID() { return NextID++; }
-	void RebootZone(const char* ip1, uint16 port, const char* ip2,
-	                uint32 skipid, uint32 zoneid = 0);
 	uint32 TriggerBootup(uint32 iZoneID);
 	void SOPZoneBootup(const char* adminname, uint32 ZoneServerID,
 	                   const char* zonename, bool iMakeStatic = false);

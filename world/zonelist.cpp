@@ -12,7 +12,6 @@
 #include "zoneserver.h"
 
 extern uint32 numzones;
-extern bool holdzones;
 extern ConsoleList console_list;
 extern UCSConnection UCSLink;
 extern EQ::Random emu_random;
@@ -84,17 +83,6 @@ void ZSList::Process() {
 			    zs->GetCAddress(), zs->GetCPort());
 			database.ZoneDisconnect(zs->GetZoneID());
 			zs->LSShutDownUpdate(zs->GetZoneID());
-			if (holdzones) {
-				Log(Logs::Detail, Logs::WorldServer,
-				    "Hold Zones mode is ON - rebooting lost zone");
-				if (!zs->IsStaticZone())
-					RebootZone(inet_ntoa(in), zs->GetCPort(), zs->GetCAddress(),
-					           zs->GetID());
-				else
-					RebootZone(inet_ntoa(in), zs->GetCPort(), zs->GetCAddress(),
-					           zs->GetID(),
-					           database.GetZoneID(zs->GetZoneName()));
-			}
 
 			iterator.RemoveCurrent();
 			numzones--;
@@ -560,49 +548,6 @@ void ZSList::SOPZoneBootup(const char* adminname, uint32 ZoneServerID,
 			}
 		}
 	}
-}
-
-void ZSList::RebootZone(const char* ip1, uint16 port, const char* ip2,
-                        uint32 skipid, uint32 zoneid) {
-	// get random zone
-	LinkedListIterator<ZoneServer*> iterator(list);
-	uint32 x = 0;
-	iterator.Reset();
-	while (iterator.MoreElements()) {
-		x++;
-		iterator.Advance();
-	}
-	if (x == 0) return;
-	auto tmp = new ZoneServer*[x];
-	uint32 y = 0;
-	iterator.Reset();
-	while (iterator.MoreElements()) {
-		if (!strcmp(iterator.GetData()->GetCAddress(), ip2) &&
-		    !iterator.GetData()->IsBootingUp() &&
-		    iterator.GetData()->GetID() != skipid) {
-			tmp[y++] = iterator.GetData();
-		}
-		iterator.Advance();
-	}
-	if (y == 0) {
-		safe_delete_array(tmp);
-		return;
-	}
-	uint32 z = emu_random.Int(0, y - 1);
-
-	auto pack =
-	    new ServerPacket(ServerOP_ZoneReboot, sizeof(ServerZoneReboot_Struct));
-	ServerZoneReboot_Struct* s = (ServerZoneReboot_Struct*)pack->pBuffer;
-	//	strcpy(s->ip1,ip1);
-	strcpy(s->ip2, ip2);
-	s->port = port;
-	s->zoneid = zoneid;
-	if (zoneid != 0)
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Rebooting static zone with the ID of: %i", zoneid);
-	tmp[z]->SendPacket(pack);
-	delete pack;
-	safe_delete_array(tmp);
 }
 
 uint16 ZSList::GetAvailableZonePort() {
