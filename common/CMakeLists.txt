@@ -73,8 +73,8 @@ SET(common_sources
 	patches/patches.cpp
 	patches/mac.cpp
 	patches/mac_limits.cpp
-	StackWalker/StackWalker.cpp	
-) 
+	StackWalker/StackWalker.cpp
+)
 
 SET(repositories
 	# Base Repositories
@@ -180,7 +180,7 @@ SET(repositories
 	repositories/base/base_account_rewards_repository.h
 	repositories/base/base_altadv_vars_repository.h
 	repositories/base/base_base_data_repository.h
-	
+
 	# Extended Repositories
 	repositories/bug_reports_repository.h
 	repositories/bugs_repository.h

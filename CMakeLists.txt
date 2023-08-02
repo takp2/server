@@ -24,6 +24,8 @@ LIST(APPEND GCC_IGNORE -Wno-unused-but-set-variable)
 LIST(APPEND GCC_IGNORE -Wno-sign-compare)
 LIST(APPEND GCC_IGNORE -Wno-cast-function-type)
 
+ADD_COMPILE_OPTIONS("$<$<CXX_COMPILER_ID:GNU>:${GCC_IGNORE}>")
+
 INCLUDE(FetchContent)
 FetchContent_Declare(
   googletest

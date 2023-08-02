@@ -23,8 +23,6 @@ ADD_EXECUTABLE(shared_memory ${shared_memory_sources} ${shared_memory_headers})
 
 INSTALL(TARGETS shared_memory RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
-TARGET_COMPILE_OPTIONS(shared_memory PRIVATE $<$<CXX_COMPILER_ID:GNU>:${GCC_IGNORE}>)
-
 TARGET_LINK_LIBRARIES(shared_memory ${SERVER_LIBS})
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
