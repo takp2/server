@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
 
-TEST(database, TestFoo) {
+TEST(ucs_database, TestFoo) {
 	EXPECT_EQ(1, 1);
 }

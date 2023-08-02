@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
 
-TEST(client_process, TestCoinTypeCoppers) {
+TEST(queryserv_client_process, TestCoinTypeCoppers) {
 	EXPECT_EQ(1, 1);
 }

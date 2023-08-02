@@ -2,6 +2,6 @@
 
 #include <gtest/gtest.h>
 
-TEST(client_process, TestCoinTypeCoppers) {
+TEST(zone_client_process, TestCoinTypeCoppers) {
 	//	EXPECT_EQ(CoinTypeCoppers(0), 0);
 }

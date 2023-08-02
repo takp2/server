@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
 
-TEST(client, TestFoo) {
+TEST(loginserver_client, TestFoo) {
 	EXPECT_EQ(1, 1);
 }
