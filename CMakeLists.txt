@@ -211,6 +211,8 @@ ELSE()
 	MESSAGE(FATAL_ERROR "One of MySQL or MariaDB is a required dependency.")
 ENDIF()
 
+ADD_DEFINITIONS(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+
 #security
 #prefer openssl to mbedtls (arbitrary)
 IF(OpenSSL_FOUND AND MBEDTLS_FOUND)

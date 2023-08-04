@@ -9,16 +9,20 @@
 #include "../common/rulesys.h"
 #include "../common/shareddb.h"
 #include "../common/strings.h"
+#include "../common/db.h"
 #include "base_data.h"
 #include "items.h"
 #include "loot.h"
 #include "npc_faction.h"
 #include "skill_caps.h"
 #include "spells.h"
+#include <chrono>
 
 EQEmuLogSys LogSys;
 
 int main(int argc, char **argv) {
+	auto start = std::chrono::high_resolution_clock::now();
+
 	RegisterExecutablePlatform(ExePlatformSharedMemory);
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
@@ -29,41 +33,42 @@ int main(int argc, char **argv) {
 		LogError("{}", load_result);
 		return 1;
 	}
-
 	auto Config = Config::get();
 
 	SharedDatabase database;
-	Log(Logs::General, Logs::Status, "Connecting to database...");
 	if (!database.Connect(Config->DatabaseHost.c_str(),
 	                      Config->DatabaseUsername.c_str(),
 	                      Config->DatabasePassword.c_str(),
 	                      Config->DatabaseDB.c_str(), Config->DatabasePort)) {
-		LogError(
-		    "Unable to connect to the database, cannot continue without a "
-		    "database connection");
+		LogError("Failed database connection");
 		return 1;
 	}
 
-	LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
+	if (!DB::Open(Config->DatabaseHost.c_str(),
+	              Config->DatabaseUsername.c_str(),
+	              Config->DatabasePassword.c_str(),
+	              Config->DatabaseDB.c_str(), Config->DatabasePort)) {
+		LogError("Failed database connection");
+		return 1;
+	}
 
-	database.LoadVariables();
-
-	/* If we're running shared memory and hotfix has no custom name, we probably
-	 * want to start from scratch... */
+	// LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
+	/*database.LoadVariables();
 	std::string db_hotfix_name;
 	if (database.GetVariable("hotfix_name", db_hotfix_name)) {
-		if (!db_hotfix_name.empty() &&
-		    strcasecmp("hotfix_", db_hotfix_name.c_str()) == 0) {
-			Log(Logs::General, Logs::Status,
-			    "Current hotfix in variables is the default %s, clearing out "
-			    "variable",
-			    db_hotfix_name.c_str());
-			std::string query = StringFormat(
-			    "UPDATE `variables` SET `value`='' WHERE "
-			    "(`varname`='hotfix_name')");
-			database.QueryDatabase(query);
-		}
+	    if (!db_hotfix_name.empty() &&
+	        strcasecmp("hotfix_", db_hotfix_name.c_str()) == 0) {
+	        Log(Logs::General, Logs::Status,
+	            "Current hotfix in variables is the default %s, clearing out "
+	            "variable",
+	            db_hotfix_name.c_str());
+	        std::string query = StringFormat(
+	            "UPDATE `variables` SET `value`='' WHERE "
+	            "(`varname`='hotfix_name')");
+	        database.QueryDatabase(query);
+	    }
 	}
+	*/
 
 	std::string hotfix_name = "";
 	bool load_all = true;
@@ -135,65 +140,60 @@ int main(int argc, char **argv) {
 	}
 
 	if (load_all || load_items) {
-		Log(Logs::General, Logs::Status, "Loading items...");
 		try {
 			LoadItems(&database, hotfix_name);
 		} catch (std::exception &ex) {
-			LogError("{}", ex.what());
+			LogError("Failed to load items: {}", ex.what());
 			return 1;
 		}
 	}
 
 	if (load_all || load_factions) {
-		Log(Logs::General, Logs::Status, "Loading factions...");
 		try {
 			LoadFactions(&database, hotfix_name);
 		} catch (std::exception &ex) {
-			LogError("{}", ex.what());
+			LogError("Failed to load factions: {}", ex.what());
 			return 1;
 		}
 	}
 
 	if (load_all || load_loot) {
-		Log(Logs::General, Logs::Status, "Loading loot...");
 		try {
 			LoadLoot(&database, hotfix_name);
 		} catch (std::exception &ex) {
-			LogError("{}", ex.what());
+			LogError("Failed to load loot: {}", ex.what());
 			return 1;
 		}
 	}
 
 	if (load_all || load_skill_caps) {
-		Log(Logs::General, Logs::Status, "Loading skill caps...");
 		try {
 			LoadSkillCaps(&database, hotfix_name);
 		} catch (std::exception &ex) {
-			LogError("{}", ex.what());
+			LogError("Failed to load skill caps: {}", ex.what());
 			return 1;
 		}
 	}
 
 	if (load_all || load_spells) {
-		Log(Logs::General, Logs::Status, "Loading spells...");
 		try {
 			LoadSpells(&database, hotfix_name);
 		} catch (std::exception &ex) {
-			LogError("{}", ex.what());
+			LogError("Failed to load spells: {}", ex.what());
 			return 1;
 		}
 	}
 
 	if (load_all || load_bd) {
-		Log(Logs::General, Logs::Status, "Loading base data...");
 		try {
 			LoadBaseData(&database, hotfix_name);
 		} catch (std::exception &ex) {
-			LogError("{}", ex.what());
+			LogError("Failed to load base data: {}", ex.what());
 			return 1;
 		}
 	}
 
+	LogInfo("Finished in {}s", std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count());
 	LogSys.CloseFileLogs();
 	return 0;
 }

@@ -193,25 +193,14 @@ std::string EQ::SayLinkEngine::GenerateQuestSaylink(std::string saylink_text,
                                                     std::string link_name) {
 	uint32 saylink_id = 0;
 
-	/**
-	 * Query for an existing phrase and id in the saylink table
-	 */
-	std::string query =
-	    StringFormat("SELECT `id` FROM `saylink` WHERE `phrase` = '%s' LIMIT 1",
-	                 Strings::Escape(saylink_text).c_str());
-
-	auto results = database.QueryDatabase(query);
-
+	auto results = DB::Query(fmt::format("SELECT `id` FROM `saylink` WHERE `phrase` = '{}' LIMIT 1", saylink_text));
 	if (results.Success()) {
 		if (results.RowCount() >= 1) {
 			for (auto row = results.begin(); row != results.end(); ++row)
 				saylink_id = static_cast<uint32>(atoi(row[0]));
 		} else {
-			std::string insert_query =
-			    StringFormat("INSERT INTO `saylink` (`phrase`) VALUES ('%s')",
-			                 Strings::Escape(saylink_text).c_str());
-
-			results = database.QueryDatabase(insert_query);
+			results = DB::Query(StringFormat("INSERT INTO `saylink` (`phrase`) VALUES ('%s')",
+			                                 Strings::Escape(saylink_text).c_str()));
 			if (!results.Success()) {
 				LogError("Error in saylink phrase queries {} ",
 				         results.ErrorMessage().c_str());

@@ -1165,7 +1165,7 @@ bool ZoneServer::Process() {
 					break;
 				}
 				ServerMotd_Struct* smotd = (ServerMotd_Struct*)pack->pBuffer;
-				database.SetVariable("MOTD", smotd->motd);
+				// database.SetVariable("MOTD", smotd->motd);
 				zoneserver_list.SendPacket(pack);
 				break;
 			}

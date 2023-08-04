@@ -151,14 +151,14 @@ int main(int argc, char** argv) {
 
 	LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
 
-	database.LoadVariables();
+	// database.LoadVariables();
 
 	std::string hotfix_name;
-	if (database.GetVariable("hotfix_name", hotfix_name)) {
-		if (!hotfix_name.empty()) {
-			LogInfo("Current hotfix in use: [{0}]", hotfix_name.c_str());
-		}
-	}
+	/*if (database.GetVariable("hotfix_name", hotfix_name)) {
+	    if (!hotfix_name.empty()) {
+	        LogInfo("Current hotfix in use: [{0}]", hotfix_name.c_str());
+	    }
+	}*/
 
 	database.LoadZoneNames();
 	database.ClearGroup();
@@ -166,25 +166,27 @@ int main(int argc, char** argv) {
 	database.ClearRaidDetails();
 	if (!database.LoadItems(hotfix_name)) {
 		LogError("Failed to load item data");
+		std::exit(1);
 	}
 
 	if (!database.LoadSkillCaps(std::string(hotfix_name))) {
 		LogError("Failed to load skill caps");
+		std::exit(1);
 	}
 
 	guild_mgr.LoadGuilds();
 	// rules:
 	{
 		std::string tmp;
-		if (database.GetVariable("RuleSet", tmp)) {
-			if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
-				LogError("Failed to load ruleset [{0}], falling back to default values", tmp.c_str());
-			}
-		} else {
-			if (!RuleManager::Instance()->LoadRules(&database, "default")) {
-				LogInfo("No rule set configured, using default rules");
-			}
+		/*if (database.GetVariable("RuleSet", tmp)) {
+		    if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
+		        LogError("Failed to load ruleset {0}, falling back to default values", tmp.c_str());
+		    }
+		} else {*/
+		if (!RuleManager::Instance()->LoadRules(&database, "default")) {
+			LogInfo("No rule set configured, using default rules");
 		}
+		//}
 	}
 	if (RuleB(World, ClearTempMerchantlist)) {
 		database.ClearMerchantTemp();

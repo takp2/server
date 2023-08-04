@@ -7,6 +7,9 @@ SET(common_sources
 	crash.cpp
 	crc16.cpp
 	crc32.cpp
+	db.cpp
+	db_result.cpp
+	db_row.cpp
 	database.cpp
 	dbcore.cpp
 	emu_constants.cpp
@@ -78,7 +81,6 @@ SET(common_sources
 
 SET(repositories
 	# Base Repositories
-	repositories/base/base_blocked_spells_repository.h
 	repositories/base/base_bug_reports_repository.h
 	repositories/base/base_bugs_repository.h
 	repositories/base/base_char_create_combinations_repository.h
@@ -124,7 +126,6 @@ SET(repositories
 	repositories/base/base_item_tick_repository.h
 	repositories/base/base_items_repository.h
 	repositories/base/base_level_exp_mods_repository.h
-	repositories/base/base_logsys_categories_repository.h
 	repositories/base/base_lootdrop_entries_repository.h
 	repositories/base/base_lootdrop_repository.h
 	repositories/base/base_loottable_entries_repository.h
@@ -227,7 +228,6 @@ SET(repositories
 	repositories/item_tick_repository.h
 	repositories/items_repository.h
 	repositories/level_exp_mods_repository.h
-	repositories/logsys_categories_repository.h
 	repositories/lootdrop_entries_repository.h
 	repositories/lootdrop_repository.h
 	repositories/loottable_entries_repository.h
@@ -283,7 +283,6 @@ SET(repositories
 	repositories/account_rewards_repository.h
 	repositories/altadv_vars_repository.h
 	repositories/base_data_repository.h
-	repositories/blocked_spells_repository.h
 	)
 
 SET(common_headers
@@ -301,6 +300,9 @@ SET(common_headers
 	data_verification.h
 	database.h
 	database_schema.h
+	db.h
+	db_result.h
+	db_row.h
 	dbcore.h
 	deity.h
 	emu_constants.h

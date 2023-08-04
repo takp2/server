@@ -1254,32 +1254,32 @@ bool Client::Death(Mob* killerMob, int32 damage, uint16 spell, EQ::skills::Skill
 			auto new_corpse = new Corpse(this, exploss, killedby);
 
 			std::string tmp;
-			database.GetVariable("ServerType", tmp);
+			/* database.GetVariable("ServerType", tmp);
 			if (tmp[0] == '1' && tmp[1] == '\0' && killerMob != nullptr && killerMob->IsClient()) {
-				database.GetVariable("PvPreward", tmp);
-				int reward = atoi(tmp.c_str());
-				if (reward == 3) {
-					database.GetVariable("PvPitem", tmp);
-					int pvpitem = atoi(tmp.c_str());
-					if (pvpitem > 0 && pvpitem < 200000)
-						new_corpse->SetPlayerKillItemID(pvpitem);
-				} else if (reward == 2)
-					new_corpse->SetPlayerKillItemID(-1);
-				else if (reward == 1)
-					new_corpse->SetPlayerKillItemID(1);
-				else
-					new_corpse->SetPlayerKillItemID(0);
-				if (killerMob->CastToClient()->isgrouped) {
-					Group* group = entity_list.GetGroupByClient(killerMob->CastToClient());
-					if (group != 0) {
-						for (int i = 0; i < 6; i++) {
-							if (group->members[i] != nullptr) {
-								new_corpse->AllowPlayerLoot(group->members[i], i);
-							}
-						}
-					}
-				}
-			}
+			    database.GetVariable("PvPreward", tmp);
+			    int reward = atoi(tmp.c_str());
+			    if (reward == 3) {
+			        database.GetVariable("PvPitem", tmp);
+			        int pvpitem = atoi(tmp.c_str());
+			        if (pvpitem > 0 && pvpitem < 200000)
+			            new_corpse->SetPlayerKillItemID(pvpitem);
+			    } else if (reward == 2)
+			        new_corpse->SetPlayerKillItemID(-1);
+			    else if (reward == 1)
+			        new_corpse->SetPlayerKillItemID(1);
+			    else
+			        new_corpse->SetPlayerKillItemID(0);
+			    if (killerMob->CastToClient()->isgrouped) {
+			        Group* group = entity_list.GetGroupByClient(killerMob->CastToClient());
+			        if (group != 0) {
+			            for (int i = 0; i < 6; i++) {
+			                if (group->members[i] != nullptr) {
+			                    new_corpse->AllowPlayerLoot(group->members[i], i);
+			                }
+			            }
+			        }
+			    }
+			} */
 
 			entity_list.AddCorpse(new_corpse, GetID());
 			SetID(0);

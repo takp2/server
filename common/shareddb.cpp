@@ -456,18 +456,6 @@ void SharedDatabase::LoadItems(void* data, uint32 size, int32 items,
 	bool disable_no_drop = RuleB(Items, DisableNoDrop);
 	bool disable_no_rent = RuleB(Items, DisableNoRent);
 
-	if (GetVariable("disablenodrop", variable_buffer)) {
-		if (variable_buffer == "1") {
-			disable_no_drop = true;
-		}
-	}
-
-	if (GetVariable("disablenorent", variable_buffer)) {
-		if (variable_buffer == "1") {
-			disable_no_rent = true;
-		}
-	}
-
 	EQ::ItemData item;
 
 	const std::string query =

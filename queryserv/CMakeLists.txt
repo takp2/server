@@ -9,7 +9,6 @@ SET(qserv_sources
 )
 
 SET(qserv_headers
-	database.h
 	queryservconfig.h
 	worldserver.h
 )

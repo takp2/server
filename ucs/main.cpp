@@ -76,18 +76,10 @@ int main() {
 
 	char tmp[64];
 
-	if (database.GetVariable("RuleSet", tmp, sizeof(tmp) - 1)) {
-		LogInfo("Loading rule set '[{0}]'", tmp);
-		if (!RuleManager::Instance()->LoadRules(&database, tmp)) {
-			LogInfo("Failed to load ruleset '[{0}]', falling back to defaults.",
-			        tmp);
-		}
+	if (!RuleManager::Instance()->LoadRules(&database, "default")) {
+		LogInfo("No rule set configured, using default rules");
 	} else {
-		if (!RuleManager::Instance()->LoadRules(&database, "default")) {
-			LogInfo("No rule set configured, using default rules");
-		} else {
-			LogInfo("Loaded default rule set 'default'", tmp);
-		}
+		LogInfo("Loaded default rule set 'default'", tmp);
 	}
 
 	g_Clientlist = new Clientlist(Config->ChatPort);

@@ -90,31 +90,31 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 	zone->pathing = IPathfinder::Load(zone->map_name);
 
 	std::string tmp;
-	if (database.GetVariable("loglevel", tmp)) {
-		int log_levels[4];
-		int tmp_i = atoi(tmp.c_str());
-		if (tmp_i > 9) {  // Server is using the new code
-			for (int i = 0; i < 4; i++) {
-				if (((int)tmp[i] >= 48) && ((int)tmp[i] <= 57))
-					log_levels[i] = (int)tmp[i] - 48;  // get the value to convert it to an int from the ascii value
-				else
-					log_levels[i] = 0;  // set to zero on a bogue char
-			}
-			zone->loglevelvar = log_levels[0];
-			LogInfo("General logging level: {} ", zone->loglevelvar);
-			zone->merchantvar = log_levels[1];
-			LogInfo("Merchant logging level: {} ", zone->merchantvar);
-			zone->tradevar = log_levels[2];
-			LogInfo("Trade logging level: {} ", zone->tradevar);
-			zone->lootvar = log_levels[3];
-			LogInfo("Loot logging level: {} ", zone->lootvar);
-		} else {
-			zone->loglevelvar = uint8(tmp_i);  // continue supporting only command logging (for now)
-			zone->merchantvar = 0;
-			zone->tradevar = 0;
-			zone->lootvar = 0;
-		}
-	}
+	/*if (database.GetVariable("loglevel", tmp)) {
+	    int log_levels[4];
+	    int tmp_i = atoi(tmp.c_str());
+	    if (tmp_i > 9) {  // Server is using the new code
+	        for (int i = 0; i < 4; i++) {
+	            if (((int)tmp[i] >= 48) && ((int)tmp[i] <= 57))
+	                log_levels[i] = (int)tmp[i] - 48;  // get the value to convert it to an int from the ascii value
+	            else
+	                log_levels[i] = 0;  // set to zero on a bogue char
+	        }
+	        zone->loglevelvar = log_levels[0];
+	        LogInfo("General logging level: {} ", zone->loglevelvar);
+	        zone->merchantvar = log_levels[1];
+	        LogInfo("Merchant logging level: {} ", zone->merchantvar);
+	        zone->tradevar = log_levels[2];
+	        LogInfo("Trade logging level: {} ", zone->tradevar);
+	        zone->lootvar = log_levels[3];
+	        LogInfo("Loot logging level: {} ", zone->lootvar);
+	    } else {
+	        zone->loglevelvar = uint8(tmp_i);  // continue supporting only command logging (for now)
+	        zone->merchantvar = 0;
+	        zone->tradevar = 0;
+	        zone->lootvar = 0;
+	    }
+	}*/
 
 	is_zone_loaded = true;
 

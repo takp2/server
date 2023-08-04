@@ -17,13 +17,13 @@ ucs:
 database:
   db: takp
   host: 127.0.0.1
-  port: 3306
+  port: 3307
   username: takp
   password: takppass
 query_serv:
   db: takp
   host: 127.0.0.1
-  port: 3306
+  port: 3307
   username: takp
   password: takppass
 zone:

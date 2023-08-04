@@ -651,18 +651,19 @@ bool Client::HandleEnterWorldPacket(const EQApplicationPacket *app) {
 	if (!pZoning) {
 		auto outapp = new EQApplicationPacket(OP_MOTD);
 		std::string tmp;
-		if (database.GetVariable("MOTD", tmp)) {
-			outapp->size = tmp.length() + 1;
-			outapp->pBuffer = new uchar[outapp->size];
-			memset(outapp->pBuffer, 0, outapp->size);
-			strcpy((char *)outapp->pBuffer, tmp.c_str());
+		/*if (database.GetVariable("MOTD", tmp)) {
+		    outapp->size = tmp.length() + 1;
+		    outapp->pBuffer = new uchar[outapp->size];
+		    memset(outapp->pBuffer, 0, outapp->size);
+		    strcpy((char *)outapp->pBuffer, tmp.c_str());
 
 		} else {
-			// Null Message of the Day. :)
-			outapp->size = 1;
-			outapp->pBuffer = new uchar[outapp->size];
-			outapp->pBuffer[0] = 0;
-		}
+		    */
+		// Null Message of the Day. :)
+		outapp->size = 1;
+		outapp->pBuffer = new uchar[outapp->size];
+		outapp->pBuffer[0] = 0;
+		//}
 		QueuePacket(outapp);
 		safe_delete(outapp);
 	}
@@ -1200,23 +1201,23 @@ bool Client::OPCharCreate(char *name, CharCreate_Struct *cc) {
 
 	// if there's a startzone variable put them in there
 	std::string startzone;
-	if (database.GetVariable("startzone", startzone)) {
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Found 'startzone' variable setting: %s", startzone.c_str());
-		pp.zone_id = database.GetZoneID(startzone.c_str());
-		if (pp.zone_id)
-			database.GetSafePoints(pp.zone_id, &pp.x, &pp.y, &pp.z);
-		else
-			Log(Logs::Detail, Logs::WorldServer,
-			    "Error getting zone id for '%s'", startzone.c_str());
+	/*if (database.GetVariable("startzone", startzone)) {
+	    Log(Logs::Detail, Logs::WorldServer,
+	        "Found 'startzone' variable setting: %s", startzone.c_str());
+	    pp.zone_id = database.GetZoneID(startzone.c_str());
+	    if (pp.zone_id)
+	        database.GetSafePoints(pp.zone_id, &pp.x, &pp.y, &pp.z);
+	    else
+	        Log(Logs::Detail, Logs::WorldServer,
+	            "Error getting zone id for '%s'", startzone.c_str());
 	} else  // otherwise use normal starting zone logic
-	{
-		bool ValidStartZone = false;
+	{*/
+	bool ValidStartZone = false;
 
-		ValidStartZone = database.GetStartZone(&pp, cc, mule);
+	ValidStartZone = database.GetStartZone(&pp, cc, mule);
 
-		if (!ValidStartZone) return false;
-	}
+	if (!ValidStartZone) return false;
+	//}
 
 	/* just in case  */
 	if (!pp.zone_id) {

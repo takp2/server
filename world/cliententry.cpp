@@ -345,10 +345,11 @@ bool ClientListEntry::CheckAuth(uint32 iLSID, const char* iKey) {
 			padmin = tmpStatus;
 		}
 		std::string lsworldadmin;
-		if (database.GetVariable("honorlsworldadmin", lsworldadmin))
-			if (atoi(lsworldadmin.c_str()) == 1 && pworldadmin != 0 &&
-			    (padmin < pworldadmin || padmin == AccountStatus::Player))
-				padmin = pworldadmin;
+		/*if (database.GetVariable("honorlsworldadmin", lsworldadmin))
+		    if (atoi(lsworldadmin.c_str()) == 1 && pworldadmin != 0 &&
+		        (padmin < pworldadmin || padmin == AccountStatus::Player))
+		        padmin = pworldadmin;
+		        */
 		return true;
 	}
 	return false;

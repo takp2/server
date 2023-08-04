@@ -5,7 +5,7 @@ MARIADB_FOLDER := mariadb-${MARIADB_VERSION}-linux-systemd-x86_64
 OS := $(shell uname -s)
 
 .PHONY: prep
-prep: set-version
+prep: update-version
 	@echo "Preparing build/bin for usage..."
 	@-cd build/bin && unlink assets
 	@cd build/bin && ln -s ../../base/assets assets
@@ -97,8 +97,12 @@ inject-mariadb:
 	-mysql -u vscode -S build/bin/db/mysql/mysqld.sock -e "GRANT ALL PRIVILEGES ON *.* TO 'takp'@'127.0.0.1';"
 	-unzip -p base/db.sql.zip | mysql -u vscode -S build/bin/db/mysql/mysqld.sock --database takp
 
+.PHONY: update-version
+update-version:
+	sed -i 's/#define VERSION ".*/#define VERSION "$(VERSION)"/g' common/version.h
+
 # CICD triggers this
 .PHONY: set-version
-set-version:
+set-version: update-version
 	sed -i 's/#define VERSION ".*/#define VERSION "$(VERSION)"/g' common/version.h
 	@echo "VERSION=${VERSION}" >> $$GITHUB_ENV

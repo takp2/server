@@ -1,8 +1,8 @@
 #include "eqemu_logsys.h"
 #include "platform.h"
-#include "repositories/logsys_categories_repository.h"
 #include "strings.h"
 #include "database.h"
+#include "db.h"
 #include "misc.h"
 
 #include <iostream>
@@ -428,69 +428,57 @@ void EQEmuLogSys::EnableConsoleLogging() {
 }
 
 EQEmuLogSys* EQEmuLogSys::LoadLogDatabaseSettings() {
-	auto categories = LogsysCategoriesRepository::GetWhere(
-	    *m_database, "TRUE ORDER BY log_category_id");
+	std::vector<int>
+	    db_categories{};
 
-	// keep track of categories
-	std::vector<int> db_categories{};
-	db_categories.reserve(categories.size());
+	auto results = DB::Query("SELECT log_category_id, log_to_console, log_to_file, log_to_gmsay FROM logsys_categories ORDER BY log_category_id");
+	if (!results.Success()) {
+		LogError("Failed to load logsys_categories: {}", results.ErrorMessage());
+		return nullptr;
+	}
+	db_categories.reserve(results.RowCount());
 
-	// loop through database categories
-	for (auto& c : categories) {
-		if (c.log_category_id <= Logs::None ||
-		    c.log_category_id >= Logs::MaxCategoryID) {
+	for (auto row = results.begin(); row != results.end(); ++row) {
+		auto log_category_id = atoi(row[0]);
+		auto log_to_console = atoi(row[1]);
+		auto log_to_file = atoi(row[2]);
+		auto log_to_gmsay = atoi(row[3]);
+
+		if (log_category_id <= Logs::None ||
+		    log_category_id >= Logs::MaxCategoryID) {
 			continue;
 		}
 
-		log_settings[c.log_category_id].log_to_console =
-		    static_cast<uint8>(c.log_to_console);
-		log_settings[c.log_category_id].log_to_file =
-		    static_cast<uint8>(c.log_to_file);
-		log_settings[c.log_category_id].log_to_gmsay =
-		    static_cast<uint8>(c.log_to_gmsay);
+		bool is_category_enabled = false;
 
-		// Determine if any output method is enabled for the category
-		// and set it to 1 so it can used to check if category is enabled
-		const bool log_to_console =
-		    log_settings[c.log_category_id].log_to_console > 0;
-		const bool log_to_file =
-		    log_settings[c.log_category_id].log_to_file > 0;
-		const bool log_to_gmsay =
-		    log_settings[c.log_category_id].log_to_gmsay > 0;
-		const bool is_category_enabled =
-		    log_to_console || log_to_file || log_to_gmsay;
+		log_settings[log_category_id].log_to_console =
+		    static_cast<uint8>(log_to_console);
+		if (log_to_console > 0) {
+			is_category_enabled = true;
+		}
+		log_settings[log_category_id].log_to_file =
+		    static_cast<uint8>(log_to_file);
+		if (log_to_file > 0) {
+			is_category_enabled = true;
+		}
+		log_settings[log_category_id].log_to_gmsay =
+		    static_cast<uint8>(log_to_gmsay);
+		if (log_to_gmsay > 0) {
+			is_category_enabled = true;
+		}
 
 		if (is_category_enabled) {
-			log_settings[c.log_category_id].is_category_enabled = 1;
+			log_settings[log_category_id].is_category_enabled = 1;
 		}
 
 		// This determines whether or not the process needs to actually file log
 		// anything. If we go through this whole loop and nothing is set to any
 		// debug level, there is no point to create a file or keep anything open
-		if (log_settings[c.log_category_id].log_to_file > 0) {
+		if (log_settings[log_category_id].log_to_file > 0) {
 			LogSys.file_logs_enabled = true;
 		}
 
-		db_categories.emplace_back(c.log_category_id);
-	}
-
-	// Auto inject categories that don't exist in the database...
-	for (int i = Logs::AA; i != Logs::MaxCategoryID; i++) {
-		if (std::find(db_categories.begin(), db_categories.end(), i) ==
-		    db_categories.end()) {
-			LogInfo("Automatically adding new log category [{0}]",
-			        Logs::LogCategoryName[i]);
-
-			auto new_category = LogsysCategoriesRepository::NewEntity();
-			new_category.log_category_id = i;
-			new_category.log_category_description =
-			    Strings::Escape(Logs::LogCategoryName[i]);
-			new_category.log_to_console = log_settings[i].log_to_console;
-			new_category.log_to_gmsay = log_settings[i].log_to_gmsay;
-			new_category.log_to_file = log_settings[i].log_to_file;
-
-			LogsysCategoriesRepository::InsertOne(*m_database, new_category);
-		}
+		db_categories.emplace_back(log_category_id);
 	}
 
 	return this;

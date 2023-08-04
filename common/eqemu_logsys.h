@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <functional>
 #include <algorithm>
+#include "db.h"
 
 #ifdef _WIN32
 #ifdef utf16_to_utf8

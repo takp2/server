@@ -10,6 +10,7 @@
 #include "dbcore.h"
 #include "linked_list.h"
 #include "eq_packet_structs.h"
+#include "db.h"
 
 #include <cmath>
 #include <string>
@@ -192,13 +193,6 @@ class Database : public DBcore {
 	uint32 GetRaidID(const char* name);
 	bool GetRaidGroupID(const char* name, uint32* raidid, uint32* groupid);
 	const char* GetRaidLeaderName(uint32 rid);
-
-	/*
-	 * Database Variables
-	 */
-	bool GetVariable(std::string varname, std::string& varvalue);
-	bool SetVariable(const std::string varname, const std::string& varvalue);
-	bool LoadVariables();
 
 	/*
 	 * General Queries

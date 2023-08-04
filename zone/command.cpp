@@ -178,7 +178,6 @@ int command_init(void) {
 
 	    command_add("gassign", "[id] - Assign targetted NPC to predefined wandering grid id.", AccountStatus::GMImpossible, command_gassign) ||
 	    command_add("gender", "[0/1/2] - Change your or your target's gender to male/female/neuter.", AccountStatus::QuestMaster, command_gender) ||
-	    command_add("getvariable", "[varname] - Get the value of a variable from the database.", AccountStatus::GMCoder, command_getvariable) ||
 	    command_add("ginfo", "- get group info on target.", AccountStatus::QuestTroupe, command_ginfo) ||
 	    command_add("giveitem", "[itemid] [charges] - Summon an item onto your target's cursor. Charges are optional.", AccountStatus::GMLeadAdmin, command_giveitem) ||
 	    command_add("givemoney", "[pp] [gp] [sp] [cp] - Gives specified amount of money to the target player.", AccountStatus::GMLeadAdmin, command_givemoney) ||
@@ -962,14 +961,6 @@ void command_connectworldserver(Client *c, const Seperator *sep) {
 		c->Message(CC_Default, "Attempting to connect to world server...");
 		worldserver.AsyncConnect();
 	}
-}
-
-void command_getvariable(Client *c, const Seperator *sep) {
-	std::string tmp;
-	if (database.GetVariable(sep->argplus[1], tmp))
-		c->Message(CC_Default, "%s = %s", sep->argplus[1], tmp.c_str());
-	else
-		c->Message(CC_Default, "GetVariable(%s) returned false", sep->argplus[1]);
 }
 
 void command_chat(Client *c, const Seperator *sep) {
@@ -7606,15 +7597,15 @@ void command_rules(Client *c, const Seperator *sep) {
 			c->Message(CC_Red, "Unknown rule set '%s'", sep->arg[2]);
 			return;
 		}
-		if (!database.SetVariable("RuleSet", sep->arg[2])) {
-			c->Message(CC_Red, "Failed to update variables table to change selected rule set");
-			return;
-		}
+		c->Message(CC_Default, "Ruleset changing is disabled.");
+		//if (!database.SetVariable("RuleSet", sep->arg[2])) {
+		//	c->Message(CC_Red, "Failed to update variables table to change selected rule set");
+		//	return;
+		//}
 
-		// TODO: we likely want to reload this ruleset everywhere...
-		RuleManager::Instance()->LoadRules(&database, sep->arg[2]);
+		//RuleManager::Instance()->LoadRules(&database, sep->arg[2]);
 
-		c->Message(CC_Default, "The selected ruleset has been changed to (%s (%d)) and reloaded locally", sep->arg[2], rsid);
+		//c->Message(CC_Default, "The selected ruleset has been changed to (%s (%d)) and reloaded locally", sep->arg[2], rsid);
 	} else if (!strcasecmp(sep->arg[1], "load")) {
 		// make sure this is a valid rule set..
 		int rsid = RuleManager::Instance()->GetRulesetID(&database, sep->arg[2]);
@@ -9184,88 +9175,96 @@ void command_undeletechar(Client *c, const Seperator *sep) {
 }
 
 void command_hotfix(Client *c, const Seperator *sep) {
+	c->Message(CC_Default, "Hotfix is disabled.");
+	/*
 	std::string hotfix;
 	database.GetVariable("hotfix_name", hotfix);
 
 	std::string hotfix_name;
 	if (!strcasecmp(hotfix.c_str(), "hotfix_")) {
-		hotfix_name = "";
+	    hotfix_name = "";
 	} else {
-		hotfix_name = "hotfix_";
+	    hotfix_name = "hotfix_";
 	}
 
 	c->Message(CC_Default, "Creating and applying hotfix");
 	std::thread t1([c, hotfix_name]() {
-		int sysRet = -1;
+	    int sysRet = -1;
 #ifdef WIN32
-		if (hotfix_name.length() > 0) {
-			sysRet = system(StringFormat("shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
-		} else {
-			sysRet = system(StringFormat("shared_memory").c_str());
-		}
+	    if (hotfix_name.length() > 0) {
+	        sysRet = system(StringFormat("shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
+	    } else {
+	        sysRet = system(StringFormat("shared_memory").c_str());
+	    }
 #else
-		if (hotfix_name.length() > 0) {
-			sysRet = system(StringFormat("./shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
-		} else {
-			sysRet = system(StringFormat("./shared_memory").c_str());
-		}
+	    if (hotfix_name.length() > 0) {
+	        sysRet = system(StringFormat("./shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
+	    } else {
+	        sysRet = system(StringFormat("./shared_memory").c_str());
+	    }
 #endif
-		if (sysRet == -1) {
-			c->Message(CC_Default, "Hotfix failed.");
-			return;
-		}
-		database.SetVariable("hotfix_name", hotfix_name);
+	    if (sysRet == -1) {
+	        c->Message(CC_Default, "Hotfix failed.");
+	        return;
+	    }
+	    database.SetVariable("hotfix_name", hotfix_name);
 
-		ServerPacket pack(ServerOP_ChangeSharedMem, hotfix_name.length() + 1);
-		if (hotfix_name.length() > 0) {
-			strcpy((char *)pack.pBuffer, hotfix_name.c_str());
-		}
-		worldserver.SendPacket(&pack);
+	    ServerPacket pack(ServerOP_ChangeSharedMem, hotfix_name.length() + 1);
+	    if (hotfix_name.length() > 0) {
+	        strcpy((char *)pack.pBuffer, hotfix_name.c_str());
+	    }
+	    worldserver.SendPacket(&pack);
 
-		c->Message(CC_Default, "Hotfix applied");
+	    c->Message(CC_Default, "Hotfix applied");
 	});
 
 	t1.detach();
+	*/
 }
 
 void command_load_shared_memory(Client *c, const Seperator *sep) {
+	c->Message(CC_Default, "Hotfix is disabled.");
+	/*
 	std::string hotfix;
 	database.GetVariable("hotfix_name", hotfix);
 
 	std::string hotfix_name;
 	if (strcasecmp(hotfix.c_str(), sep->arg[1]) == 0) {
-		c->Message(CC_Default, "Cannot attempt to load this shared memory segment as it is already loaded.");
-		return;
+	    c->Message(CC_Default, "Cannot attempt to load this shared memory segment as it is already loaded.");
+	    return;
 	}
 
 	hotfix_name = sep->arg[1];
 	c->Message(CC_Default, "Loading shared memory segment %s", hotfix_name.c_str());
 	std::thread t1([c, hotfix_name]() {
-		int sysRet = -1;
+	    int sysRet = -1;
 #ifdef WIN32
-		if (hotfix_name.length() > 0) {
-			sysRet = system(StringFormat("shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
-		} else {
-			sysRet = system(StringFormat("shared_memory").c_str());
-		}
+	    if (hotfix_name.length() > 0) {
+	        sysRet = system(StringFormat("shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
+	    } else {
+	        sysRet = system(StringFormat("shared_memory").c_str());
+	    }
 #else
-		if (hotfix_name.length() > 0) {
-			sysRet = system(StringFormat("./shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
-		} else {
-			sysRet = system(StringFormat("./shared_memory").c_str());
-		}
+	    if (hotfix_name.length() > 0) {
+	        sysRet = system(StringFormat("./shared_memory -hotfix=%s", hotfix_name.c_str()).c_str());
+	    } else {
+	        sysRet = system(StringFormat("./shared_memory").c_str());
+	    }
 #endif
-		if (sysRet == -1) {
-			c->Message(CC_Default, "Shared memory segment failed loading.");
-			return;
-		}
-		c->Message(CC_Default, "Shared memory segment finished loading.");
+	    if (sysRet == -1) {
+	        c->Message(CC_Default, "Shared memory segment failed loading.");
+	        return;
+	    }
+	    c->Message(CC_Default, "Shared memory segment finished loading.");
 	});
 
 	t1.detach();
+	*/
 }
 
 void command_apply_shared_memory(Client *c, const Seperator *sep) {
+	c->Message(CC_Default, "Hotfix is disabled.");
+	/*
 	std::string hotfix;
 	database.GetVariable("hotfix_name", hotfix);
 	std::string hotfix_name = sep->arg[1];
@@ -9275,9 +9274,10 @@ void command_apply_shared_memory(Client *c, const Seperator *sep) {
 
 	ServerPacket pack(ServerOP_ChangeSharedMem, hotfix_name.length() + 1);
 	if (hotfix_name.length() > 0) {
-		strcpy((char *)pack.pBuffer, hotfix_name.c_str());
+	    strcpy((char *)pack.pBuffer, hotfix_name.c_str());
 	}
 	worldserver.SendPacket(&pack);
+	*/
 }
 
 void command_keyring(Client *c, const Seperator *sep) {

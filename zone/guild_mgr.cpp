@@ -420,7 +420,7 @@ bool GuildApproval::ProcessApproval() {
 
 GuildApproval::GuildApproval(const char *guildname, Client *owner, uint32 id) {
 	std::string founders;
-	database.GetVariable("GuildCreation", founders);
+	// database.GetVariable("GuildCreation", founders);
 	uint8 tmp = atoi(founders.c_str());
 	deletion_timer = new Timer(1800000);
 	strcpy(guild, guildname);
@@ -438,7 +438,7 @@ GuildApproval::~GuildApproval() {
 
 bool GuildApproval::AddMemberApproval(Client *addition) {
 	std::string founders;
-	database.GetVariable("GuildCreation", founders);
+	// database.GetVariable("GuildCreation", founders);
 	uint8 tmp = atoi(founders.c_str());
 	for (int i = 0; i < tmp; i++) {
 		if (members[i] && members[i] == addition)
@@ -464,7 +464,7 @@ bool GuildApproval::AddMemberApproval(Client *addition) {
 
 void GuildApproval::ApprovedMembers(Client *requestee) {
 	std::string founders;
-	database.GetVariable("GuildCreation", founders);
+	// database.GetVariable("GuildCreation", founders);
 	uint8 tmp = atoi(founders.c_str());
 	for (int i = 0; i < tmp; i++) {
 		if (members[i])
@@ -479,7 +479,7 @@ void GuildApproval::GuildApproved() {
 	if (!owner)
 		return;
 	std::string founders;
-	database.GetVariable("GuildCreation", founders);
+	// database.GetVariable("GuildCreation", founders);
 	uint8 tmp = atoi(founders.c_str());
 	uint32 tmpeq = guild_mgr.CreateGuild(guild, owner->CharacterID());
 	guild_mgr.SetGuild(owner->CharacterID(), tmpeq, 2);

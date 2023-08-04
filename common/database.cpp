@@ -23,6 +23,7 @@
 #include "unix.h"
 #endif
 
+#include "db.h"
 #include "database.h"
 #include "eq_packet_structs.h"
 #include "extprofile.h"
@@ -939,78 +940,6 @@ void Database::GetCharName(uint32 char_id, char* name) {
 	for (auto row = results.begin(); row != results.end(); ++row) {
 		strcpy(name, row[0]);
 	}
-}
-
-bool Database::LoadVariables() {
-	auto results = QueryDatabase(
-	    StringFormat("SELECT varname, value, unix_timestamp() FROM variables "
-	                 "where unix_timestamp(ts) >= %d",
-	                 varcache.last_update));
-
-	if (!results.Success()) return false;
-
-	if (results.RowCount() == 0) return true;
-
-	LockMutex lock(&Mvarcache);
-
-	std::string key, value;
-	for (auto row = results.begin(); row != results.end(); ++row) {
-		varcache.last_update =
-		    atoi(row[2]);  // ahh should we be comparing if this is newer?
-		key = row[0];
-		value = row[1];
-		std::transform(
-		    std::begin(key), std::end(key), std::begin(key),
-		    ::tolower);  // keys are lower case, DB doesn't have to be
-		varcache.Add(key, value);
-	}
-
-	return true;
-}
-
-// Gets variable from 'variables' table
-bool Database::GetVariable(std::string varname, std::string& varvalue) {
-	varvalue.clear();
-
-	LockMutex lock(&Mvarcache);
-
-	if (varname.empty()) return false;
-
-	std::transform(std::begin(varname), std::end(varname), std::begin(varname),
-	               ::tolower);  // all keys are lower case
-	auto tmp = varcache.Get(varname);
-	if (tmp) {
-		varvalue = *tmp;
-		return true;
-	}
-	return false;
-}
-
-bool Database::SetVariable(const std::string varname,
-                           const std::string& varvalue) {
-	std::string escaped_name = Strings::Escape(varname);
-	std::string escaped_value = Strings::Escape(varvalue);
-	std::string query =
-	    StringFormat("Update variables set value='%s' WHERE varname like '%s'",
-	                 escaped_value.c_str(), escaped_name.c_str());
-	auto results = QueryDatabase(query);
-
-	if (!results.Success()) return false;
-
-	if (results.RowsAffected() == 1) {
-		LoadVariables();  // refresh cache
-		return true;
-	}
-
-	query = StringFormat(
-	    "Insert Into variables (varname, value) values ('%s', '%s')",
-	    escaped_name.c_str(), escaped_value.c_str());
-	results = QueryDatabase(query);
-
-	if (results.RowsAffected() != 1) return false;
-
-	LoadVariables();  // refresh cache
-	return true;
 }
 
 // Get zone starting points from DB

@@ -212,15 +212,15 @@ int main(int argc, char** argv) {
 	LogInfo("Mapping Incoming Opcodes");
 	MapOpcodes();
 
-	LogInfo("Loading Variables");
-	database.LoadVariables();
+	// LogInfo("Loading Variables");
+	// database.LoadVariables();
 
 	std::string hotfix_name;
-	if (database.GetVariable("hotfix_name", hotfix_name)) {
-		if (!hotfix_name.empty()) {
-			LogInfo("Current hotfix in use: [{}]", hotfix_name.c_str());
-		}
-	}
+	// if (database.GetVariable("hotfix_name", hotfix_name)) {
+	//	if (!hotfix_name.empty()) {
+	//		LogInfo("Current hotfix in use: [{}]", hotfix_name.c_str());
+	//	}
+	// }
 
 	LogInfo("Loading zone names");
 	database.LoadZoneNames();
@@ -282,20 +282,20 @@ int main(int argc, char** argv) {
 	// rules:
 	{
 		std::string tmp;
-		if (database.GetVariable("RuleSet", tmp)) {
-			LogInfo("Loading rule set '{}'", tmp.c_str());
-			if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
-				LogError(
-				    "Failed to load ruleset '{}', falling back to defaults.",
-				    tmp.c_str());
-			}
+		/*if (database.GetVariable("RuleSet", tmp)) {
+		    LogInfo("Loading rule set '{}'", tmp.c_str());
+		    if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
+		        LogError(
+		            "Failed to load ruleset '{}', falling back to defaults.",
+		            tmp.c_str());
+		    }
+		} else {*/
+		if (!RuleManager::Instance()->LoadRules(&database, "default")) {
+			LogInfo("No rule set configured, using default rules");
 		} else {
-			if (!RuleManager::Instance()->LoadRules(&database, "default")) {
-				LogInfo("No rule set configured, using default rules");
-			} else {
-				LogInfo("Loaded default rule set 'Default'");
-			}
+			LogInfo("Loaded default rule set 'Default'");
 		}
+		//}
 	}
 
 	parse = new QuestParserCollection();

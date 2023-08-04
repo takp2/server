@@ -1030,8 +1030,8 @@ void Corpse::MakeLootRequestPackets(Client* client, const EQApplicationPacket* a
 	uint8 Loot_Request_Type = 1;
 	bool loot_coin = false;
 	std::string tmp;
-	if (database.GetVariable("LootCoin", tmp))
-		loot_coin = tmp[0] == 1 && tmp[1] == '\0';
+	//if (database.GetVariable("LootCoin", tmp))
+	//	loot_coin = tmp[0] == 1 && tmp[1] == '\0';
 
 	if (this->being_looted_by != 0xFFFFFFFF && this->being_looted_by != client->GetID()) {
 		SendLootReqErrorPacket(client, 0);

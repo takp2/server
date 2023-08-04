@@ -9,14 +9,11 @@ extern bool run_server;
 extern EQEmuLogSys Log;
 
 ClientManager::ClientManager() {
-	int old_port = atoi(server.config->GetVariable("Old", "port").c_str());
+	int old_port = 9000;
 	old_stream = new EQStreamFactory(OldStream, old_port);
 	old_ops = new RegularOpcodeManager;
-	if (!old_ops->LoadOpcodes(
-	        server.config->GetVariable("Old", "opcodes").c_str())) {
-		LogError(
-		    "ClientManager fatal error: couldn't load opcodes for Old file %s.",
-		    server.config->GetVariable("Old", "opcodes").c_str());
+	if (!old_ops->LoadOpcodes("assets/opcodes/old_opcodes.conf")) {
+		LogError("ClientManager failed to get opcodes at assets/opcodes/old_opcodes.conf");
 		run_server = false;
 	} else if (old_stream->Open()) {
 		LogInfo("ClientManager listening on Old stream.");
