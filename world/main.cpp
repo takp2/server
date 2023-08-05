@@ -293,38 +293,20 @@ int main(int argc, char** argv) {
 			// client object
 			struct in_addr in {};
 			in.s_addr = eqsi->GetRemoteIP();
-			if (RuleB(
-			        World,
-			        UseBannedIPsTable)) {  // Lieka: Check to see if we have the
-				                           // responsibility for blocking IPs.
-				LogInfo(
-				    "Checking inbound connection [{0}] against BannedIPs table",
-				    inet_ntoa(in));
-				if (!database.CheckBannedIPs(
-				        inet_ntoa(in))) {  // Lieka: Check inbound IP against
-					                       // banned IP table.
-					LogInfo(
-					    "Connection [{0}] PASSED banned IPs check. Processing "
-					    "connection.",
-					    inet_ntoa(in));
+			if (RuleB(World, UseBannedIPsTable)) {
+				// LogInfo("Checking inbound connection [{0}] against BannedIPs table",inet_ntoa(in));
+				if (!database.CheckBannedIPs(inet_ntoa(in))) {  // Lieka: Check inbound IP against
+					// LogInfo("Connection [{0}] PASSED banned IPs check. Processing connection.", inet_ntoa(in));
 					auto client = new Client(eqsi);
-					// @merth: client->zoneattempt=0;
 					client_list.Add(client);
 				} else {
-					LogInfo(
-					    "Connection from [{0}] FAILED banned IPs check. "
-					    "Closing connection.",
-					    inet_ntoa(in));
-					eqsi->Close();  // Lieka: If the inbound IP is on the banned
-					                // table, close the EQStream.
+					LogInfo("Connection {} failed banned IPs check, rejecting", inet_ntoa(in));
+					eqsi->Close();
 				}
 			}
 			if (!RuleB(World, UseBannedIPsTable)) {
-				LogInfo(
-				    "New connection from [{0}]:[{1}], processing connection",
-				    inet_ntoa(in), ntohs(eqsi->GetRemotePort()));
+				LogInfo("New connection from {0}:{1}", inet_ntoa(in), ntohs(eqsi->GetRemotePort()));
 				auto client = new Client(eqsi);
-				// @merth: client->zoneattempt=0;
 				client_list.Add(client);
 			}
 			i++;
@@ -332,11 +314,29 @@ int main(int argc, char** argv) {
 		}
 
 		client_list.Process();
+
 		i = 0;
 		while ((tcpc = tcps.NewQueuePop())) {
 			struct in_addr in {};
 			in.s_addr = tcpc->GetrIP();
-			Log(Logs::Detail, Logs::WorldServer, "New TCP connection from {0}:{1}", inet_ntoa(in), tcpc->GetrPort());
+			std::string identifier = "unknown";
+			if (tcpc->GetMode() == EmuTCPConnection::modePacket) {
+				switch (tcpc->GetPacketMode()) {
+					case EmuTCPConnection::packetModeZone:
+						identifier = "zone";
+						break;
+					case EmuTCPConnection::packetModeLauncher:
+						identifier = "launcher";
+						break;
+					case EmuTCPConnection::packetModeUCS:
+						identifier = "ucs";
+						break;
+					case EmuTCPConnection::packetModeQueryServ:
+						identifier = "queryserv";
+						break;
+				}
+			}
+			LogInfo("New TCP {} connection from {}:{}", identifier, inet_ntoa(in), tcpc->GetrPort());
 			console_list.Add(new Console(tcpc));
 			i++;
 			if (i == 5) break;
@@ -367,6 +367,7 @@ int main(int argc, char** argv) {
 		if (InterserverTimer.Check()) {
 			InterserverTimer.Start();
 			database.ping();
+			DB::Ping();
 			// AsyncLoadVariables(dbasync, &database);
 			ReconnectCounter++;
 			if (ReconnectCounter >=

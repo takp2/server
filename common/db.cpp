@@ -62,6 +62,17 @@ bool DB::open() {
 	LogError("Failed to connect to database: %s", err_message);
 	return false;
 }
+
+void DB::Ping() {
+	if (!is_connected) {
+		if (!open()) {
+			LogError("Ping() called on an unconnected DB object.");
+			return;
+		}
+	}
+	mysql_ping(conn);
+}
+
 // Query is an unsafe call to do a simple query without binding parameters. All queries should stop using this
 DBResult DB::Query(std::string query) {
 	return Query(query.c_str(), query.length());

@@ -22,6 +22,7 @@ class DB {
 	static void TransactionCommit();
 	static void TransactionRollback();
 	static void TransactionEnd();
+	static void Ping();
 
    private:
 	static bool open();
