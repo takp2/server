@@ -6,7 +6,7 @@
 std::mutex DB::mu;
 std::atomic<bool> DB::is_connected = ATOMIC_VAR_INIT(false);
 std::atomic<bool> DB::is_initialized = ATOMIC_VAR_INIT(false);
-MYSQL* DB::conn = nullptr;
+std::atomic<MYSQL*> DB::conn = ATOMIC_VAR_INIT(nullptr);
 char* DB::host = nullptr;
 char* DB::user = nullptr;
 char* DB::password = nullptr;

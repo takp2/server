@@ -28,7 +28,7 @@ class DB {
 	static std::mutex mu;
 	static std::atomic<bool> is_connected;
 	static std::atomic<bool> is_initialized;
-	static MYSQL* conn;
+	static std::atomic<MYSQL*> conn;
 	static char* host;
 	static char* user;
 	static char* password;
