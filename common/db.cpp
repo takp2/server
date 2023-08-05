@@ -31,7 +31,7 @@ bool DB::Open(const char* host, const char* user, const char* password,
 	DB::is_initialized = true;
 	return open();
 }
-
+// Open creates a connection to the database. It should only be called once during a
 bool DB::open() {
 	std::lock_guard<std::mutex> lock(mu);
 
@@ -62,11 +62,12 @@ bool DB::open() {
 	LogError("Failed to connect to database: %s", err_message);
 	return false;
 }
-
+// Query is an unsafe call to do a simple query without binding parameters. All queries should stop using this
 DBResult DB::Query(std::string query) {
 	return Query(query.c_str(), query.length());
 }
 
+// Query is an unsafe call to do a simple query without binding parameters. All queries should stop using this
 DBResult DB::Query(const char* query, uint32 querylen) {
 	if (!is_connected) {
 		if (!open()) {
@@ -112,6 +113,30 @@ DBResult DB::Query(const char* query, uint32 querylen) {
 	                (uint32)mysql_insert_id(conn));
 }
 
+// Prepare a statement for later execution via Execute() and close it with Finish().
+MYSQL_STMT* DB::Prepare(const std::string& statement) {
+	if (!is_connected) {
+		if (!open()) {
+			LogError("Prepare called on an unconnected DB object.");
+			return nullptr;
+		}
+	}
+
+	MYSQL_STMT* stmt = mysql_stmt_init(conn);
+	if (!stmt) {
+		LogError("Failed to initialize statement: %s", mysql_error(conn));
+		return nullptr;
+	}
+
+	const char* stmtStr = statement.c_str();
+	if (mysql_stmt_prepare(stmt, stmtStr, statement.size()) != 0) {
+		LogError("Failed to prepare statement: %s", mysql_stmt_error(stmt));
+		return nullptr;
+	}
+	return stmt;
+}
+
+// Request is a shortcut to doing a Prepare(), Execute() and Finish() in one call. It is useful when you only are going to execute a statement once.
 template <typename... Args>
 DBResult DB::Request(const std::string& statement, Args&&... args) {
 	if (!is_connected) {
@@ -121,25 +146,19 @@ DBResult DB::Request(const std::string& statement, Args&&... args) {
 		}
 	}
 
-	MYSQL_STMT* stmt = mysql_stmt_init(conn);
+	MYSQL_STMT* stmt = Prepare(statement);
 	if (!stmt) {
-		LogError("Failed to initialize statement: %s", mysql_error(conn));
 		return DBResult(nullptr, 0, 0, 0, 0, 0, nullptr);
 	}
 
-	const char* stmtStr = statement.c_str();
-	if (mysql_stmt_prepare(stmt, stmtStr, statement.size()) != 0) {
-		LogError("Failed to prepare statement: %s", mysql_stmt_error(stmt));
-		mysql_stmt_close(stmt);
-		return DBResult(nullptr, 0, 0, 0, 0, 0, nullptr);
-	}
+	auto result = Execute(stmt, std::forward<Args>(args)...);
+	mysql_stmt_close(stmt);
+	return result;
+}
 
-	if (mysql_stmt_param_count(stmt) != sizeof...(args)) {
-		LogError("Parameter count mismatch in prepared statement");
-		mysql_stmt_close(stmt);
-		return DBResult(nullptr, 0, 0, 0, 0, 0, nullptr);
-	}
-
+// Execute a prepared statement. Note that stmt will NOT be closed by this function, call DB::Finish(stmt) to do that.
+template <typename... Args>
+DBResult DB::Execute(MYSQL_STMT* stmt, Args&&... args) {
 	int index = 0;
 	((mysql_stmt_bind_param(stmt, &index, std::forward<Args>(args)) == 0 ? index++ : void(), false), ...);
 
@@ -150,7 +169,6 @@ DBResult DB::Request(const std::string& statement, Args&&... args) {
 	}
 
 	auto result = mysql_store_result(conn);
-	mysql_stmt_close(stmt);
 
 	if (result == nullptr) {
 		if (mysql_field_count(conn) == 0) {
@@ -170,4 +188,53 @@ DBResult DB::Request(const std::string& statement, Args&&... args) {
 	                (uint32)mysql_num_rows(result),
 	                (uint32)mysql_field_count(conn),
 	                (uint32)mysql_insert_id(conn));
+}
+
+// Finish a prepared statement. This will close the statement and free any resources used by it.
+void DB::Finish(MYSQL_STMT* stmt) {
+	mysql_stmt_close(stmt);
+}
+
+void DB::TransactionStart() {
+	if (!is_connected) {
+		if (!open()) {
+			LogError("TransactionStart() called on an unconnected DB object.");
+			return;
+		}
+	}
+
+	Query("START TRANSACTION");
+}
+
+void DB::TransactionCommit() {
+	if (!is_connected) {
+		if (!open()) {
+			LogError("TransactionCommit() called on an unconnected DB object.");
+			return;
+		}
+	}
+
+	Query("COMMIT");
+}
+
+void DB::TransactionRollback() {
+	if (!is_connected) {
+		if (!open()) {
+			LogError("TransactionRollback() called on an unconnected DB object.");
+			return;
+		}
+	}
+
+	Query("ROLLBACK");
+}
+
+void DB::TransactionEnd() {
+	if (!is_connected) {
+		if (!open()) {
+			LogError("TransactionEnd() called on an unconnected DB object.");
+			return;
+		}
+	}
+
+	Query("END");
 }
