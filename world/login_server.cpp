@@ -79,8 +79,9 @@ bool LoginServer::Process() {
 	 * ************/
 	ServerPacket* pack = 0;
 	while ((pack = tcpc->PopPacket())) {
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Recevied ServerPacket from LS OpCode 0x%04x", pack->opcode);
+		if (pack->opcode != ServerOP_KeepAlive) {
+			Log(Logs::Detail, Logs::WorldServer, "Recevied ServerPacket from LS OpCode 0x%04x", pack->opcode);
+		}
 
 		switch (pack->opcode) {
 			case 0:
@@ -221,16 +222,13 @@ bool LoginServer::Process() {
 bool LoginServer::InitLoginServer() {
 	if (Connected() == false) {
 		if (ConnectReady()) {
-			Log(Logs::Detail, Logs::WorldServer,
-			    "Connecting to login server: %s:%d", LoginServerAddress,
-			    LoginServerPort);
 			Connect();
-		} else {
-			Log(Logs::Detail, Logs::WorldServer,
-			    "Not connected but not ready to connect, this is bad: %s:%d",
-			    LoginServerAddress, LoginServerPort);
-			database.LSDisconnect();
+			return true;
 		}
+		Log(Logs::Detail, Logs::WorldServer,
+		    "Not connected but not ready to connect, this is bad: %s:%d",
+		    LoginServerAddress, LoginServerPort);
+		database.LSDisconnect();
 	}
 	return true;
 }

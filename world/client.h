@@ -23,6 +23,9 @@ class Client {
 
 	bool Process();
 	void SendCharInfo();
+	void SendMaxCharCreate();
+	void SendMembership();
+	void SendMembershipSettings();
 	void EnterWorld(bool TryBootup = true);
 	void ZoneUnavail();
 	void QueuePacket(const EQApplicationPacket *app, bool ack_req = true);

@@ -297,6 +297,7 @@ int main(int argc, char** argv) {
 				// LogInfo("Checking inbound connection [{0}] against BannedIPs table",inet_ntoa(in));
 				if (!database.CheckBannedIPs(inet_ntoa(in))) {  // Lieka: Check inbound IP against
 					// LogInfo("Connection [{0}] PASSED banned IPs check. Processing connection.", inet_ntoa(in));
+					LogInfo("New client connection from {0}:{1}", inet_ntoa(in), ntohs(eqsi->GetRemotePort()));
 					auto client = new Client(eqsi);
 					client_list.Add(client);
 				} else {

@@ -4,8 +4,6 @@
 	"name": "takp",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "xackery/takp-dev:latest",
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
 		3307,
@@ -21,9 +19,9 @@
 		7008,
 		7009,
 		7778,
-		9000,
 		9001
 	],
+	"appPort": "9000:9000/udp",
 	"remoteEnv": {
 		"LOCALWSF": "${localWorkspaceFolder}",
 		"CONTAINERWSF": "${containerWorkspaceFolder}"
