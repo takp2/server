@@ -104,67 +104,26 @@ int main(int argc, char** argv) {
 
 	const char* zone_name;
 	std::string z_name;
-	if (argc == 4) {
-		worldserver.SetLauncherName(argv[2]);
-		auto zone_port = Strings::Split(argv[1], ':');
 
-		if (!zone_port.empty()) {
-			z_name = zone_port[0];
+	zone_name = ".";
+	worldserver.SetLaunchedName(".");
+	if (argc >= 2) {  // zone <port>
+		auto port = atoi(argv[1]);
+		if (port == 0) {
+			LogError("Invalid port specified: {}", argv[1]);
+			LogInfo("Usage: zone <port>, or zone <port> <shortname>");
+			return 1;
 		}
-
-		if (zone_port.size() > 1) {
-			std::string p_name = zone_port[1];
-			Config->SetZonePort(atoi(p_name.c_str()));
+		Config->SetZonePort(port);
+		if (argc >= 3) {  // zone <port> <shortname>
+			z_name = argv[2];
+			worldserver.SetLaunchedName(z_name.c_str());
+			if (strncmp(z_name.c_str(), "dynamic_", 8) == 0) {
+				zone_name = ".";
+			} else {
+				zone_name = z_name.c_str();
+			}
 		}
-
-		worldserver.SetLaunchedName(z_name.c_str());
-		if (strncmp(z_name.c_str(), "dynamic_", 8) == 0) {
-			zone_name = ".";
-		} else {
-			zone_name = z_name.c_str();
-		}
-	} else if (argc == 3) {
-		worldserver.SetLauncherName(argv[2]);
-		auto zone_port = Strings::Split(argv[1], ':');
-
-		if (!zone_port.empty()) {
-			z_name = zone_port[0];
-		}
-
-		if (zone_port.size() > 1) {
-			std::string p_name = zone_port[1];
-			Config->SetZonePort(atoi(p_name.c_str()));
-		}
-
-		worldserver.SetLaunchedName(z_name.c_str());
-		if (strncmp(z_name.c_str(), "dynamic_", 8) == 0) {
-			zone_name = ".";
-		} else {
-			zone_name = z_name.c_str();
-		}
-	} else if (argc == 2) {
-		worldserver.SetLauncherName("NONE");
-		auto zone_port = Strings::Split(argv[1], ':');
-
-		if (!zone_port.empty()) {
-			z_name = zone_port[0];
-		}
-
-		if (zone_port.size() > 1) {
-			std::string p_name = zone_port[1];
-			Config->SetZonePort(atoi(p_name.c_str()));
-		}
-
-		worldserver.SetLaunchedName(z_name.c_str());
-		if (strncmp(z_name.c_str(), "dynamic_", 8) == 0) {
-			zone_name = ".";
-		} else {
-			zone_name = z_name.c_str();
-		}
-	} else {
-		zone_name = ".";
-		worldserver.SetLaunchedName(".");
-		worldserver.SetLauncherName("NONE");
 	}
 
 	worldserver.SetPassword(Config->SharedKey.c_str());
@@ -280,8 +239,6 @@ int main(int argc, char** argv) {
 	} else {*/
 	if (!RuleManager::Instance()->LoadRules(&database, "default")) {
 		LogInfo("No rule set configured, using default rules");
-	} else {
-		LogInfo("Loaded default rule set 'Default'");
 	}
 	//}
 
@@ -309,9 +266,15 @@ int main(int argc, char** argv) {
 #endif
 	if (!strlen(zone_name) || !strcmp(zone_name, ".")) {
 		LogInfo("Entering sleep mode");
-	} else if (!Zone::Bootup(database.GetZoneID(zone_name), true)) {
-		LogError("Zone Bootup failed :: Zone::Bootup");
-		zone = 0;
+	} else {
+		LogInfo("Starting as {}", zone_name);
+		auto start = std::chrono::high_resolution_clock::now();
+
+		if (!Zone::Bootup(database.GetZoneID(zone_name), true)) {
+			LogError("Failed zone bootup for {}", zone_name);
+			zone = 0;
+		}
+		LogInfo("Finished loading {} in {}s", zone_name, std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::high_resolution_clock::now() - start).count());
 	}
 
 	// register all the patches we have avaliable with the stream identifier.
@@ -349,10 +312,10 @@ int main(int argc, char** argv) {
 			worldserver.Process();
 
 			if (!eqsf.IsOpen() && Config->ZonePort != 0) {
-				LogInfo("Listening on port {} ",
+				LogInfo("UDP listening on port {} ",
 				        Config->ZonePort);
 				if (!eqsf.Open(Config->ZonePort)) {
-					LogError("Failed to open port {} ", Config->ZonePort);
+					LogError("Failed to open UDP port {} ", Config->ZonePort);
 					ZoneConfig::SetZonePort(0);
 					worldserver.Disconnect();
 					worldwasconnected = false;

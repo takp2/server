@@ -626,8 +626,6 @@ int32 ZoneDatabase::GetDoorsDBCountPlusOne(const char* zone_name) {
 }
 
 bool ZoneDatabase::LoadDoors(int32 iDoorCount, Door* into, const char* zone_name) {
-	LogInfo("Loading Doors from database...");
-
 	std::string query = StringFormat(
 	    "SELECT id, doorid, zone, name, pos_x, pos_y, pos_z, heading, "
 	    "opentype, lockpick, keyitem, nokeyring, triggerdoor, triggertype, "
@@ -639,6 +637,7 @@ bool ZoneDatabase::LoadDoors(int32 iDoorCount, Door* into, const char* zone_name
 	    zone_name);
 	auto results = QueryDatabase(query);
 	if (!results.Success()) {
+		LogError("Failed loading doors for zone %s", zone_name);
 		return false;
 	}
 

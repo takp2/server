@@ -850,21 +850,20 @@ bool Client::Process() {
 	to.sin_addr.s_addr = ip;
 
 	if (autobootup_timeout.Check()) {
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Zone bootup timer expired, bootup failed or too slow");
+		Log(Logs::Detail, Logs::WorldServer, "Zone bootup timer expired, bootup failed or too slow");
 		ZoneUnavail();
 	}
+
 	if (connect.Check()) {
 		// SendGuildList();// Send OPCode: OP_GuildsList
 		SendApproveWorld();
 		connect.Disable();
 	}
+
 	if (CLE_keepalive_timer.Check()) {
 		if (cle) cle->KeepAlive();
 	}
 
-	/************ Get all packets from packet manager out queue and process them
-	 * ************/
 	EQApplicationPacket *app = 0;
 	while (ret && (app = (EQApplicationPacket *)eqs->PopPacket())) {
 		ret = HandlePacket(app);
@@ -886,8 +885,7 @@ bool Client::Process() {
 			loginserverlist.SendPacket(pack);
 			safe_delete(pack);
 		}
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Client disconnected (not active in process)");
+		Log(Logs::Detail, Logs::WorldServer, "Client disconnected (not active in process)");
 		return false;
 	}
 
@@ -905,19 +903,16 @@ void Client::EnterWorld(bool TryBootup) {
 		zs->IncomingClient(this);
 	} else {
 		if (TryBootup && !RuleB(World, DontBootDynamics)) {
-			Log(Logs::Detail, Logs::WorldServer,
-			    "Attempting autobootup of (%d)", zoneID);
+			Log(Logs::Detail, Logs::WorldServer, "Attempting autobootup of (%d)", zoneID);
 			autobootup_timeout.Start();
 			pwaitingforbootup = zoneserver_list.TriggerBootup(zoneID);
 			if (pwaitingforbootup == 0) {
-				Log(Logs::Detail, Logs::WorldServer,
-				    "No zoneserver available to boot up");
+				Log(Logs::Detail, Logs::WorldServer, "No zoneserver available to boot up");
 				ZoneUnavail();
 			}
 			return;
 		} else {
-			Log(Logs::Detail, Logs::WorldServer,
-			    "Requested zone %d is not running.", zoneID);
+			Log(Logs::Detail, Logs::WorldServer, "Requested zone %d is not running.", zoneID);
 			ZoneUnavail();
 			return;
 		}

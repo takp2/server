@@ -961,10 +961,9 @@ uint8 Zone::EmuToEQMacAA(uint32 id) {
 }
 
 void Zone::LoadAAs() {
-	LogInfo("Loading AA information...");
 	totalAAs = database.CountAAs();
 	if (totalAAs == 0) {
-		LogError("Failed to load AAs!");
+		LogError("Failed loading AAs");
 		aas = nullptr;
 		return;
 	}
@@ -978,12 +977,9 @@ void Zone::LoadAAs() {
 		aas_send[aa->id] = aa;
 	}
 
-	// load AA Effects into aa_effects
-	LogInfo("Loading AA Effects...");
-	if (database.LoadAAEffects()) {
-		LogInfo("Loaded {} AA Effects.", aa_effects.size());
-	} else {
-		LogError("Failed to load AA Effects!");
+	if (!database.LoadAAEffects()) {
+		LogError("Failed loading AA Effects");
+		return;
 	}
 }
 
@@ -1191,7 +1187,7 @@ SendAA_Struct* ZoneDatabase::GetAASkillVars(uint32 skill_id) {
 	    "SELECT a.cost, a.max_level, a.type, "
 	    "COALESCE("  // So we can return 0 if it's null.
 	    "("          // this is our derived table that has the row #
-	         // that we can SELECT from, because the client is stupid.
+	                 // that we can SELECT from, because the client is stupid.
 	    "SELECT p.prereq_index_num "
 	    "FROM (SELECT a2.skill_id, @row := @row + 1 AS prereq_index_num "
 	    "FROM altadv_vars a2) AS p "

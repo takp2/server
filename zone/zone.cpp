@@ -61,30 +61,41 @@ Zone* zone = 0;
 void UpdateWindowTitle(char* iNewTitle);
 
 bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
-	const char* zonename = database.GetZoneName(iZoneID);
+	const char* zone_name = database.GetZoneName(iZoneID);
 
-	if (iZoneID == 0 || zonename == 0)
+	if (iZoneID == 0) {
+		LogError("Failed bootup, zone id is 0");
 		return false;
-	if (zone != 0 || is_zone_loaded) {
-		std::cerr << "Error: Zone::Bootup call when zone already booted!" << std::endl;
+	}
+
+	if (zone_name == 0) {
+		LogError("Failed bootup, zone id {} not found", iZoneID);
+		return false;
+	}
+	if (zone != 0) {
+		LogError("Failed to boot zone {}, another zone {} is already booted", iZoneID, zone->GetShortName());
 		worldserver.SetZoneData(0);
 		return false;
 	}
 
-	LogInfo("Booting {} ({})", zonename, iZoneID);
+	if (is_zone_loaded) {
+		LogError("Failed to boot zone {}, another zone that is unknown is already booted", iZoneID);
+		worldserver.SetZoneData(0);
+		return false;
+	}
 
 	numclients = 0;
-	zone = new Zone(iZoneID, zonename);
+	zone = new Zone(iZoneID, zone_name);
 
 	// init the zone, loads all the data, etc
 	if (!zone->Init(iStaticZone)) {
+		LogError("Failed zone init for {}", zone_name);
 		safe_delete(zone);
-		std::cerr << "Zone->Init failed" << std::endl;
 		worldserver.SetZoneData(0);
 		return false;
 	}
 
-	LogInfo("{} is using {} for its map_name", zonename, zone->map_name);
+	// LogInfo("{} is using {} for its map_name", zone_name, zone->map_name);
 	zone->zonemap = Map::LoadMapFile(zone->map_name);
 	zone->watermap = WaterMap::LoadWaterMapfile(zone->map_name);
 	zone->pathing = IPathfinder::Load(zone->map_name);
@@ -120,17 +131,12 @@ bool Zone::Bootup(uint32 iZoneID, bool iStaticZone) {
 
 	worldserver.SetZoneData(iZoneID);
 
-	LogInfo("---- Zone server [{}], listening on port:[{}] ----", zonename, ZoneConfig::get()->ZonePort);
-	LogInfo("Zone Bootup: [{}] [{}] ([{}])",
-	        (iStaticZone) ? "Static" : "Dynamic", zonename, iZoneID);
 	parse->Init();
-	UpdateWindowTitle(nullptr);
+	// UpdateWindowTitle(nullptr);
 	zone->GetTimeSync();
 
 	/* Set Logging */
-
 	LogSys.StartFileLogs(StringFormat("%s_port_%u", zone->GetShortName(), ZoneConfig::get()->ZonePort));
-
 	return true;
 }
 
@@ -144,11 +150,10 @@ bool Zone::LoadZoneObjects() {
 	    zoneid);
 	auto results = database.QueryDatabase(query);
 	if (!results.Success()) {
-		LogError("Error Loading Objects from DB: {} ", results.ErrorMessage().c_str());
+		LogError("Failed loading object: {} ", results.ErrorMessage().c_str());
 		return false;
 	}
 
-	LogInfo("Loading Objects from DB...");
 	for (auto row = results.begin(); row != results.end(); ++row) {
 		if (atoi(row[9]) == 0) {
 			// Type == 0 - Static Object
@@ -258,7 +263,6 @@ bool Zone::LoadGroundSpawns() {
 
 	memset(&groundspawn, 0, sizeof(groundspawn));
 	int gsindex = 0;
-	LogInfo("Loading Ground Spawns from DB...");
 	database.LoadGroundSpawns(zoneid, &groundspawn);
 	uint32 ix = 0;
 	char* name = nullptr;
@@ -449,7 +453,6 @@ int32 Zone::GetTempMerchantQtyNoSlot(uint32 NPCID, int16 itemid) {
 }
 
 void Zone::LoadTempMerchantData() {
-	LogInfo("Loading Temporary Merchant Lists...");
 	std::string query = StringFormat(
 	    "SELECT								   "
 	    "DISTINCT ml.npcid,					   "
@@ -469,6 +472,7 @@ void Zone::LoadTempMerchantData() {
 	    GetShortName());
 	auto results = database.QueryDatabase(query);
 	if (!results.Success()) {
+		LogError("Failed loading temp merchant: {}", results.ErrorMessage());
 		return;
 	}
 	std::map<uint32, std::list<TempMerchantList> >::iterator cur;
@@ -494,7 +498,7 @@ void Zone::LoadTempMerchantData() {
 			// The client has an internal limit of items per stack.
 			ml.charges = MERCHANT_CHARGE_CAP;
 			database.SaveMerchantTemp(npcid, ml.origslot, ml.item, ml.charges, ml.quantity);
-			LogInfo("Adjusted item {} on temporary merchant list ({}) to quantity {}.", ml.item, npcid, MERCHANT_CHARGE_CAP);
+			// LogInfo("Adjusted item {} on temporary merchant list ({}) to quantity {}.", ml.item, npcid, MERCHANT_CHARGE_CAP);
 		}
 		cur->second.push_back(ml);
 	}
@@ -502,8 +506,6 @@ void Zone::LoadTempMerchantData() {
 }
 
 void Zone::LoadNewMerchantData(uint32 merchantid) {
-	LogInfo("Merchant: {} is loading...", merchantid);
-
 	std::list<MerchantList> merchant_list;
 
 	auto query = fmt::format(
@@ -548,8 +550,6 @@ void Zone::LoadNewMerchantData(uint32 merchantid) {
 }
 
 void Zone::GetMerchantDataForZoneLoad() {
-	LogInfo("Loading Merchant Lists...");
-
 	auto query = fmt::format(
 	    SQL(
 	        SELECT
@@ -590,14 +590,19 @@ void Zone::GetMerchantDataForZoneLoad() {
 	    GetShortName());
 
 	auto results = database.QueryDatabase(query);
+	if (!results.Success()) {
+		LogError("Failed loading merchant data: {}", results.ErrorMessage());
+		return;
+	}
+
+	if (!results.RowCount()) {
+		LogError("Failed loading merchant data: No results found.");
+		return;
+	}
 
 	std::map<uint32, std::list<MerchantList> >::iterator merchant_list;
 
 	uint32 npcid = 0;
-	if (!results.Success() || !results.RowCount()) {
-		LogDebug("No Merchant Data found for [{}]", GetShortName());
-		return;
-	}
 
 	for (auto row : results) {
 		MerchantList mle{};
@@ -717,19 +722,16 @@ void Zone::Shutdown(bool quite) {
 }
 
 void Zone::LoadZoneDoors(const char* zone) {
-	LogInfo("Loading doors for {} ...", zone);
-
 	uint32 maxid;
 	int32 count = database.GetDoorsCount(&maxid, zone);
 	if (count < 1) {
-		LogInfo("... No doors loaded.");
 		return;
 	}
 
 	auto dlist = new Door[count];
 
 	if (!database.LoadDoors(count, dlist, zone)) {
-		LogError("... Failed to load doors.");
+		LogError("Failed to load doors");
 		delete[] dlist;
 		return;
 	}
@@ -796,7 +798,7 @@ Zone::Zone(uint32 in_zoneid, const char* in_short_name)
 	autoshutdown_timer.Start(AUTHENTICATION_TIMEOUT * 1000, false);
 	Weather_Timer = new Timer(60000);
 	Weather_Timer->Start();
-	LogInfo("The next weather check for zone: {} will be in {} seconds.", short_name, Weather_Timer->GetRemainingTime() / 1000);
+	// LogInfo("The next weather check for zone: {} will be in {} seconds.", short_name, Weather_Timer->GetRemainingTime() / 1000);
 	zone_weather = 0;
 	weather_intensity = 0;
 	blocked_spells = nullptr;
@@ -868,7 +870,7 @@ Zone::~Zone() {
 	}
 }
 
-// Modified for timezones.
+// Init is called by Bootup
 bool Zone::Init(bool iStaticZone) {
 	SetStaticZone(iStaticZone);
 
@@ -886,58 +888,51 @@ bool Zone::Init(bool iStaticZone) {
 
 	zone->update_range = 1000.0f;
 
-	LogInfo("Loading spawn conditions...");
 	if (!spawn_conditions.LoadSpawnConditions(short_name)) {
-		LogError("Loading spawn conditions failed, continuing without them.");
+		LogError("Failed loading spawn_condition, ignoring");
 	}
 
-	LogInfo("Loading static zone points...");
 	if (!database.LoadStaticZonePoints(&zone_point_list, short_name)) {
-		LogError("Loading static zone points failed.");
+		LogError("Failed loading zone_points points");
 		return false;
 	}
 
-	LogInfo("Loading spawn groups...");
 	if (!database.LoadSpawnGroups(short_name, &spawn_group_list)) {
-		LogError("Loading spawn groups failed.");
+		LogError("Failed loading spawn groups");
 		return false;
 	}
 
-	LogInfo("Loading spawn2 points...");
 	if (!database.PopulateZoneSpawnList(zoneid, spawn2_list)) {
-		LogError("Loading spawn2 points failed.");
+		LogError("Failed loading spawn2");
 		return false;
 	}
 
-	LogInfo("Loading random box spawns...");
 	if (!database.PopulateRandomZoneSpawnList(zoneid, spawn2_list)) {
-		LogError("Loading random box spawns failed (Possibly over ID limit.)");
+		LogError("Failed loading random spawns, ignoring");
 	}
 
-	LogInfo("Loading player corpses...");
 	if (!database.LoadCharacterCorpses(zoneid)) {
-		LogError("Loading player corpses failed.");
+		LogError("Failed loading character corpses");
 		return false;
 	}
 
-	LogInfo("Loading traps...");
 	if (!database.LoadTraps(short_name)) {
-		LogError("Loading traps failed.");
+		LogError("Failed loading traps");
 		return false;
 	}
 
-	LogInfo("Loading ground spawns...");
 	if (!LoadGroundSpawns()) {
-		LogError("Loading ground spawns failed. continuing.");
+		LogError("Failed loading ground spawns, ignoring");
 	}
 
-	LogInfo("Loading World Objects from DB...");
 	if (!LoadZoneObjects()) {
-		LogError("Loading World Objects failed. continuing.");
+		LogError("Failed loading object, ignoring");
 	}
 
-	LogInfo("Flushing old respawn timers...");
-	database.QueryDatabase("DELETE FROM `respawn_times` WHERE (`start` + `duration`) < UNIX_TIMESTAMP(NOW())");
+	auto result = DB::Query("DELETE FROM `respawn_times` WHERE (`start` + `duration`) < UNIX_TIMESTAMP(NOW())");
+	if (!result.Success()) {
+		LogError("Failed deleting expired respawn times, ignoring");
+	}
 
 	// load up the zone's doors (prints inside)
 	zone->LoadZoneDoors(zone->GetShortName());
@@ -948,10 +943,8 @@ bool Zone::Init(bool iStaticZone) {
 		database.DeleteTraderItem(0);
 	}
 
-	LogInfo("Loading NPC Emotes...");
 	zone->LoadNPCEmotes(&NPCEmoteList);
 
-	LogInfo("Loading KeyRing Data...");
 	zone->LoadKeyRingData(&KeyRingDataList);
 
 	// Load AA information
@@ -972,10 +965,7 @@ bool Zone::Init(bool iStaticZone) {
 	petition_list.ClearPetitions();
 	petition_list.ReadDatabase();
 
-	LogInfo("Loading timezone data...");
 	zone->zone_time.setEQTimeZone(database.GetZoneTZ(zoneid));
-
-	LogInfo("Init Finished: ZoneID = {}, Time Offset = {} ", zoneid, zone->zone_time.getEQTimeZone());
 
 	LoadGrids();
 	LoadTickItems();
@@ -1049,7 +1039,6 @@ bool Zone::LoadZoneCFG(const char* filename, bool DontLoadDefault) {
 	strcpy(newzone_data.zone_long_name, GetLongName());
 	strcpy(newzone_data.zone_short_name2, GetShortName());
 
-	LogInfo("Successfully loaded Zone Config.");
 	return true;
 }
 

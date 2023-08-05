@@ -230,7 +230,7 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 	if (eqsf.Open()) {
-		LogInfo("UDP istening on {}", 9000);
+		LogInfo("UDP listening on {}", 9000);
 	} else {
 		LogInfo("Failed to start UDP listening on {}", 9000);
 		return 1;

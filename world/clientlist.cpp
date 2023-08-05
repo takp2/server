@@ -29,8 +29,9 @@ ClientList::~ClientList() {
 }
 
 void ClientList::Process() {
-	if (CLStale_timer.Check())
+	if (CLStale_timer.Check()) {
 		CLCheckStale();
+	}
 
 	LinkedListIterator<Client*> iterator(list);
 
@@ -43,10 +44,12 @@ void ClientList::Process() {
 			uint32 accountid = iterator.GetData()->GetAccountID();
 			iterator.RemoveCurrent();
 
-			if (!ActiveConnection(accountid))
+			if (!ActiveConnection(accountid)) {
 				database.ClearAccountActive(accountid);
-		} else
-			iterator.Advance();
+			}
+			continue;
+		}
+		iterator.Advance();
 	}
 }
 
