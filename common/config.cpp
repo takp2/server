@@ -14,12 +14,12 @@ Config *Config::_config = nullptr;
 
 void Config::parse_config() {
 	if (_root["world"].IsNull()) {
-		throw std::runtime_error("Missing world section in config.ymaml");
+		throw std::runtime_error("missing world section in config.ymaml");
 	}
 	std::string value;
 
 	if (_root["world"]["short_name"].IsNull()) {
-		throw std::runtime_error("Missing world.short_name in config.yaml");
+		throw std::runtime_error("missing world.short_name in config.yaml");
 	}
 	if (_root["world"]["short_name"].Type() != YAML::NodeType::Scalar) {
 		throw std::runtime_error("world.short_name must be a string");
@@ -27,7 +27,7 @@ void Config::parse_config() {
 	ShortName = _root["world"]["short_name"].as<std::string>();
 
 	if (_root["world"]["long_name"].IsNull()) {
-		throw std::runtime_error("Missing world.long_name in config.yaml");
+		throw std::runtime_error("missing world.long_name in config.yaml");
 	}
 	if (_root["world"]["long_name"].Type() != YAML::NodeType::Scalar) {
 		throw std::runtime_error("world.long_name must be a string");
@@ -35,7 +35,7 @@ void Config::parse_config() {
 	LongName = _root["world"]["long_name"].as<std::string>();
 
 	if (_root["world"]["wan_address"].IsNull()) {
-		throw std::runtime_error("Missing world.wan_address in config.yaml");
+		throw std::runtime_error("missing world.wan_address in config.yaml");
 	}
 	if (_root["world"]["wan_address"].Type() != YAML::NodeType::Scalar) {
 		throw std::runtime_error("world.wan_address must be a string");
@@ -43,7 +43,7 @@ void Config::parse_config() {
 	WorldAddress = _root["world"]["wan_address"].as<std::string>();
 
 	if (_root["world"]["lan_address"].IsNull()) {
-		throw std::runtime_error("Missing world.lan_address in config.yaml");
+		throw std::runtime_error("missing world.lan_address in config.yaml");
 	}
 	if (_root["world"]["lan_address"].Type() != YAML::NodeType::Scalar) {
 		throw std::runtime_error("world.lan_address must be a string");
@@ -58,7 +58,7 @@ void Config::parse_config() {
 	}
 
 	if (_root["world"]["shared_key"].IsNull()) {
-		throw std::runtime_error("Missing world.shared_key in config.yaml");
+		throw std::runtime_error("missing world.shared_key in config.yaml");
 	}
 	if (_root["world"]["shared_key"].Type() != YAML::NodeType::Scalar) {
 		throw std::runtime_error("world.shared_key must be a string");
@@ -96,14 +96,14 @@ void Config::parse_config() {
 	for (std::size_t i = 0; i < _root["login_server"].size(); i++) {
 		auto loginconfig = new LoginConfig;
 		if (_root["login_server"][i]["host"].IsNull()) {
-			throw std::runtime_error("Missing login_server.host in config.yaml");
+			throw std::runtime_error("missing login_server.host in config.yaml");
 		}
 		if (_root["login_server"][i]["host"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("login_server.host must be a string");
 		}
 		loginconfig->LoginHost = _root["login_server"][i]["host"].as<std::string>();
 		if (_root["login_server"][i]["port"].IsNull()) {
-			throw std::runtime_error("Missing login_server.port in config.yaml");
+			throw std::runtime_error("missing login_server.port in config.yaml");
 		}
 		if (_root["login_server"][i]["port"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("login_server.port must be a number");
@@ -160,7 +160,7 @@ void Config::parse_config() {
 		}
 		DatabaseHost = _root["database"]["host"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing database.host in config.yaml");
+		throw std::runtime_error("missing database.host in config.yaml");
 	}
 
 	if (!_root["database"]["username"].IsNull()) {
@@ -169,7 +169,7 @@ void Config::parse_config() {
 		}
 		DatabaseUsername = _root["database"]["username"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing database.username in config.yaml");
+		throw std::runtime_error("missing database.username in config.yaml");
 	}
 
 	if (!_root["database"]["password"].IsNull()) {
@@ -178,7 +178,7 @@ void Config::parse_config() {
 		}
 		DatabasePassword = _root["database"]["password"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing database.password in config.yaml");
+		throw std::runtime_error("missing database.password in config.yaml");
 	}
 
 	if (!_root["database"]["db"].IsNull()) {
@@ -187,7 +187,7 @@ void Config::parse_config() {
 		}
 		DatabaseDB = _root["database"]["db"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing database.db in config.yaml");
+		throw std::runtime_error("missing database.db in config.yaml");
 	}
 
 	if (!_root["database"]["port"].IsNull()) {
@@ -196,7 +196,7 @@ void Config::parse_config() {
 		}
 		DatabasePort = _root["database"]["port"].as<uint16_t>();
 	} else {
-		throw std::runtime_error("Missing database.port in config.yaml");
+		throw std::runtime_error("missing database.port in config.yaml");
 	}
 
 	if (!_root["query_serv"]["host"].IsNull()) {
@@ -205,7 +205,7 @@ void Config::parse_config() {
 		}
 		QSDatabaseHost = _root["query_serv"]["host"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing query_serv.host in config.yaml");
+		throw std::runtime_error("missing query_serv.host in config.yaml");
 	}
 
 	if (!_root["query_serv"]["username"].IsNull()) {
@@ -214,7 +214,7 @@ void Config::parse_config() {
 		}
 		QSDatabaseUsername = _root["query_serv"]["username"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing query_serv.username in config.yaml");
+		throw std::runtime_error("missing query_serv.username in config.yaml");
 	}
 
 	if (!_root["query_serv"]["password"].IsNull()) {
@@ -223,7 +223,7 @@ void Config::parse_config() {
 		}
 		QSDatabasePassword = _root["query_serv"]["password"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing query_serv.password in config.yaml");
+		throw std::runtime_error("missing query_serv.password in config.yaml");
 	}
 
 	if (!_root["query_serv"]["db"].IsNull()) {
@@ -232,7 +232,7 @@ void Config::parse_config() {
 		}
 		QSDatabaseDB = _root["query_serv"]["db"].as<std::string>();
 	} else {
-		throw std::runtime_error("Missing query_serv.db in config.yaml");
+		throw std::runtime_error("missing query_serv.db in config.yaml");
 	}
 
 	if (!_root["query_serv"]["port"].IsNull()) {
@@ -241,7 +241,7 @@ void Config::parse_config() {
 		}
 		QSDatabasePort = _root["query_serv"]["port"].as<uint16_t>();
 	} else {
-		throw std::runtime_error("Missing query_serv.port in config.yaml");
+		throw std::runtime_error("missing query_serv.port in config.yaml");
 	}
 
 	if (!_root["zone"]["default_status"].IsNull()) {
