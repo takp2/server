@@ -48,12 +48,19 @@ int main() {
 
 	LogInfo("Connecting to MySQL");
 
-	/* MySQL Connection */
 	if (!database.Connect(
 	        Config->QSDatabaseHost.c_str(), Config->QSDatabaseUsername.c_str(),
 	        Config->QSDatabasePassword.c_str(), Config->QSDatabaseDB.c_str(),
 	        Config->QSDatabasePort)) {
-		LogInfo("Cannot continue without a database connection.");
+		LogInfo("Failed to connect to database");
+		return 1;
+	}
+
+	if (!DB::Open(
+	        Config->QSDatabaseHost.c_str(), Config->QSDatabaseUsername.c_str(),
+	        Config->QSDatabasePassword.c_str(), Config->QSDatabaseDB.c_str(),
+	        Config->QSDatabasePort)) {
+		LogInfo("Failed to open database");
 		return 1;
 	}
 
@@ -62,7 +69,7 @@ int main() {
 		return 1;
 	}
 
-	LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
+	LogSys.LoadLogDatabaseSettings()->StartFileLogs();
 
 	if (signal(SIGINT, CatchSignal) == SIG_ERR) {
 		LogInfo("Could not set signal handler");

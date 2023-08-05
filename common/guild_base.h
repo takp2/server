@@ -32,9 +32,6 @@ class BaseGuildManager {
 	BaseGuildManager();
 	virtual ~BaseGuildManager();
 
-	// this must be called before doing anything else with this object
-	void SetDatabase(Database *db) { m_db = db; }
-
 	bool LoadGuilds();
 	bool RefreshGuild(uint32 guild_id);
 

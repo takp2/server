@@ -20,18 +20,12 @@ BaseGuildManager::~BaseGuildManager() { ClearGuilds(); }
 bool BaseGuildManager::LoadGuilds() {
 	ClearGuilds();
 
-	if (m_db == nullptr) {
-		Log(Logs::Detail, Logs::Guilds,
-		    "Requested to load guilds when we have no database object.");
-		return (false);
-	}
-
 	std::string query(
 	    "SELECT id, name, leader, minstatus, motd, motd_setter,channel,url "
 	    "FROM guilds");
 	std::map<uint32, GuildInfo *>::iterator res;
 
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		return false;
@@ -45,7 +39,7 @@ bool BaseGuildManager::LoadGuilds() {
 	    "SELECT "
 	    "guild_id,`rank`,title,can_hear,can_speak,can_invite,can_remove,can_"
 	    "promote,can_demote,can_motd,can_warpeace FROM guild_ranks";
-	results = m_db->QueryDatabase(query);
+	results = DB::Query(query);
 
 	if (!results.Success()) {
 		return false;
@@ -102,7 +96,7 @@ bool BaseGuildManager::RefreshGuild(uint32 guild_id) {
 	GuildInfo *info;
 
 	// load up all the guilds
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		return false;
@@ -124,7 +118,7 @@ bool BaseGuildManager::RefreshGuild(uint32 guild_id) {
 	    "can_remove, can_promote, can_demote, can_motd, can_warpeace "
 	    "FROM guild_ranks WHERE guild_id=%lu",
 	    (unsigned long)guild_id);
-	results = m_db->QueryDatabase(query);
+	results = DB::Query(query);
 
 	if (!results.Success()) {
 		return false;
@@ -227,12 +221,12 @@ bool BaseGuildManager::_StoreGuildDB(uint32 guild_id) {
 	                                 (unsigned long)guild_id);
 
 	// clear out old `guilds` entry
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	// clear out old `guild_ranks` entries
 	query = StringFormat("DELETE FROM guild_ranks WHERE guild_id=%lu",
 	                     (unsigned long)guild_id);
-	results = m_db->QueryDatabase(query);
+	results = DB::Query(query);
 
 	// escape our strings.
 	auto name_esc = new char[info->name.length() * 2 + 1];
@@ -249,7 +243,7 @@ bool BaseGuildManager::_StoreGuildDB(uint32 guild_id) {
 	    "VALUES(%lu,'%s',%lu,%d,'%s', '%s')",
 	    (unsigned long)guild_id, name_esc, (unsigned long)info->leader_char_id,
 	    info->minstatus, motd_esc, motd_set_esc);
-	results = m_db->QueryDatabase(query);
+	results = DB::Query(query);
 
 	if (!results.Success()) {
 		safe_delete_array(name_esc);
@@ -283,7 +277,7 @@ bool BaseGuildManager::_StoreGuildDB(uint32 guild_id) {
 		    rankInfo.permissions[GUILD_DEMOTE],
 		    rankInfo.permissions[GUILD_MOTD],
 		    rankInfo.permissions[GUILD_WARPEACE]);
-		results = m_db->QueryDatabase(query);
+		results = DB::Query(query);
 
 		if (!results.Success()) {
 			safe_delete_array(title_esc);
@@ -325,7 +319,7 @@ uint32 BaseGuildManager::_GetFreeGuildID() {
 
 	for (auto index = 1; index < RuleI(Guild, MaxGuilds); ++index) {
 		query = StringFormat("SELECT id FROM guilds where id=%i;", index);
-		auto results = m_db->QueryDatabase(query);
+		auto results = DB::Query(query);
 
 		if (!results.Success()) {
 			continue;
@@ -533,7 +527,7 @@ bool BaseGuildManager::DBRenameGuild(uint32 guild_id, const char *name) {
 	// insert the new `guilds` entry
 	std::string query =
 	    StringFormat("UPDATE guilds SET name='%s' WHERE id=%d", esc, guild_id);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		Log(Logs::Detail, Logs::Guilds, "Error renaming guild %d '%s': %s",
@@ -568,7 +562,7 @@ bool BaseGuildManager::DBSetGuildLeader(uint32 guild_id, uint32 leader) {
 	// insert the new `guilds` entry
 	std::string query = StringFormat(
 	    "UPDATE guilds SET leader='%d' WHERE id=%d", leader, guild_id);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		return false;
@@ -615,7 +609,7 @@ bool BaseGuildManager::DBSetGuildMOTD(uint32 guild_id, const char *motd,
 	std::string query =
 	    StringFormat("UPDATE guilds SET motd='%s',motd_setter='%s' WHERE id=%d",
 	                 esc, esc_set, guild_id);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		safe_delete_array(esc);
@@ -649,7 +643,7 @@ bool BaseGuildManager::DBSetGuildURL(uint32 GuildID, const char *URL) {
 
 	std::string query =
 	    StringFormat("UPDATE guilds SET url='%s' WHERE id=%d", esc, GuildID);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		safe_delete_array(esc);
@@ -681,7 +675,7 @@ bool BaseGuildManager::DBSetGuildChannel(uint32 GuildID, const char *Channel) {
 
 	std::string query = StringFormat(
 	    "UPDATE guilds SET channel='%s' WHERE id=%d", esc, GuildID);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		safe_delete_array(esc);
@@ -713,7 +707,7 @@ bool BaseGuildManager::DBSetGuild(uint32 charid, uint32 guild_id, uint8 rank) {
 		    "REPLACE INTO guild_members (char_id,guild_id,`rank`,public_note) "
 		    "VALUES(%d,%d,%d,'')",
 		    charid, guild_id, rank);
-		auto results = m_db->QueryDatabase(query);
+		auto results = DB::Query(query);
 
 		if (!results.Success()) {
 			return false;
@@ -722,7 +716,7 @@ bool BaseGuildManager::DBSetGuild(uint32 charid, uint32 guild_id, uint8 rank) {
 	} else {
 		query =
 		    StringFormat("DELETE FROM guild_members WHERE char_id=%d", charid);
-		auto results = m_db->QueryDatabase(query);
+		auto results = DB::Query(query);
 		if (!results.Success()) {
 			return false;
 		}
@@ -752,7 +746,7 @@ bool BaseGuildManager::GetBankerFlag(uint32 CharID) {
 	std::string query = StringFormat(
 	    "select `banker` from `guild_members` where char_id=%i LIMIT 1",
 	    CharID);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 	if (!results.Success()) {
 		return false;
 	}
@@ -779,7 +773,7 @@ bool BaseGuildManager::GetAltFlag(uint32 CharID) {
 
 	std::string query = StringFormat(
 	    "SELECT `alt` FROM `guild_members` WHERE char_id=%i LIMIT 1", CharID);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 	if (!results.Success()) {
 		return false;
 	}
@@ -806,7 +800,7 @@ bool BaseGuildManager::DBSetPublicNote(uint32 charid, const char *note) {
 	    "UPDATE guild_members SET public_note='%s' WHERE char_id=%d", esc,
 	    charid);
 	safe_delete_array(esc);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		return false;
@@ -820,7 +814,7 @@ bool BaseGuildManager::DBSetPublicNote(uint32 charid, const char *note) {
 bool BaseGuildManager::QueryWithLogging(std::string query, const char *errmsg) {
 	if (m_db == nullptr) return (false);
 
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 
 	if (!results.Success()) {
 		return (false);
@@ -837,7 +831,7 @@ bool BaseGuildManager::QueryWithLogging(std::string query, const char *errmsg) {
 	" FROM `character_data` AS c LEFT JOIN guild_members AS g ON " \
 	"c.id=g.char_id "
 
-static void ProcessGuildMember(MySQLRequestRow row, CharGuildInfo &into) {
+static void ProcessGuildMember(DBRow row, CharGuildInfo &into) {
 	// fields from `characer_`
 	into.char_id = atoi(row[0]);
 	into.char_name = row[1];
@@ -867,7 +861,7 @@ bool BaseGuildManager::GetEntireGuild(uint32 guild_id,
 	// load up the rank info for each guild.
 	std::string query =
 	    StringFormat(GuildMemberBaseQuery " WHERE g.guild_id=%d", guild_id);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 	if (!results.Success()) {
 		return false;
 	}
@@ -902,7 +896,7 @@ bool BaseGuildManager::GetCharInfo(const char *char_name, CharGuildInfo &into) {
 	std::string query =
 	    StringFormat(GuildMemberBaseQuery " WHERE c.name='%s'", esc);
 	safe_delete_array(esc);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 	if (!results.Success()) {
 		return false;
 	}
@@ -928,7 +922,7 @@ bool BaseGuildManager::GetCharInfo(uint32 char_id, CharGuildInfo &into) {
 	// load up the rank info for each guild.
 	std::string query;
 	query = StringFormat(GuildMemberBaseQuery " WHERE c.id=%d", char_id);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 	if (!results.Success()) {
 		return false;
 	}
@@ -1182,7 +1176,7 @@ uint32 BaseGuildManager::DoesAccountContainAGuildLeader(uint32 AccountID) {
 	    "SELECT guild_id FROM guild_members WHERE char_id IN "
 	    "(SELECT id FROM `character_data` WHERE account_id = %i) AND rank = 2",
 	    AccountID);
-	auto results = m_db->QueryDatabase(query);
+	auto results = DB::Query(query);
 	if (!results.Success()) {
 		return 0;
 	}

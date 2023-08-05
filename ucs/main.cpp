@@ -72,7 +72,7 @@ int main() {
 		return 1;
 	}
 
-	LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
+	LogSys.LoadLogDatabaseSettings()->StartFileLogs();
 
 	char tmp[64];
 

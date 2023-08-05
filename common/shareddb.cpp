@@ -833,7 +833,6 @@ bool SharedDatabase::LoadNPCFactionLists(const std::string& prefix) {
 		mutex.Lock();
 		std::string file_name =
 		    Config->SharedMemDir + prefix + std::string("faction");
-		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		faction_mmf = std::unique_ptr<EQ::MemoryMappedFile>(
 		    new EQ::MemoryMappedFile(file_name));
 		faction_hash = std::unique_ptr<EQ::FixedMemoryHashSet<NPCFactionList>>(
@@ -842,7 +841,7 @@ bool SharedDatabase::LoadNPCFactionLists(const std::string& prefix) {
 		        faction_mmf->Size()));
 		mutex.Unlock();
 	} catch (std::exception& ex) {
-		LogError("Error Loading npc factions: {0}", ex.what());
+		LogError("Failed loading npc factions: {0}", ex.what());
 		return false;
 	}
 
@@ -1217,13 +1216,12 @@ bool SharedDatabase::LoadSpells(const std::string& prefix, int32* records,
 		    Config->SharedMemDir + prefix + std::string("spells");
 		spells_mmf = std::unique_ptr<EQ::MemoryMappedFile>(
 		    new EQ::MemoryMappedFile(file_name));
-		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		*records = *reinterpret_cast<uint32*>(spells_mmf->Get());
 		*sp = reinterpret_cast<const SPDat_Spell_Struct*>(
 		    (char*)spells_mmf->Get() + 4);
 		mutex.Unlock();
 	} catch (std::exception& ex) {
-		LogError("Error Loading Spells: {0}", ex.what());
+		LogError("Failed to load spells: {0}", ex.what());
 		return false;
 	}
 	return true;
@@ -1465,12 +1463,11 @@ bool SharedDatabase::LoadBaseData(const std::string& prefix) {
 
 		std::string file_name =
 		    Config->SharedMemDir + prefix + std::string("base_data");
-		LogInfo("[Shared Memory] Attempting to load file [{0}]", file_name);
 		base_data_mmf = std::unique_ptr<EQ::MemoryMappedFile>(
 		    new EQ::MemoryMappedFile(file_name));
 		mutex.Unlock();
 	} catch (std::exception& ex) {
-		LogError("Error Loading Base Data: {0}", ex.what());
+		LogError("Failed to load base_data: {0}", ex.what());
 		return false;
 	}
 

@@ -95,7 +95,6 @@ int main(int argc, char** argv) {
 
 	LogInfo("Starting Zone v{}", VERSION);
 
-	LogInfo("Loading config.yaml");
 	auto load_result = ZoneConfig::LoadConfig();
 	if (!load_result.empty()) {
 		LogError("{}", load_result);
@@ -170,22 +169,25 @@ int main(int argc, char** argv) {
 
 	worldserver.SetPassword(Config->SharedKey.c_str());
 
-	LogInfo("Connecting to MySQL...");
 	if (!database.Connect(Config->DatabaseHost.c_str(),
 	                      Config->DatabaseUsername.c_str(),
 	                      Config->DatabasePassword.c_str(),
 	                      Config->DatabaseDB.c_str(), Config->DatabasePort)) {
-		LogError("Cannot continue without a database connection.");
+		LogError("Failed to open database");
 		return 1;
 	}
 
-	LogSys.SetDatabase(&database)
-	    ->LoadLogDatabaseSettings()
+	if (!DB::Open(Config->DatabaseHost.c_str(),
+	              Config->DatabaseUsername.c_str(),
+	              Config->DatabasePassword.c_str(),
+	              Config->DatabaseDB.c_str(), Config->DatabasePort)) {
+		LogError("Failed to open db");
+		return 1;
+	}
+
+	LogSys.LoadLogDatabaseSettings()
 	    ->SetGMSayHandler(&Zone::GMSayHookCallBackProcess)
 	    ->StartFileLogs();
-
-	/* Guilds */
-	guild_mgr.SetDatabase(&database);
 
 #ifdef _EQDEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -208,8 +210,6 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 #endif
-
-	LogInfo("Mapping Incoming Opcodes");
 	MapOpcodes();
 
 	// LogInfo("Loading Variables");
@@ -222,81 +222,68 @@ int main(int argc, char** argv) {
 	//	}
 	// }
 
-	LogInfo("Loading zone names");
 	database.LoadZoneNames();
 
-	LogInfo("Loading items");
 	if (!database.LoadItems(hotfix_name)) {
-		LogError("Loading items FAILED!");
-		LogError("Failed. But ignoring error and going on...");
+		LogError("Failed to load items");
+		return 1;
 	}
 
-	LogInfo("Loading npc faction lists");
 	if (!database.LoadNPCFactionLists(hotfix_name)) {
-		LogError("Loading npcs faction lists FAILED!");
-		return 1;
-	}
-	LogInfo("Loading loot tables");
-	if (!database.LoadLoot(hotfix_name)) {
-		LogError("Loading loot FAILED!");
-		return 1;
-	}
-	LogInfo("Loading skill caps");
-	if (!database.LoadSkillCaps(std::string(hotfix_name))) {
-		LogError("Loading skill caps FAILED!");
+		LogError("Failed to npc factions");
 		return 1;
 	}
 
-	LogInfo("Loading spells");
+	if (!database.LoadLoot(hotfix_name)) {
+		LogError("Failed to load loot");
+		return 1;
+	}
+
+	if (!database.LoadSkillCaps(std::string(hotfix_name))) {
+		LogError("Failed to load skill caps");
+		std::exit(1);
+		return 1;
+	}
+
 	if (!database.LoadSpells(hotfix_name, &SPDAT_RECORDS, &spells)) {
 		LogError("Loading spells FAILED!");
 		return 1;
 	}
 
-	LogInfo("Loading base data");
 	if (!database.LoadBaseData(hotfix_name)) {
 		LogError("Loading base data FAILED!");
 		return 1;
 	}
 
-	LogInfo("Loading guilds");
 	guild_mgr.LoadGuilds();
 
-	LogInfo("Loading factions");
 	database.LoadFactionData();
 
-	LogInfo("Loading titles");
 	title_manager.LoadTitles();
 
-	LogInfo("Loading AA actions");
 	database.LoadAAActions();
 
-	LogInfo("Loading commands");
 	int retval = command_init();
 	if (retval < 0) {
-		LogError("Command loading FAILED");
-	} else {
-		LogInfo("{} commands loaded", retval);
+		LogError("Failed to load commands");
+		return 1;
 	}
 
-	// rules:
-	{
-		std::string tmp;
-		/*if (database.GetVariable("RuleSet", tmp)) {
-		    LogInfo("Loading rule set '{}'", tmp.c_str());
-		    if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
-		        LogError(
-		            "Failed to load ruleset '{}', falling back to defaults.",
-		            tmp.c_str());
-		    }
-		} else {*/
-		if (!RuleManager::Instance()->LoadRules(&database, "default")) {
-			LogInfo("No rule set configured, using default rules");
-		} else {
-			LogInfo("Loaded default rule set 'Default'");
-		}
-		//}
+	// std::string tmp;
+	/*if (database.GetVariable("RuleSet", tmp)) {
+	    LogInfo("Loading rule set '{}'", tmp.c_str());
+	    if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
+	        LogError(
+	            "Failed to load ruleset '{}', falling back to defaults.",
+	            tmp.c_str());
+	    }
+	} else {*/
+	if (!RuleManager::Instance()->LoadRules(&database, "default")) {
+		LogInfo("No rule set configured, using default rules");
+	} else {
+		LogInfo("Loaded default rule set 'Default'");
 	}
+	//}
 
 	parse = new QuestParserCollection();
 #ifdef LUA_EQEMU
@@ -304,12 +291,11 @@ int main(int argc, char** argv) {
 	parse->RegisterQuestInterface(lua_parser, "lua");
 #endif
 
-	// now we have our parser, load the quests
-	LogInfo("Loading quests");
 	parse->ReloadQuests();
 
 	if (!worldserver.Connect()) {
-		LogError("Worldserver Connection Failed :: worldserver.Connect()");
+		// We can ignore this, it is reported inside with context
+		// LogError("Failed to connect to world, will retry in 5 seconds");
 	}
 
 	Timer InterserverTimer(

@@ -247,7 +247,7 @@ class EQEmuLogSys {
 	/* Internally used memory reference for all log settings per category.
 	    These are loaded via DB and have defaults loaded in
 	   LoadLogSettingsDefaults. Database loaded via
-	   LogSys.SetDatabase(&database)->LoadLogDatabaseSettings();
+	   LogSys.LoadLogDatabaseSettings();
 	*/
 	LogSettings log_settings[Logs::LogCategory::MaxCategoryID];
 
@@ -274,13 +274,7 @@ class EQEmuLogSys {
 	void SilenceConsoleLogging();
 	void EnableConsoleLogging();
 
-	// database
-	EQEmuLogSys* SetDatabase(Database* db);
-
    private:
-	// reference to database
-	Database* m_database;
-
 	std::function<void(uint16 log_category, const std::string&)>
 	    on_log_gmsay_hook;
 	std::function<void(uint16 debug_level, uint16 log_category,

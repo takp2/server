@@ -84,17 +84,6 @@ extern ConsoleList console_list;
 
 void CatchSignal(int sig_num);
 
-void LoadDatabaseConnections() {
-	if (!database.Connect(Config->DatabaseHost.c_str(),
-	                      Config->DatabaseUsername.c_str(),
-	                      Config->DatabasePassword.c_str(),
-	                      Config->DatabaseDB.c_str(), Config->DatabasePort)) {
-		LogError("Failed to connect to database");
-
-		std::exit(1);
-	}
-}
-
 void LoadServerConfig() {
 	auto load_result = WorldConfig::LoadConfig();
 	if (!load_result.empty()) {
@@ -146,10 +135,26 @@ int main(int argc, char** argv) {
 #endif
 
 	RegisterLoginservers();
-	LoadDatabaseConnections();
-	guild_mgr.SetDatabase(&database);
 
-	LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
+	if (!database.Connect(Config->DatabaseHost.c_str(),
+	                      Config->DatabaseUsername.c_str(),
+	                      Config->DatabasePassword.c_str(),
+	                      Config->DatabaseDB.c_str(), Config->DatabasePort)) {
+		LogError("Failed to connect to database");
+
+		std::exit(1);
+	}
+
+	if (!DB::Open(Config->DatabaseHost.c_str(),
+	              Config->DatabaseUsername.c_str(),
+	              Config->DatabasePassword.c_str(),
+	              Config->DatabaseDB.c_str(), Config->DatabasePort)) {
+		LogError("Failed to connect to database");
+
+		std::exit(1);
+	}
+
+	LogSys.LoadLogDatabaseSettings()->StartFileLogs();
 
 	// database.LoadVariables();
 
@@ -175,19 +180,18 @@ int main(int argc, char** argv) {
 	}
 
 	guild_mgr.LoadGuilds();
-	// rules:
-	{
-		std::string tmp;
-		/*if (database.GetVariable("RuleSet", tmp)) {
-		    if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
-		        LogError("Failed to load ruleset {0}, falling back to default values", tmp.c_str());
-		    }
-		} else {*/
-		if (!RuleManager::Instance()->LoadRules(&database, "default")) {
-			LogInfo("No rule set configured, using default rules");
-		}
-		//}
+
+	std::string tmp;
+	/*if (database.GetVariable("RuleSet", tmp)) {
+	    if (!RuleManager::Instance()->LoadRules(&database, tmp.c_str())) {
+	        LogError("Failed to load ruleset {0}, falling back to default values", tmp.c_str());
+	    }
+	} else {*/
+	if (!RuleManager::Instance()->LoadRules(&database, "default")) {
+		LogInfo("No rule set configured, using default rules");
 	}
+	//}
+
 	if (RuleB(World, ClearTempMerchantlist)) {
 		database.ClearMerchantTemp();
 	}
@@ -205,7 +209,7 @@ int main(int argc, char** argv) {
 
 	launcher_list.LoadList();
 
-	std::string tmp;
+	tmp = "";
 	int delete_count = database.DeleteStalePlayerCorpses();
 	if (delete_count > 0) {
 		LogInfo("Deleted {0} stale player corpses from database", delete_count);
@@ -220,17 +224,15 @@ int main(int argc, char** argv) {
 
 	char errbuf[TCPConnection_ErrorBufferSize];
 	if (tcps.Open(Config->WorldTCPPort, errbuf)) {
-		LogInfo("TCP Listening on {}", Config->WorldTCPPort);
+		LogInfo("TCP listening on {}", Config->WorldTCPPort);
 	} else {
-		LogInfo("Failed to TCP Listener on port [{0}]:",
-		        Config->WorldTCPPort);
-		LogError("        {0}", errbuf);
+		LogInfo("Failed to start TCP listening on {}: {}", Config->WorldTCPPort, errbuf);
 		return 1;
 	}
 	if (eqsf.Open()) {
-		LogInfo("UDP Listening on {}", 9000);
+		LogInfo("UDP istening on {}", 9000);
 	} else {
-		LogInfo("Failed to start client (UDP) listener (port 9000)");
+		LogInfo("Failed to start UDP listening on {}", 9000);
 		return 1;
 	}
 

@@ -481,11 +481,10 @@ EQEmuLogSys* EQEmuLogSys::LoadLogDatabaseSettings() {
 		db_categories.emplace_back(log_category_id);
 	}
 
-	return this;
-}
-
-EQEmuLogSys* EQEmuLogSys::SetDatabase(Database* db) {
-	m_database = db;
-
+	// info and error should always be to console
+	log_settings[Logs::Info].is_category_enabled = 1;
+	log_settings[Logs::Info].log_to_console = Logs::General;
+	log_settings[Logs::Error].is_category_enabled = 1;
+	log_settings[Logs::Error].log_to_console = Logs::General;
 	return this;
 }

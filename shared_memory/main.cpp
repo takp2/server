@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	// LogSys.SetDatabase(&database)->LoadLogDatabaseSettings()->StartFileLogs();
+	// LogSys.LoadLogDatabaseSettings()->StartFileLogs();
 	/*database.LoadVariables();
 	std::string db_hotfix_name;
 	if (database.GetVariable("hotfix_name", db_hotfix_name)) {
