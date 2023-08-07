@@ -40,9 +40,8 @@ class Config {
 	int32 MaxClients;
 	std::string SharedKey;
 
-	// From <chatserver/>
-	std::string ChatHost;
-	uint16 ChatPort;
+	std::string UCSHost;
+	uint16 UCSPort;
 
 	// From <database/>
 	std::string DatabaseHost;

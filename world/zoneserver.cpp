@@ -161,12 +161,12 @@ bool ZoneServer::Process() {
 				this->SendEmoteMessage(
 				    0, 0, AccountStatus::Player, CC_User_ChatChannel,
 				    "The Universal Chat service is temporarily unavailable. "
-				    "You will be notified when it is restored.");
+				    "You will be notified when it is restored");
 			} else {
 				this->SendEmoteMessage(
 				    0, 0, AccountStatus::Player, CC_User_ChatChannel,
 				    "The Universal Chat service has been restored.  You must "
-				    "zone to re-join channels.");
+				    "zone to re-join channels");
 			}
 		}
 	}
@@ -185,7 +185,7 @@ bool ZoneServer::Process() {
 						struct in_addr in;
 						in.s_addr = GetIP();
 						Log(Logs::Detail, Logs::WorldServer,
-						    "Zone authorization failed.");
+						    "Zone authorization failed");
 						auto pack = new ServerPacket(ServerOP_ZAAuthFailed);
 						SendPacket(pack);
 						safe_delete(pack);
@@ -196,7 +196,7 @@ bool ZoneServer::Process() {
 					struct in_addr in;
 					in.s_addr = GetIP();
 					Log(Logs::Detail, Logs::WorldServer,
-					    "Zone authorization failed.");
+					    "Zone authorization failed");
 					auto pack = new ServerPacket(ServerOP_ZAAuthFailed);
 					SendPacket(pack);
 					safe_delete(pack);
@@ -208,7 +208,7 @@ bool ZoneServer::Process() {
 				    "**WARNING** You have not configured a world shared key in "
 				    "your config file. You should add a <key>STRING</key> "
 				    "element to your <world> element to prevent unauthroized "
-				    "zone access.");
+				    "zone access");
 				is_authenticated = true;
 			}
 		}
@@ -371,7 +371,7 @@ bool ZoneServer::Process() {
 				} else {
 					Log(Logs::General, Logs::WorldServer,
 					    "Character %s is not found, group ownership will not "
-					    "be transferred.",
+					    "be transferred",
 					    sgls->leader_name);
 				}
 
@@ -761,19 +761,19 @@ bool ZoneServer::Process() {
 				} else {
 					client_port = sci->port;
 					Log(Logs::Detail, Logs::WorldServer,
-					    "Zone specified port %d.", client_port);
+					    "Zone specified port %d", client_port);
 				}
 
 				if (sci->address[0]) {
 					strn0cpy(client_address, sci->address, 250);
 					Log(Logs::Detail, Logs::WorldServer,
-					    "Zone specified address %s.", sci->address);
+					    "Zone specified address %s", sci->address);
 				}
 
 				if (sci->local_address[0]) {
 					strn0cpy(client_local_address, sci->local_address, 250);
 					Log(Logs::Detail, Logs::WorldServer,
-					    "Zone specified local address %s.", sci->address);
+					    "Zone specified local address %s", sci->address);
 				}
 
 				if (sci->process_id) {
@@ -937,7 +937,7 @@ bool ZoneServer::Process() {
 							}
 						} else {
 							Log(Logs::Detail, Logs::WorldServer,
-							    "Zone for %s won't boot due to rule.",
+							    "Zone for %s won't boot due to rule",
 							    ztz->name);
 							// bootup failed, send back error code 0
 							ztz->response = 0;
@@ -1109,7 +1109,7 @@ bool ZoneServer::Process() {
 						this->SendEmoteMessage(
 						    gmg->myname, 0, AccountStatus::Player, CC_Red,
 						    fmt::format(
-						        "Error: Cannot identify {}'s zoneserver.",
+						        "Error: Cannot identify {}'s zoneserver",
 						        gmg->gotoname)
 						        .c_str());
 					else if (cle->Anon() == 1 &&
@@ -1145,13 +1145,13 @@ bool ZoneServer::Process() {
 					loginserverlist.SendStatus();
 					SendEmoteMessage(
 					    l->character_name, 0, AccountStatus::Player, CC_Yellow,
-					    fmt::format("World {}.",
+					    fmt::format("World {}",
 					                l->is_locked ? "locked" : "unlocked")
 					        .c_str());
 				} else {
 					SendEmoteMessage(
 					    l->character_name, 0, AccountStatus::Player, CC_Yellow,
-					    fmt::format("World {}, but login server not connected.",
+					    fmt::format("World {}, but login server not connected",
 					                l->is_locked ? "locked" : "unlocked")
 					        .c_str());
 				}
@@ -1315,12 +1315,12 @@ bool ZoneServer::Process() {
 					if (zs->SendPacket(pack)) {
 						Log(Logs::Detail, Logs::WorldServer,
 						    "Sent request to spawn player corpse id %i in zone "
-						    "%u.",
+						    "%u",
 						    s->player_corpse_id, s->zone_id);
 					} else {
 						Log(Logs::Detail, Logs::WorldServer,
 						    "Could not send request to spawn player corpse id "
-						    "%i in zone %u.",
+						    "%i in zone %u",
 						    s->player_corpse_id, s->zone_id);
 					}
 				}
@@ -1364,7 +1364,7 @@ bool ZoneServer::Process() {
 									if (zs->SendPacket(reply))
 										Log(Logs::Detail, Logs::WorldServer,
 										    "Sent consent packet from player "
-										    "%s to player %s in zone %u.",
+										    "%s to player %s in zone %u",
 										    s->ownername, s->grantname,
 										    cle->zone());
 								}
@@ -1394,13 +1394,13 @@ bool ZoneServer::Process() {
 						if (!zs->SendPacket(reply))
 							Log(Logs::Detail, Logs::WorldServer,
 							    "ServerOP_Consent: Unable to send consent "
-							    "response back to player %s in zone %s.",
+							    "response back to player %s in zone %s",
 							    s->ownername, zs->GetZoneName());
 					} else {
 						Log(Logs::Detail, Logs::WorldServer,
 						    "ServerOP_Consent: Unable to locate zone record "
 						    "for zone id %u in zoneserver list for "
-						    "ServerOP_Consent_Response operation.",
+						    "ServerOP_Consent_Response operation",
 						    s->zone_id);
 					}
 					safe_delete(reply);
@@ -1416,13 +1416,13 @@ bool ZoneServer::Process() {
 					if (!zs->SendPacket(pack))
 						Log(Logs::Detail, Logs::WorldServer,
 						    "ServerOP_Consent_Response: Unable to send consent "
-						    "response back to player %s in zone %s.",
+						    "response back to player %s in zone %s",
 						    s->ownername, zs->GetZoneName());
 				} else {
 					Log(Logs::Detail, Logs::WorldServer,
 					    "ServerOP_Consent_Response: Unable to locate zone "
 					    "record for zone id %u in zoneserver list for "
-					    "ServerOP_Consent_Response operation.",
+					    "ServerOP_Consent_Response operation",
 					    s->zone_id);
 				}
 				break;
@@ -1490,7 +1490,7 @@ bool ZoneServer::Process() {
 					} else
 						Log(Logs::Detail, Logs::WorldServer,
 						    "Granted player %s not found to send denied "
-						    "consent message.",
+						    "consent message",
 						    cd->gname);
 
 					iterator.Advance();
@@ -1604,13 +1604,13 @@ bool ZoneServer::Process() {
 			case ServerOP_ChangeSharedMem: {
 				std::string hotfix_name = std::string((char*)pack->pBuffer);
 
-				Log(Logs::General, Logs::WorldServer, "Loading items...");
+				Log(Logs::General, Logs::WorldServer, "Loading items..");
 				if (!database.LoadItems(hotfix_name)) {
 					Log(Logs::General, Logs::WorldServer,
 					    "Error: Could not load item data. But ignoring");
 				}
 
-				Log(Logs::General, Logs::WorldServer, "Loading skill caps...");
+				Log(Logs::General, Logs::WorldServer, "Loading skill caps..");
 				if (!database.LoadSkillCaps(hotfix_name)) {
 					Log(Logs::General, Logs::WorldServer,
 					    "Error: Could not load skill cap data. But ignoring");
@@ -1681,7 +1681,7 @@ bool ZoneServer::Process() {
 		} else {
 			Log(Logs::Detail, Logs::WorldServer,
 			    "Zoneserver process attempted to delete pack when pack does "
-			    "not exist.");
+			    "not exist");
 		}
 	}
 	return true;

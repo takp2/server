@@ -223,18 +223,17 @@ int main(int argc, char** argv) {
 	database.LoadCharacterCreateCombos();
 
 	char errbuf[TCPConnection_ErrorBufferSize];
-	if (tcps.Open(Config->WorldTCPPort, errbuf)) {
-		LogInfo("TCP listening on {}", Config->WorldTCPPort);
-	} else {
+	if (!tcps.Open(Config->WorldTCPPort, errbuf)) {
 		LogInfo("Failed to start TCP listening on {}: {}", Config->WorldTCPPort, errbuf);
 		return 1;
 	}
-	if (eqsf.Open()) {
-		LogInfo("UDP listening on {}", 9000);
-	} else {
+	LogInfo("TCP listening on {}", Config->WorldTCPPort);
+
+	if (!eqsf.Open()) {
 		LogInfo("Failed to start UDP listening on {}", 9000);
 		return 1;
 	}
+	LogInfo("UDP listening on {}", 9000);
 
 	// register all the patches we have avaliable with the stream identifier.
 	EQStreamIdentifier stream_identifier;

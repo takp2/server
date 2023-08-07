@@ -159,22 +159,18 @@ static void ProcessCommandIgnore(Client *c, std::string Ignoree) {
 	safe_delete(outapp);
 }
 
-Clientlist::Clientlist(int ChatPort) {
-	chatsf = new EQStreamFactory(ChatStream, ChatPort, 60000);
+Clientlist::Clientlist(int UCSPort) {
+	chatsf = new EQStreamFactory(ChatStream, UCSPort, 60000);
 
 	ChatOpMgr = new RegularOpcodeManager;
 
 	if (!ChatOpMgr->LoadOpcodes("assets/patches/chat_opcodes.conf")) exit(1);
 
-	if (chatsf->Open()) {
-		LogF(Logs::Detail, Logs::LoginServer,
-		     "Client (UDP) Chat listener started on port [{0}].", ChatPort);
-	} else {
-		LogF(Logs::Detail, Logs::UCSServer,
-		     "Failed to start client (UDP) listener (port [{0}]-4i)", ChatPort);
-
+	if (!chatsf->Open()) {
+		LogError("Failed to start UDP listening on {}", UCSPort);
 		exit(1);
 	}
+	LogInfo("UDP listening on port {}", UCSPort);
 }
 
 Client::Client(EQStream *eqs) {
@@ -341,7 +337,7 @@ void Clientlist::Process() {
 					if (strlen(PacketBuffer) != 8) {
 						LogInfo(
 						    "Mail key is the wrong size. Version of world "
-						    "incompatible with UCS.");
+						    "incompatible with UCS");
 						KeyValid = false;
 						break;
 					}
@@ -672,7 +668,7 @@ void Client::JoinChannels(std::string ChannelNameList) {
 		if (NumberOfChannels == MAX_JOINED_CHANNELS) {
 			GeneralChannelMessage(
 			    "You have joined the maximum number of channels. /leave one "
-			    "before trying to join another.");
+			    "before trying to join another");
 
 			break;
 		}
@@ -869,7 +865,7 @@ void Client::ProcessChannelList(std::string Input) {
 	if (RequiredChannel)
 		RequiredChannel->SendChannelMembers(this);
 	else
-		GeneralChannelMessage("Channel " + Input + " not found.");
+		GeneralChannelMessage("Channel " + Input + " not found");
 }
 
 void Client::SendChannelList() {
@@ -925,7 +921,7 @@ void Client::SendChannelMessage(std::string Message) {
 
 	if (IsRevoked()) {
 		GeneralChannelMessage(
-		    "You are Revoked, you cannot chat in global channels.");
+		    "You are Revoked, you cannot chat in global channels");
 		return;
 	}
 
@@ -942,7 +938,7 @@ void Client::SendChannelMessage(std::string Message) {
 				if (char_ent->Level < RuleI(Chat, GlobalChatLevelLimit)) {
 					GeneralChannelMessage(
 					    "You are either not high enough level or high enough "
-					    "karma to talk in this channel right now.");
+					    "karma to talk in this channel right now");
 					return;
 				}
 			}
@@ -989,7 +985,7 @@ void Client::SendChannelMessage(std::string Message) {
 					} else {
 						GeneralChannelMessage(
 						    "You are currently rate limited, you cannot send "
-						    "more messages for up to 60 seconds.");
+						    "more messages for up to 60 seconds");
 					}
 				} else {
 					RequiredChannel->SendMessageToChannel(
@@ -998,7 +994,7 @@ void Client::SendChannelMessage(std::string Message) {
 			} else
 				GeneralChannelMessage(
 				    "Channel " + ChannelName +
-				    " is moderated and you have not been granted a voice.");
+				    " is moderated and you have not been granted a voice");
 		} else {
 			if (!RequiredChannel->IsModerated() ||
 			    RequiredChannel->HasVoice(GetName()) ||
@@ -1009,7 +1005,7 @@ void Client::SendChannelMessage(std::string Message) {
 			else
 				GeneralChannelMessage(
 				    "Channel " + ChannelName +
-				    " is moderated and you have not been granted a voice.");
+				    " is moderated and you have not been granted a voice");
 		}
 	}
 }
@@ -1022,7 +1018,7 @@ void Client::SendChannelMessageByNumber(std::string Message) {
 	int ChannelNumber = atoi(Message.substr(0, MessageStart).c_str());
 
 	if ((ChannelNumber < 1) || (ChannelNumber > MAX_JOINED_CHANNELS)) {
-		GeneralChannelMessage("Invalid channel name/number specified.");
+		GeneralChannelMessage("Invalid channel name/number specified");
 
 		return;
 	}
@@ -1030,14 +1026,14 @@ void Client::SendChannelMessageByNumber(std::string Message) {
 	ChatChannel *RequiredChannel = JoinedChannels[ChannelNumber - 1];
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Invalid channel name/number specified.");
+		GeneralChannelMessage("Invalid channel name/number specified");
 
 		return;
 	}
 
 	if (IsRevoked()) {
 		GeneralChannelMessage(
-		    "You are Revoked, you cannot chat in global channels.");
+		    "You are Revoked, you cannot chat in global channels");
 		return;
 	}
 
@@ -1054,7 +1050,7 @@ void Client::SendChannelMessageByNumber(std::string Message) {
 				if (char_ent->Level < RuleI(Chat, GlobalChatLevelLimit)) {
 					GeneralChannelMessage(
 					    "You are either not high enough level or high enough "
-					    "karma to talk in this channel right now.");
+					    "karma to talk in this channel right now");
 					return;
 				}
 			}
@@ -1102,7 +1098,7 @@ void Client::SendChannelMessageByNumber(std::string Message) {
 				} else {
 					GeneralChannelMessage(
 					    "You are currently rate limited, you cannot send more "
-					    "messages for up to 60 seconds.");
+					    "messages for up to 60 seconds");
 				}
 			} else {
 				RequiredChannel->SendMessageToChannel(
@@ -1111,7 +1107,7 @@ void Client::SendChannelMessageByNumber(std::string Message) {
 		} else
 			GeneralChannelMessage(
 			    "Channel " + RequiredChannel->GetName() +
-			    " is moderated and you have not been granted a voice.");
+			    " is moderated and you have not been granted a voice");
 	} else {
 		if (!RequiredChannel->IsModerated() ||
 		    RequiredChannel->HasVoice(GetName()) ||
@@ -1122,7 +1118,7 @@ void Client::SendChannelMessageByNumber(std::string Message) {
 		else
 			GeneralChannelMessage(
 			    "Channel " + RequiredChannel->GetName() +
-			    " is moderated and you have not been granted a voice.");
+			    " is moderated and you have not been granted a voice");
 	}
 }
 
@@ -1338,7 +1334,7 @@ void Client::SetChannelOwner(std::string CommandString) {
 	ChatChannel *RequiredChannel = ChannelList->FindChannel(ChannelName);
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Channel " + ChannelName + " not found.");
+		GeneralChannelMessage("Channel " + ChannelName + " not found");
 		return;
 	}
 
@@ -1349,7 +1345,7 @@ void Client::SetChannelOwner(std::string CommandString) {
 	}
 
 	if (database.FindCharacter(NewOwner.c_str()) < 0) {
-		GeneralChannelMessage("Player " + NewOwner + " does not exist.");
+		GeneralChannelMessage("Player " + NewOwner + " does not exist");
 		return;
 	}
 
@@ -1358,7 +1354,7 @@ void Client::SetChannelOwner(std::string CommandString) {
 	if (RequiredChannel->IsModerator(NewOwner))
 		RequiredChannel->RemoveModerator(NewOwner);
 
-	GeneralChannelMessage("Channel owner changed.");
+	GeneralChannelMessage("Channel owner changed");
 }
 
 void Client::OPList(std::string CommandString) {
@@ -1379,7 +1375,7 @@ void Client::OPList(std::string CommandString) {
 	ChatChannel *RequiredChannel = ChannelList->FindChannel(ChannelName);
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Channel " + ChannelName + " not found.");
+		GeneralChannelMessage("Channel " + ChannelName + " not found");
 		return;
 	}
 
@@ -1431,25 +1427,25 @@ void Client::ChannelInvite(std::string CommandString) {
 	Client *RequiredClient = g_Clientlist->FindCharacter(Invitee);
 
 	if (!RequiredClient) {
-		GeneralChannelMessage(Invitee + " is not online.");
+		GeneralChannelMessage(Invitee + " is not online");
 		return;
 	}
 
 	if (RequiredClient == this) {
-		GeneralChannelMessage("You cannot invite yourself to a channel.");
+		GeneralChannelMessage("You cannot invite yourself to a channel");
 		return;
 	}
 
 	if (!RequiredClient->InvitesAllowed()) {
 		GeneralChannelMessage(
-		    "That player is not currently accepting channel invitations.");
+		    "That player is not currently accepting channel invitations");
 		return;
 	}
 
 	ChatChannel *RequiredChannel = ChannelList->FindChannel(ChannelName);
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Channel " + ChannelName + " not found.");
+		GeneralChannelMessage("Channel " + ChannelName + " not found");
 		return;
 	}
 
@@ -1496,7 +1492,7 @@ void Client::ChannelModerate(std::string CommandString) {
 	ChatChannel *RequiredChannel = ChannelList->FindChannel(ChannelName);
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Channel " + ChannelName + " not found.");
+		GeneralChannelMessage("Channel " + ChannelName + " not found");
 		return;
 	}
 
@@ -1513,10 +1509,10 @@ void Client::ChannelModerate(std::string CommandString) {
 	if (!RequiredChannel->IsClientInChannel(this)) {
 		if (RequiredChannel->IsModerated())
 			GeneralChannelMessage("Channel " + ChannelName +
-			                      " is now moderated.");
+			                      " is now moderated");
 		else
 			GeneralChannelMessage("Channel " + ChannelName +
-			                      " is no longer moderated.");
+			                      " is no longer moderated");
 	}
 }
 
@@ -1562,20 +1558,20 @@ void Client::ChannelGrantModerator(std::string CommandString) {
 	Client *RequiredClient = g_Clientlist->FindCharacter(Moderator);
 
 	if (!RequiredClient && (database.FindCharacter(Moderator.c_str()) < 0)) {
-		GeneralChannelMessage("Player " + Moderator + " does not exist.");
+		GeneralChannelMessage("Player " + Moderator + " does not exist");
 		return;
 	}
 
 	if (RequiredClient == this) {
 		GeneralChannelMessage(
-		    "You cannot grant yourself moderator rights to a channel.");
+		    "You cannot grant yourself moderator rights to a channel");
 		return;
 	}
 
 	ChatChannel *RequiredChannel = ChannelList->FindChannel(ChannelName);
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Channel " + ChannelName + " not found.");
+		GeneralChannelMessage("Channel " + ChannelName + " not found");
 		return;
 	}
 
@@ -1649,19 +1645,19 @@ void Client::ChannelGrantVoice(std::string CommandString) {
 	Client *RequiredClient = g_Clientlist->FindCharacter(Voicee);
 
 	if (!RequiredClient && (database.FindCharacter(Voicee.c_str()) < 0)) {
-		GeneralChannelMessage("Player " + Voicee + " does not exist.");
+		GeneralChannelMessage("Player " + Voicee + " does not exist");
 		return;
 	}
 
 	if (RequiredClient == this) {
-		GeneralChannelMessage("You cannot grant yourself voice to a channel.");
+		GeneralChannelMessage("You cannot grant yourself voice to a channel");
 		return;
 	}
 
 	ChatChannel *RequiredChannel = ChannelList->FindChannel(ChannelName);
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Channel " + ChannelName + " not found.");
+		GeneralChannelMessage("Channel " + ChannelName + " not found");
 		return;
 	}
 
@@ -1676,7 +1672,7 @@ void Client::ChannelGrantVoice(std::string CommandString) {
 	if (RequiredChannel->IsOwner(RequiredClient->GetName()) ||
 	    RequiredChannel->IsModerator(RequiredClient->GetName())) {
 		GeneralChannelMessage(
-		    "The channel owner and moderators automatically have voice.");
+		    "The channel owner and moderators automatically have voice");
 		return;
 	}
 
@@ -1743,19 +1739,19 @@ void Client::ChannelKick(std::string CommandString) {
 	Client *RequiredClient = g_Clientlist->FindCharacter(Kickee);
 
 	if (!RequiredClient) {
-		GeneralChannelMessage("Player " + Kickee + " is not online.");
+		GeneralChannelMessage("Player " + Kickee + " is not online");
 		return;
 	}
 
 	if (RequiredClient == this) {
-		GeneralChannelMessage("You cannot kick yourself out of a channel.");
+		GeneralChannelMessage("You cannot kick yourself out of a channel");
 		return;
 	}
 
 	ChatChannel *RequiredChannel = ChannelList->FindChannel(ChannelName);
 
 	if (!RequiredChannel) {
-		GeneralChannelMessage("Channel " + ChannelName + " not found.");
+		GeneralChannelMessage("Channel " + ChannelName + " not found");
 		return;
 	}
 
@@ -1768,14 +1764,14 @@ void Client::ChannelKick(std::string CommandString) {
 	}
 
 	if (RequiredChannel->IsOwner(RequiredClient->GetName())) {
-		GeneralChannelMessage("You cannot kick the owner out of the channel.");
+		GeneralChannelMessage("You cannot kick the owner out of the channel");
 		return;
 	}
 
 	if (RequiredChannel->IsModerator(Kickee) &&
 	    !RequiredChannel->IsOwner(GetName())) {
 		GeneralChannelMessage(
-		    "Only the channel owner can kick a moderator out of the channel.");
+		    "Only the channel owner can kick a moderator out of the channel");
 		return;
 	}
 
@@ -1802,10 +1798,10 @@ void Client::ToggleInvites() {
 	AllowInvites = !AllowInvites;
 
 	if (AllowInvites)
-		GeneralChannelMessage("You will now receive channel invitations.");
+		GeneralChannelMessage("You will now receive channel invitations");
 	else
 		GeneralChannelMessage(
-		    "You will no longer receive channel invitations.");
+		    "You will no longer receive channel invitations");
 }
 
 std::string Client::ChannelSlotName(int SlotNumber) {
@@ -1838,12 +1834,12 @@ void Client::SetConnectionType(char c) {
 	switch (c) {
 		case 'C': {
 			TypeOfConnection = ConnectionTypeChat;
-			LogInfo("Connection type is Chat.");
+			LogInfo("Connection type is Chat");
 			break;
 		}
 		default: {
 			TypeOfConnection = ConnectionTypeUnknown;
-			LogInfo("Connection type is unknown.");
+			LogInfo("Connection type is unknown");
 		}
 	}
 }

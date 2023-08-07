@@ -209,7 +209,7 @@ class Client {
 
 class Clientlist {
    public:
-	Clientlist(int ChatPort);
+	Clientlist(int UCSPort);
 	void Process();
 	void CloseAllConnections();
 	Client *FindCharacter(std::string CharacterName);

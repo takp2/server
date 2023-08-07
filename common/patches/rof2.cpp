@@ -41,7 +41,7 @@ void Register(EQStreamIdentifier &into) {
 		// TODO: figure out how to support shared memory with multiple patches...
 		opcodes = new RegularOpcodeManager();
 		if (!opcodes->LoadOpcodes(opfile.c_str())) {
-			Log(Logs::General, Logs::Netcode, "[OPCODES] Error loading opcodes file %s. Not registering patch %s.", opfile.c_str(), name);
+			Log(Logs::General, Logs::Netcode, "[OPCODES] Error loading opcodes file %s. Not registering patch %s", opfile.c_str(), name);
 			return;
 		}
 	}
@@ -73,7 +73,7 @@ void Register(EQStreamIdentifier &into) {
 	signature.first_eq_opcode = opcodes->EmuToEQ(OP_DataRate);
 	into.RegisterOldPatch(signature, pname.c_str(), &opcodes, &struct_strategy);
 
-	Log(Logs::General, Logs::Netcode, "[IDENTIFY] Registered patch %s", name);
+	Log(Logs::General, Logs::Netcode, "Registered patch %s", name);
 }
 
 void Reload() {
@@ -89,7 +89,7 @@ void Reload() {
 		opfile += name;
 		opfile += ".conf";
 		if (!opcodes->ReloadOpcodes(opfile.c_str())) {
-			Log(Logs::General, Logs::Netcode, "[OPCODES] Error reloading opcodes file %s for patch %s.", opfile.c_str(), name);
+			Log(Logs::General, Logs::Netcode, "[OPCODES] Error reloading opcodes file %s for patch %s", opfile.c_str(), name);
 			return;
 		}
 		Log(Logs::General, Logs::Netcode, "[OPCODES] Reloaded opcodes for patch %s", name);
@@ -830,7 +830,7 @@ structs::Item_Struct *MacItem(const EQ::ItemInstance *inst, int16 slot_id_in, in
 	memset(mac_pop_item, 0, sizeof(structs::Item_Struct));
 
 	if (item->GMFlag == -1) {
-		Log(Logs::Detail, Logs::General, "Item %s is flagged for GMs.", item->Name);
+		Log(Logs::Detail, Logs::General, "Item %s is flagged for GMs", item->Name);
 	}
 
 	// General items

@@ -82,7 +82,7 @@ int main() {
 		LogInfo("Loaded default rule set 'default'", tmp);
 	}
 
-	g_Clientlist = new Clientlist(Config->ChatPort);
+	g_Clientlist = new Clientlist(Config->UCSPort);
 
 	ChannelList = new ChatChannelList();
 

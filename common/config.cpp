@@ -144,14 +144,14 @@ void Config::parse_config() {
 			throw std::runtime_error("ucs.host must be a string");
 		}
 
-		ChatHost = _root["ucs"]["host"].as<std::string>();
+		UCSHost = _root["ucs"]["host"].as<std::string>();
 	}
 
 	if (!_root["ucs"]["port"].IsNull()) {
 		if (_root["ucs"]["port"].Type() != YAML::NodeType::Scalar) {
 			throw std::runtime_error("ucs.port must be a number");
 		}
-		ChatPort = _root["ucs"]["port"].as<uint16_t>();
+		UCSPort = _root["ucs"]["port"].as<uint16_t>();
 	}
 
 	if (!_root["database"]["host"].IsNull()) {
@@ -360,11 +360,11 @@ std::string Config::GetByName(const std::string &var_name) const {
 	if (var_name == "TelnetEnabled") {
 		return (TelnetEnabled ? "true" : "false");
 	}
-	if (var_name == "ChatHost") {
-		return (ChatHost);
+	if (var_name == "UCSHost") {
+		return (UCSHost);
 	}
-	if (var_name == "ChatPort") {
-		return (itoa(ChatPort));
+	if (var_name == "UCSPort") {
+		return (itoa(UCSPort));
 	}
 	if (var_name == "DatabaseHost") {
 		return (DatabaseHost);
@@ -441,8 +441,8 @@ void Config::Dump() const {
 	std::cout << "WorldTCPPort = " << WorldTCPPort << std::endl;
 	std::cout << "WorldIP = " << WorldIP << std::endl;
 	std::cout << "TelnetEnabled = " << TelnetEnabled << std::endl;
-	std::cout << "ChatHost = " << ChatHost << std::endl;
-	std::cout << "ChatPort = " << ChatPort << std::endl;
+	std::cout << "UCSHost = " << UCSHost << std::endl;
+	std::cout << "UCSPort = " << UCSPort << std::endl;
 	std::cout << "DatabaseHost = " << DatabaseHost << std::endl;
 	std::cout << "DatabaseUsername = " << DatabaseUsername << std::endl;
 	std::cout << "DatabasePassword = " << DatabasePassword << std::endl;
