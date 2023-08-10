@@ -24,7 +24,7 @@ class ZoneConfig : public Config {
 	}
 
 	// Load the config
-	static std::string LoadConfig() {
+	static bool LoadConfig() {
 		if (_zone_config != nullptr)
 			delete _zone_config;
 		_zone_config = new ZoneConfig;

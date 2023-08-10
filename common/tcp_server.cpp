@@ -136,7 +136,7 @@ bool BaseTCPServer::Open(uint16 in_port, char *errbuf) {
 	LockMutex lock(&MSock);
 	if (sock != 0) {
 		if (errbuf) {
-			snprintf(errbuf, TCPServer_ErrorBufferSize, "Listening socket already open");
+			snprintf(errbuf, TCPServer_ErrorBufferSize, "listening socket already open");
 		}
 		return false;
 	}
@@ -173,7 +173,8 @@ bool BaseTCPServer::Open(uint16 in_port, char *errbuf) {
 	// without waiting for conns in TIME_WAIT to die
 	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse_addr, sizeof(reuse_addr));
 
-	if (bind(sock, (struct sockaddr *)&address, sizeof(address)) < 0) {
+	int bind_result = bind(sock, (struct sockaddr *)&address, sizeof(address));
+	if (bind_result < 0) {
 #ifdef _WINDOWS
 		closesocket(sock);
 #else
@@ -181,7 +182,7 @@ bool BaseTCPServer::Open(uint16 in_port, char *errbuf) {
 #endif
 		sock = 0;
 		if (errbuf) {
-			sprintf(errbuf, "bind(): <0");
+			sprintf(errbuf, strerror(errno));
 		}
 		return false;
 	}

@@ -3,6 +3,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "../common/global_define.h"
+#include "../common/eqemu_logsys.h"
 #include "config.h"
 #include "misc_functions.h"
 
@@ -12,62 +13,76 @@
 std::string Config::ConfigFile = "config.yaml";
 Config *Config::_config = nullptr;
 
-void Config::parse_config() {
+bool Config::parse_config() {
 	if (_root["world"].IsNull()) {
-		throw std::runtime_error("missing world section in config.ymaml");
+		LogError("Missing world section in config.yaml");
+		return false;
 	}
 	std::string value;
 
 	if (_root["world"]["short_name"].IsNull()) {
-		throw std::runtime_error("missing world.short_name in config.yaml");
+		LogError("Missing world.short_name in config.yaml");
+		return false;
 	}
 	if (_root["world"]["short_name"].Type() != YAML::NodeType::Scalar) {
-		throw std::runtime_error("world.short_name must be a string");
+		LogError("World.short_name must be a string");
+		return false;
 	}
 	ShortName = _root["world"]["short_name"].as<std::string>();
 
 	if (_root["world"]["long_name"].IsNull()) {
-		throw std::runtime_error("missing world.long_name in config.yaml");
+		LogError("Missing world.long_name in config.yaml");
+		return false;
 	}
 	if (_root["world"]["long_name"].Type() != YAML::NodeType::Scalar) {
-		throw std::runtime_error("world.long_name must be a string");
+		LogError("World.long_name must be a string");
+		return false;
 	}
 	LongName = _root["world"]["long_name"].as<std::string>();
 
-	if (_root["world"]["wan_address"].IsNull()) {
-		throw std::runtime_error("missing world.wan_address in config.yaml");
+	if (!_root["world"]["wan_address"].IsNull()) {
+		// LogError("Missing world.wan_address in config.yaml");
+		if (_root["world"]["wan_address"].Type() != YAML::NodeType::Scalar) {
+			// LogError("World.wan_address must be a string");
+			// return false;
+			WorldAddress = "";
+		} else {
+			WorldAddress = _root["world"]["wan_address"].as<std::string>();
+		}
 	}
-	if (_root["world"]["wan_address"].Type() != YAML::NodeType::Scalar) {
-		throw std::runtime_error("world.wan_address must be a string");
-	}
-	WorldAddress = _root["world"]["wan_address"].as<std::string>();
 
 	if (_root["world"]["lan_address"].IsNull()) {
-		throw std::runtime_error("missing world.lan_address in config.yaml");
+		LogError("Missing world.lan_address in config.yaml");
+		return false;
 	}
 	if (_root["world"]["lan_address"].Type() != YAML::NodeType::Scalar) {
-		throw std::runtime_error("world.lan_address must be a string");
+		LogError("World.lan_address must be a string");
+		return false;
 	}
 	LocalAddress = _root["world"]["lan_address"].as<std::string>();
 
 	if (!_root["world"]["max_clients"].IsNull()) {
 		if (_root["world"]["max_clients"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("world.max_clients must be an integer");
+			LogError("World.max_clients must be an integer");
+			return false;
 		}
 		MaxClients = _root["world"]["max_clients"].as<int32_t>();
 	}
 
 	if (_root["world"]["shared_key"].IsNull()) {
-		throw std::runtime_error("missing world.shared_key in config.yaml");
+		LogError("Missing world.shared_key in config.yaml");
+		return false;
 	}
 	if (_root["world"]["shared_key"].Type() != YAML::NodeType::Scalar) {
-		throw std::runtime_error("world.shared_key must be a string");
+		LogError("World.shared_key must be a string");
+		return false;
 	}
 	SharedKey = _root["world"]["shared_key"].as<std::string>();
 
 	if (!_root["world"]["is_locked"].IsNull()) {
 		if (_root["world"]["is_locked"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("world.is_locked must be a boolean");
+			LogError("World.is_locked must be a boolean");
+			return false;
 		}
 		Locked = _root["world"]["is_locked"].as<bool>();
 	} else {
@@ -76,7 +91,8 @@ void Config::parse_config() {
 
 	if (!_root["world"]["intranet_ip"].IsNull()) {
 		if (_root["world"]["intranet_ip"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("world.intranet_ip must be a string");
+			LogError("World.intranet_ip must be a string");
+			return false;
 		}
 		WorldIP = _root["world"]["intranet_ip"].as<std::string>();
 	} else {
@@ -85,7 +101,8 @@ void Config::parse_config() {
 
 	if (!_root["world"]["intranet_port"].IsNull()) {
 		if (_root["world"]["intranet_port"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("world.intranet_port must be a number");
+			LogError("World.intranet_port must be a number");
+			return false;
 		}
 		WorldTCPPort = _root["world"]["intranet_port"].as<uint16_t>();
 	} else {
@@ -96,34 +113,41 @@ void Config::parse_config() {
 	for (std::size_t i = 0; i < _root["login_server"].size(); i++) {
 		auto loginconfig = new LoginConfig;
 		if (_root["login_server"][i]["host"].IsNull()) {
-			throw std::runtime_error("missing login_server.host in config.yaml");
+			LogError("Missing login_server.host in config.yaml");
+			return false;
 		}
 		if (_root["login_server"][i]["host"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("login_server.host must be a string");
+			LogError("Login_server.host must be a string");
+			return false;
 		}
 		loginconfig->LoginHost = _root["login_server"][i]["host"].as<std::string>();
 		if (_root["login_server"][i]["port"].IsNull()) {
-			throw std::runtime_error("missing login_server.port in config.yaml");
+			LogError("Missing login_server.port in config.yaml");
+			return false;
 		}
 		if (_root["login_server"][i]["port"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("login_server.port must be a number");
+			LogError("Login_server.port must be a number");
+			return false;
 		}
 		loginconfig->LoginPort = _root["login_server"][i]["port"].as<uint16>();
 		if (!_root["login_server"][i]["account"].IsNull()) {
 			if (_root["login_server"][i]["account"].Type() != YAML::NodeType::Scalar) {
-				throw std::runtime_error("login_server.account must be a string");
+				LogError("Login_server.account must be a string");
+				return false;
 			}
 			loginconfig->LoginAccount = _root["login_server"][i]["account"].as<std::string>();
 		}
 		if (!_root["login_server"][i]["password"].IsNull()) {
 			if (_root["login_server"][i]["password"].Type() != YAML::NodeType::Scalar) {
-				throw std::runtime_error("login_server.password must be a string");
+				LogError("Login_server.password must be a string");
+				return false;
 			}
 			loginconfig->LoginPassword = _root["login_server"][i]["password"].as<std::string>();
 		}
 		if (!_root["login_server"][i]["type"].IsNull()) {
 			if (_root["login_server"][i]["type"].Type() != YAML::NodeType::Scalar) {
-				throw std::runtime_error("login_server.type must be a number");
+				LogError("Login_server.type must be a number");
+				return false;
 			}
 			loginconfig->LoginType = _root["login_server"][i]["type"].as<uint8>();
 		}
@@ -132,7 +156,8 @@ void Config::parse_config() {
 
 	if (!_root["world"]["telnet_is_enabled"].IsNull()) {
 		if (_root["world"]["telnet_is_enabled"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("telnet.is_enabled must be a boolean");
+			LogError("Telnet.is_enabled must be a boolean");
+			return false;
 		}
 		TelnetEnabled = _root["world"]["telnet_is_enabled"].as<bool>();
 	} else {
@@ -141,7 +166,8 @@ void Config::parse_config() {
 
 	if (!_root["ucs"]["host"].IsNull()) {
 		if (_root["ucs"]["host"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("ucs.host must be a string");
+			LogError("Ucs.host must be a string");
+			return false;
 		}
 
 		UCSHost = _root["ucs"]["host"].as<std::string>();
@@ -149,104 +175,126 @@ void Config::parse_config() {
 
 	if (!_root["ucs"]["port"].IsNull()) {
 		if (_root["ucs"]["port"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("ucs.port must be a number");
+			LogError("Ucs.port must be a number");
+			return false;
 		}
 		UCSPort = _root["ucs"]["port"].as<uint16_t>();
 	}
 
 	if (!_root["database"]["host"].IsNull()) {
 		if (_root["database"]["host"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("database.host must be a string");
+			LogError("Database.host must be a string");
+			return false;
 		}
 		DatabaseHost = _root["database"]["host"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing database.host in config.yaml");
+		LogError("Missing database.host in config.yaml");
+		return false;
 	}
 
 	if (!_root["database"]["username"].IsNull()) {
 		if (_root["database"]["username"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("database.username must be a string");
+			LogError("Database.username must be a string");
+			return false;
 		}
 		DatabaseUsername = _root["database"]["username"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing database.username in config.yaml");
+		LogError("Missing database.username in config.yaml");
+		return false;
 	}
 
 	if (!_root["database"]["password"].IsNull()) {
 		if (_root["database"]["password"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("database.password must be a string");
+			LogError("Database.password must be a string");
+			return false;
 		}
 		DatabasePassword = _root["database"]["password"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing database.password in config.yaml");
+		LogError("Missing database.password in config.yaml");
+		return false;
 	}
 
 	if (!_root["database"]["db"].IsNull()) {
 		if (_root["database"]["db"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("database.db must be a string");
+			LogError("Database.db must be a string");
+			return false;
 		}
 		DatabaseDB = _root["database"]["db"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing database.db in config.yaml");
+		LogError("Missing database.db in config.yaml");
+		return false;
 	}
 
 	if (!_root["database"]["port"].IsNull()) {
 		if (_root["database"]["port"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("database.port must be a number");
+			LogError("Database.port must be a number");
+			return false;
 		}
 		DatabasePort = _root["database"]["port"].as<uint16_t>();
 	} else {
-		throw std::runtime_error("missing database.port in config.yaml");
+		LogError("Missing database.port in config.yaml");
+		return false;
 	}
 
 	if (!_root["query_serv"]["host"].IsNull()) {
 		if (_root["query_serv"]["host"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("query_serv.host must be a string");
+			LogError("Query_serv.host must be a string");
+			return false;
 		}
 		QSDatabaseHost = _root["query_serv"]["host"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing query_serv.host in config.yaml");
+		LogError("Missing query_serv.host in config.yaml");
+		return false;
 	}
 
 	if (!_root["query_serv"]["username"].IsNull()) {
 		if (_root["query_serv"]["username"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("query_serv.username must be a string");
+			LogError("Query_serv.username must be a string");
+			return false;
 		}
 		QSDatabaseUsername = _root["query_serv"]["username"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing query_serv.username in config.yaml");
+		LogError("Missing query_serv.username in config.yaml");
+		return false;
 	}
 
 	if (!_root["query_serv"]["password"].IsNull()) {
 		if (_root["query_serv"]["password"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("query_serv.password must be a string");
+			LogError("Query_serv.password must be a string");
+			return false;
 		}
 		QSDatabasePassword = _root["query_serv"]["password"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing query_serv.password in config.yaml");
+		LogError("Missing query_serv.password in config.yaml");
+		return false;
 	}
 
 	if (!_root["query_serv"]["db"].IsNull()) {
 		if (_root["query_serv"]["db"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("query_serv.db must be a string");
+			LogError("Query_serv.db must be a string");
+			return false;
 		}
 		QSDatabaseDB = _root["query_serv"]["db"].as<std::string>();
 	} else {
-		throw std::runtime_error("missing query_serv.db in config.yaml");
+		LogError("Missing query_serv.db in config.yaml");
+		return false;
 	}
 
 	if (!_root["query_serv"]["port"].IsNull()) {
 		if (_root["query_serv"]["port"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("query_serv.port must be a number");
+			LogError("Query_serv.port must be a number");
+			return false;
 		}
 		QSDatabasePort = _root["query_serv"]["port"].as<uint16_t>();
 	} else {
-		throw std::runtime_error("missing query_serv.port in config.yaml");
+		LogError("Missing query_serv.port in config.yaml");
+		return false;
 	}
 
 	if (!_root["zone"]["default_status"].IsNull()) {
 		if (_root["zone"]["default_status"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("zone.default_status must be a number");
+			LogError("Zone.default_status must be a number");
+			return false;
 		}
 		DefaultStatus = _root["zone"]["default_status"].as<uint8_t>();
 	} else {
@@ -255,7 +303,8 @@ void Config::parse_config() {
 
 	if (!_root["zone"]["port_min"].IsNull()) {
 		if (_root["zone"]["port_min"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("zone.port_min must be a number");
+			LogError("Zone.port_min must be a number");
+			return false;
 		}
 		ZonePortLow = _root["zone"]["port_min"].as<uint16_t>();
 	} else {
@@ -264,7 +313,8 @@ void Config::parse_config() {
 
 	if (!_root["zone"]["port_max"].IsNull()) {
 		if (_root["zone"]["port_max"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("zone.port_max must be a number");
+			LogError("Zone.port_max must be a number");
+			return false;
 		}
 		ZonePortHigh = _root["zone"]["port_max"].as<uint16_t>();
 	} else {
@@ -273,7 +323,8 @@ void Config::parse_config() {
 
 	if (!_root["dir"]["maps"].IsNull()) {
 		if (_root["dir"]["maps"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("dir.maps must be a string");
+			LogError("Dir.maps must be a string");
+			return false;
 		}
 		MapDir = _root["dir"]["maps"].as<std::string>();
 	} else {
@@ -282,7 +333,8 @@ void Config::parse_config() {
 
 	if (!_root["dir"]["logs"].IsNull()) {
 		if (_root["dir"]["logs"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("dir.logs must be a string");
+			LogError("Dir.logs must be a string");
+			return false;
 		}
 		LogDir = _root["dir"]["logs"].as<std::string>();
 	} else {
@@ -291,7 +343,8 @@ void Config::parse_config() {
 
 	if (!_root["dir"]["lua_modules"].IsNull()) {
 		if (_root["dir"]["lua_modules"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("dir.lua_modules must be a string");
+			LogError("Dir.lua_modules must be a string");
+			return false;
 		}
 		LuaModuleDir = _root["dir"]["lua_modules"].as<std::string>();
 	} else {
@@ -300,7 +353,8 @@ void Config::parse_config() {
 
 	if (!_root["dir"]["quests"].IsNull()) {
 		if (_root["dir"]["quests"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("dir.quests must be a string");
+			LogError("Dir.quests must be a string");
+			return false;
 		}
 		QuestDir = _root["dir"]["quests"].as<std::string>();
 	} else {
@@ -309,7 +363,8 @@ void Config::parse_config() {
 
 	if (!_root["dir"]["patches"].IsNull()) {
 		if (_root["dir"]["patches"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("dir.patches must be a string");
+			LogError("Dir.patches must be a string");
+			return false;
 		}
 		PatchDir = _root["dir"]["patches"].as<std::string>();
 	} else {
@@ -318,12 +373,14 @@ void Config::parse_config() {
 
 	if (!_root["dir"]["shared_memory"].IsNull()) {
 		if (_root["dir"]["shared_memory"].Type() != YAML::NodeType::Scalar) {
-			throw std::runtime_error("dir.shared_memory must be a string");
+			LogError("Dir.shared_memory must be a string");
+			return false;
 		}
 		SharedMemDir = _root["dir"]["shared_memory"].as<std::string>();
 	} else {
 		SharedMemDir = "shared/";
 	}
+	return true;
 }
 
 std::string Config::GetByName(const std::string &var_name) const {

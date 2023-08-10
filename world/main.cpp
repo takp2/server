@@ -84,14 +84,6 @@ extern ConsoleList console_list;
 
 void CatchSignal(int sig_num);
 
-void LoadServerConfig() {
-	auto load_result = WorldConfig::LoadConfig();
-	if (!load_result.empty()) {
-		LogError("{}", load_result);
-		std::exit(1);
-	}
-}
-
 void RegisterLoginservers() {
 	LinkedList<LoginConfig*> loginlist = Config->loginlist;
 	LinkedListIterator<LoginConfig*> iterator(loginlist);
@@ -111,7 +103,10 @@ int main(int argc, char** argv) {
 	LogSys.LoadLogSettingsDefaults();
 	set_exception_handler();
 	LogInfo("Starting World v{}", VERSION);
-	LoadServerConfig();
+	if (!WorldConfig::LoadConfig()) {
+		LogError("Failed to load config");
+		std::exit(1);
+	}
 
 	Config = WorldConfig::get();
 

@@ -28,9 +28,8 @@ int main(int argc, char **argv) {
 	set_exception_handler();
 
 	LogInfo("Starting SharedMemory v{}", VERSION);
-	auto load_result = Config::LoadConfig();
-	if (!load_result.empty()) {
-		LogError("{}", load_result);
+	if (!Config::LoadConfig()) {
+		LogError("Failed to load config");
 		return 1;
 	}
 	auto Config = Config::get();

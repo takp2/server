@@ -377,6 +377,7 @@ void Client::SendMembershipSettings() {
 
 bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 	if (app->size != sizeof(LoginInfo_Struct)) {
+		Log(Logs::Detail, Logs::WorldServer, "Handlesessionlogininfopacket: invalid LoginInfo_Struct size: %i", app->size);
 		return false;
 	}
 
@@ -389,8 +390,7 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 	strn0cpy(password, (char *)&(li->login_info[strlen(name) + 1]), 15);
 
 	if (strlen(password) <= 1) {
-		// TODO: Find out how to tell the client wrong username/password
-		Log(Logs::Detail, Logs::WorldServer, "Login without a password");
+		Log(Logs::Detail, Logs::WorldServer, "Handlesessionlogininfopacket: login failed (no password)");
 		return false;
 	}
 
@@ -411,8 +411,7 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 	if ((cle = zoneserver_list.CheckAuth(inet_ntoa(tmpip), password)))
 #else
 	if (loginserverlist.Connected() == false && !pZoning) {
-		Log(Logs::Detail, Logs::WorldServer,
-		    "Error: Login server login while not connected to login server");
+		Log(Logs::Detail, Logs::WorldServer, "Handlesessionlogininfopacket: loginserver login while not connected to loginserver");
 		return false;
 	}
 
@@ -420,20 +419,23 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 	     (cle = client_list.CheckAuth(id, password))))
 #endif
 	{
-		if (GetSessionLimit()) return false;
+		if (GetSessionLimit()) {
+			Log(Logs::Detail, Logs::WorldServer, "Handlesessionlogininfopacket: session limit reached, aborting");
+			return false;
+		}
 
-		if (cle->Online() < CLE_Status_Online) cle->SetOnline();
+		if (cle->Online() < CLE_Status_Online) {
+			cle->SetOnline();
+		}
 
 		if (eqs->ClientVersion() != EQ::versions::ClientVersion::RoF2) {
-			LogError("Client requested unsupported client {}, disconnecting");
+			Log(Logs::Detail, Logs::WorldServer, "Handlesessionlogininfopacket: client requested {}, unsupported", eqs->ClientVersion());
 			return false;
 		}
 		m_ClientVersionBit = EQ::versions::bit_RoF2;
 
-		Log(Logs::Detail, Logs::WorldServer, "ClientVersionBit is: %i",
-		    m_ClientVersionBit);
-		Log(Logs::Detail, Logs::WorldServer, "Logged in. Mode=%s",
-		    pZoning ? "(Zoning)" : "(CharSel)");
+		Log(Logs::Detail, Logs::WorldServer, "ClientVersionBit is: %i", m_ClientVersionBit);
+		Log(Logs::Detail, Logs::WorldServer, "Logged in. Mode=%s", pZoning ? "(Zoning)" : "(CharSel)");
 		Log(Logs::Detail, Logs::WorldServer, "LS Account #%d", cle->LSID());
 
 		const WorldConfig *Config = WorldConfig::get();
@@ -464,8 +466,7 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 			database.GetLiveCharByLSID(id, char_name);
 			charid = database.GetCharacterInfo(char_name, &tmpaccid, &zoneID);
 			if (charid == 0 || tmpaccid != GetAccountID()) {
-				Log(Logs::Detail, Logs::WorldServer,
-				    "Could not get CharInfo for '%s'", char_name);
+				Log(Logs::Detail, Logs::WorldServer, "Handlesessionlogininfopacket: could not get charinfo for {}", char_name);
 				eqs->Close();
 				return true;
 			}
@@ -482,13 +483,13 @@ bool Client::HandleSendLoginInfoPacket(const EQApplicationPacket *app) {
 			database.LoginIP(cle->AccountID(), long2ip(GetIP()));
 		}
 	} else {
-		// TODO: Find out how to tell the client wrong username/password
-		Log(Logs::Detail, Logs::WorldServer, "Bad/Expired session key '%s'",
-		    name);
+		Log(Logs::Detail, Logs::WorldServer, "Handlesessionlogininfopacket: bad/expired session key {}", name);
 		return false;
 	}
 
-	if (!cle) return true;
+	if (!cle) {
+		return true;
+	}
 
 	cle->SetIP(GetIP());
 	return true;

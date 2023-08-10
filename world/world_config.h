@@ -26,7 +26,7 @@ class WorldConfig : public Config {
 	}
 
 	// Load the config
-	static std::string LoadConfig() {
+	static bool LoadConfig() {
 		if (_world_config != nullptr) delete _world_config;
 		_world_config = new WorldConfig;
 		_config = _world_config;

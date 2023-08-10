@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <yaml-cpp/yaml.h>
+#include "../common/eqemu_logsys.h"
 #ifndef _WIN32
 // this doesn't appear to affect linux-based systems..need feedback for _WIN64
 #include <fmt/format.h>
@@ -76,7 +77,7 @@ class Config {
 	YAML::Node _root;
 	static std::string ConfigFile;
 
-	void parse_config();
+	bool parse_config();
 
 	Config() {}
 	virtual ~Config() {}
@@ -92,8 +93,10 @@ class Config {
 		Config::ConfigFile = file;
 	}
 	// Load the config
-	static std::string LoadConfig() {
-		if (_config != nullptr) return "";
+	static bool LoadConfig() {
+		if (_config != nullptr) {
+			return true;
+		}
 
 		_config = new Config;
 
@@ -101,26 +104,22 @@ class Config {
 	}
 
 	// Load config file and parse data
-	static std::string parseFile() {
-		if (_config == nullptr) {
-			return LoadConfig();
-		}
-
+	static bool parseFile() {
 		try {
 			_config->_root = YAML::LoadFile(Config::ConfigFile);
-			_config->parse_config();
+			return _config->parse_config();
 		} catch (YAML::BadFile &e) {
-			return fmt::format("Failed opening {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
+			LogError("Failed opening {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
 		} catch (YAML::RepresentationException &e) {
-			return fmt::format("Failed with {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
+			LogError("Failed with {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
 		} catch (YAML::ParserException &e) {
-			return fmt::format("Failed parsing {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
+			LogError("Failed parsing {}:{}:{}: {}", Config::ConfigFile, e.mark.line, e.mark.column, e.msg);
 		} catch (YAML::Exception &e) {
-			return fmt::format("Failed loading {}: {}", Config::ConfigFile, e.msg);
+			LogError("Failed loading {}: {}", Config::ConfigFile, e.msg);
 		} catch (std::exception &e) {
-			return "Failed during " + Config::ConfigFile + ": " + e.what();
+			LogError("Failed during {}: {}", Config::ConfigFile, e.what());
 		}
-		return "";
+		return false;
 	}
 
 	void Dump() const;

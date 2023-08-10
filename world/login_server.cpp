@@ -191,9 +191,7 @@ bool LoginServer::Process() {
 			case ServerOP_LSRemoteAddr: {
 				if (!Config->WorldAddress.length()) {
 					WorldConfig::SetWorldAddress((char*)pack->pBuffer);
-					Log(Logs::Detail, Logs::WorldServer,
-					    "Loginserver provided %s as world address",
-					    pack->pBuffer);
+					LogInfo("Loginserver provided {} as world address", pack->pBuffer);
 				}
 				break;
 			}

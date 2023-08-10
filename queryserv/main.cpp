@@ -36,14 +36,13 @@ int main() {
 	set_exception_handler();
 	Timer InterserverTimer(INTERSERVER_TIMER);  // does auto-reconnect
 
-	auto load_result = Config::LoadConfig();
-	if (!load_result.empty()) {
-		LogError("{}", load_result);
+	LogInfo("Starting QueryServ v{}", VERSION);
+	if (!Config::LoadConfig()) {
+		LogError("Failed to load config");
 		return 1;
 	}
 
 	Config = queryservconfig::get();
-	LogInfo("Starting QueryServ v{}", VERSION);
 	WorldShortName = Config->ShortName;
 
 	LogInfo("Connecting to MySQL");

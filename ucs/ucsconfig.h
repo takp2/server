@@ -18,7 +18,7 @@ class ucsconfig : public Config {
 	}
 
 	// Load the config
-	static std::string LoadConfig() {
+	static bool LoadConfig() {
 		if (_chat_config != nullptr) delete _chat_config;
 		_chat_config = new ucsconfig;
 		_config = _chat_config;

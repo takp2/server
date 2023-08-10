@@ -52,9 +52,8 @@ int main() {
 
 	LogInfo("Starting UCS v{}", VERSION);
 
-	auto load_result = ucsconfig::LoadConfig();
-	if (!load_result.empty()) {
-		LogError("{}", load_result);
+	if (!ucsconfig::LoadConfig()) {
+		LogError("Failed to load config");
 		return 1;
 	}
 
